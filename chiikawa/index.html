@@ -69,6 +69,23 @@ main{padding-block:16px 48px}
 .name{font-size:11.5px;color:var(--muted);margin-bottom:2px}
 rt{font-size:.5em;color:var(--muted)}
 .no-furi rt{display:none}
+rt{user-select:none;-webkit-user-select:none}
+.kw{cursor:pointer;border-radius:4px;text-decoration:underline dotted var(--pink);text-underline-offset:5px;text-decoration-thickness:2px}
+.kw:hover,.kw:focus-visible{background:var(--pink-soft);outline:none}
+.kw-pop{position:absolute;z-index:30;background:var(--card);color:var(--ink);border-radius:16px;padding:12px 14px;box-shadow:0 8px 24px rgba(40,60,90,.18);border:2px solid var(--pink-soft);max-width:min(280px,calc(100vw - 32px))}
+.kw-pop .w{font-family:var(--f-jp);font-weight:700;font-size:24px;line-height:1.3}
+.kw-pop .r{font-family:var(--f-jp);color:var(--blue);font-size:15px}
+.kw-pop .b{font-family:var(--f-jp);font-size:13px;color:var(--muted)}
+.kw-pop .m{font-size:15px;margin:4px 0 8px}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.wcard{min-width:0;border:0;background:var(--card);border-radius:20px;padding:14px 10px;text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center}
+.wcard .w{font-family:var(--f-jp);font-weight:700;font-size:26px;line-height:1.3}
+.wcard .r,.wcard .m{visibility:hidden}
+.wcard .r{font-family:var(--f-jp);color:var(--blue);font-size:14px}
+.wcard .m{font-size:13.5px;line-height:1.4;min-height:2.8em}
+.wcard.open .r,.wcard.open .m{visibility:visible}
+.wcard .hint{font-size:11.5px;color:var(--muted)}
+.wcard.open .hint{display:none}
 
 .big{font-family:var(--f-jp);font-weight:700;font-size:34px;line-height:1.4;color:var(--blue)}
 .big-ko{font-size:17px;margin-top:2px}
@@ -106,9 +123,9 @@ rt{font-size:.5em;color:var(--muted)}
 .q{font-size:18px;margin:4px 0 2px}
 .q-sub{font-size:13px;color:var(--muted);margin:0}
 .opts{display:grid;gap:9px;margin-top:16px}
-.opt{text-align:left;border:2px solid var(--line);background:var(--card);border-radius:16px;padding:10px 14px;font-family:var(--f-jp);font-size:17px;line-height:1.8}
-.opt:hover:not(:disabled){border-color:var(--blue)}
-.opt:disabled{cursor:default}
+.opt{user-select:text;-webkit-user-select:text;cursor:pointer;text-align:left;border:2px solid var(--line);background:var(--card);border-radius:16px;padding:10px 14px;font-family:var(--f-jp);font-size:17px;line-height:1.8}
+.opt:hover:not(.done){border-color:var(--blue)}
+.opt.done{cursor:text}
 .opt.right{border-color:#7cc49a;background:var(--me)}
 .opt.wrong{border-color:var(--pink);background:var(--pink-soft)}
 .react{display:flex;gap:12px;align-items:center;margin-top:16px}
@@ -247,12 +264,38 @@ const SLANG=[
  ['{映|ば}える','사진발 잘 받다','このパフェ、{映|ば}える〜','이 파르페 사진발 좋다~']
 ];
 
+// 한자 단어 뜻: '한자|읽기': [사전형(없으면 빈칸), 뜻]
+const DICT={
+ '一杯|いっぱい':['','한 그릇, 한 잔 / 가득'],'一理|いちり':['','일리'],'了解|りょうかい':['','알겠음, 양해'],'二人|ふたり':['','두 사람'],
+ '人|ひと':['','사람'],'今|いま':['','지금'],'今度|こんど':['','다음번, 이번'],'今日|きょう':['','오늘'],
+ '仕掛|しか':['仕掛け（しかけ）','채비 (낚시 장치), 장치'],'何|なに':['','무엇'],'何|なん':['','무엇 (뒤에 だ·です가 오면 なん)'],'何時|なんじ':['','몇 시'],
+ '使|つか':['使う（つかう）','쓰다, 사용하다'],'全然|ぜんぜん':['','전혀'],'写真|しゃしん':['','사진'],'出|で':['出る（でる）','나가다, 나오다, 출발하다'],
+ '前|まえ':['','앞, 전'],'勉強|べんきょう':['','공부'],'合|あ':['間に合う（まにあう）','(시간에) 늦지 않다, 대다'],'間|ま':['間に合う（まにあう）','(시간에) 늦지 않다, 대다'],
+ '同|おな':['同じ（おなじ）','같은'],'土産|みやげ':['お土産（おみやげ）','선물, 기념품'],'地元|じもと':['','그 지역, 현지'],'夕焼|ゆうや':['夕焼け（ゆうやけ）','노을'],
+ '夜中|よなか':['','한밤중'],'大丈夫|だいじょうぶ':['','괜찮음'],'大変|たいへん':['','힘듦, 큰일'],'家|いえ':['','집'],
+ '寝|ね':['寝る（ねる）','자다'],'尊|とうと':['尊い（とうとい）','귀하다, 소중하다'],'店|みせ':['','가게'],'微妙|びみょう':['','미묘함, 애매함'],
+ '忘|わす':['忘れる（わすれる）','잊다, 두고 오다'],'急|いそ':['急ぐ（いそぐ）','서두르다'],'悪|わる':['悪い（わるい）','나쁘다, 미안하다'],'感|かん':['感じ（かんじ）','느낌'],
+ '手作|てづく':['手作り（てづくり）','손수 만듦, 수제'],'持|も':['持つ（もつ）','들다, 가지다'],'挑戦|ちょうせん':['','도전'],'推|お':['推し（おし）','최애'],
+ '撮|と':['撮る（とる）','(사진을) 찍다'],'新作|しんさく':['','신작, 신상'],'早|はや':['早い（はやい）','이르다, 빠르다'],'明日|あした':['','내일'],
+ '映|ば':['映える（ばえる）','돋보이다, 사진발 받다'],'昨日|きのう':['','어제'],'時|じ':['','~시 (시각)'],'最近|さいきん':['','최근, 요즘'],
+ '月曜日|げつようび':['','월요일'],'朝|あさ':['','아침'],'来|き':['来る（くる）','오다'],'根掛|ねが':['根掛かり（ねがかり）','밑걸림 (바늘이 바닥에 걸림)'],
+ '楽|たの':['楽しい（たのしい）・楽しみ（たのしみ）','즐겁다 · 기대, 즐거움'],'楽|らく':['','편함, 수월함'],'残念|ざんねん':['','아쉬움, 유감'],'気|き':['','마음, 신경 (気にする: 신경 쓰다)'],
+ '沼|ぬま':['','늪 → 沼る: (취미에) 푹 빠지다'],'混|こ':['混む（こむ）','붐비다'],'激辛|げきから':['','엄청 매움'],'無理|むり':['','무리'],
+ '甘|あま':['甘える（あまえる）','응석 부리다, 호의에 기대다'],'眠|ねむ':['眠い（ねむい）','졸리다'],'私|わたし':['','나, 저'],'秒|びょう':['','초 (시간)'],
+ '終電|しゅうでん':['','막차'],'船|ふね':['','배'],'草|くさ':['','풀 (인터넷에선 ㅋㅋ)'],'菓子|かし':['お菓子（おかし）','과자'],
+ '行|い':['行く（いく）','가다'],'言|い':['言う（いう）','말하다'],'言葉|ことば':['','말, 단어'],'詰|つ':['詰む（つむ）','막히다 → 詰んだ: 망했다'],
+ '財布|さいふ':['','지갑'],'買|か':['買う（かう）','사다'],'走|はし':['走る（はしる）','달리다'],'辺|へん':['','근처, 부근'],
+ '返信|へんしん':['','답장'],'逃|のが':['逃す（のがす）','놓치다'],'連絡|れんらく':['','연락'],'遅|おく':['遅れる（おくれる）','늦다'],
+ '遠慮|えんりょ':['','사양, 조심함'],'釣|つ':['釣る（つる）・釣れる（つれる）','낚다 · (물고기가) 잡히다'],'雨|あめ':['','비'],'韓国|かんこく':['','한국'],
+ '食|た':['食べる（たべる）','먹다'],'駅前|えきまえ':['','역 앞'],'魚|さかな':['','물고기, 생선']
+};
+
 /* ── 유틸 ── */
 const $=s=>document.querySelector(s);
 const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const RUBY=/\{([^|{}]+)\|([^{}]+)\}/g;
-const rb=s=>esc(s).replace(RUBY,'<ruby>$1<rt>$2</rt></ruby>');
+const rb=s=>esc(s).replace(RUBY,(_,k,r)=>DICT[k+'|'+r]?`<ruby class="kw" tabindex="0" role="button" data-k="${k}|${r}">${k}<rt>${r}</rt></ruby>`:`<ruby>${k}<rt>${r}</rt></ruby>`);
 const plain=s=>s.replace(RUBY,'$1');
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const rnd=a=>a[Math.floor(Math.random()*a.length)];
@@ -271,7 +314,7 @@ function say(t){
   try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ja-JP';u.rate=.9;if(jaVoice)u.voice=jaVoice;speechSynthesis.speak(u)}catch(e){toast('소리를 내지 못했어요')}
 }
 const ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>';
-const sayBtn=t=>`<button class="say" data-act="say" data-t="${esc(plain(t).replace(/ \/ /g,'、'))}">${ICON}듣기</button>`;
+const sayBtn=t=>`<button class="say" data-act="say" data-t="${esc(plain(t).replace(/ \/ /g,'、'))}">${ICON}듣기</button><button class="say" data-act="copy" data-t="${esc(plain(t))}">복사</button>`;
 
 /* 날짜마다 바뀌는 오늘의 한마디 — 같은 날엔 모두 같은 걸 봐요 */
 const now=new Date();
@@ -282,7 +325,7 @@ let todayIdx=pick(PHRASES,0);
 function chat(lines){return `<div class="chat">${lines.map(([w,jp,ko],k)=>`<div class="msg ${k%2?'r':''}"><img class="ava" src="${WHO[w][1]}" alt="${WHO[w][0]}" width="44" height="44"><div class="bub"><div class="name" lang="ja">${WHO[w][0]}</div><div class="jp" lang="ja">${rb(jp)}</div><div class="ko">${esc(ko)}</div></div></div>`).join('')}</div>`}
 
 /* ── 화면 ── */
-const VIEWS=[['today','오늘의 한마디'],['real','진짜 말투'],['react','리액션'],['trip','대마도 여행·낚시'],['slang','요즘 말'],['play','이럴 땐 뭐라고?']];
+const VIEWS=[['today','오늘의 한마디'],['real','진짜 말투'],['react','리액션'],['trip','대마도 여행·낚시'],['slang','요즘 말'],['kanji','한자 단어'],['play','이럴 땐 뭐라고?']];
 let view='today';
 
 const R={
@@ -303,7 +346,7 @@ const R={
   </div>`;
  },
  real(){
-  return `<p class="intro">교과서에서 배운 말을 친구끼리 하면 이렇게 바뀌어요. 줄어드는 규칙만 알아도 드라마·유튜브가 훨씬 잘 들려요.</p>
+  return `<p class="intro">점선 밑줄 한자를 누르면 뜻이 나와요. 교과서에서 배운 말을 친구끼리 하면 이렇게 바뀌어요. 줄어드는 규칙만 알아도 드라마·유튜브가 훨씬 잘 들려요.</p>
   <div class="list">${REAL.map(r=>`<div class="item"><div class="book" lang="ja">${esc(r[0])}</div><div class="jp" lang="ja">${esc(r[1])}</div><div class="ko">${esc(r[2])}</div>${r[3]?`<div class="sub">${esc(r[3])}</div>`:''}${sayBtn(r[1])}</div>`).join('')}</div>`;
  },
  react(){
@@ -320,13 +363,18 @@ const R={
   return `<p class="intro">SNS랑 친구 사이에서 쓰는 말이에요. 처음 보는 사람이나 윗사람한테는 쓰지 마세요.</p>
   <div class="list">${SLANG.map(s=>`<div class="item"><div class="jp" lang="ja">${rb(s[0])}</div><div class="ko">${esc(s[1])}</div><div class="ex" lang="ja">${rb(s[2])}<span>${esc(s[3])}</span></div>${sayBtn(s[2])}</div>`).join('')}</div>`;
  },
+ kanji(){
+  const ks=Object.keys(DICT);
+  return `<p class="intro">이 사이트 문장에 나오는 한자 단어 ${ks.length}개예요. 카드를 누르면 읽는 법과 뜻이 나와요. 문장 속 점선 밑줄 한자도 누르면 뜻이 떠요.</p>
+  <div class="wgrid">${ks.map(k=>{const [w,r]=k.split('|'),[b,m]=DICT[k];return `<button class="wcard" data-act="flip" lang="ja"><span class="w">${w}</span><span class="r">${b?esc(b):r}</span><span class="m" lang="ko">${esc(m)}</span><span class="hint" lang="ko">눌러서 뜻 보기</span></button>`}).join('')}</div>`;
+ },
  play(){
   if(!P)newQ();
   const q=P,done=q.picked!=null,ok=q.picked===q.ans;
   return `<div class="play"><div class="box">
     <div class="row" style="justify-content:space-between"><p class="label" style="margin:0">${esc(q.kind)}</p><span class="streak">연속 ${streak}개 · 최고 ${best}개</span></div>
     <p class="q">${q.q}</p>${q.sub?`<p class="q-sub">${q.sub}</p>`:''}
-    <div class="opts">${q.opts.map((o,k)=>{let c='opt';if(done){if(k===q.ans)c+=' right';else if(k===q.picked)c+=' wrong'}return `<button class="${c}" data-act="ans" data-k="${k}" lang="ja" ${done?'disabled':''}>${rb(o)}</button>`}).join('')}</div>
+    <div class="opts">${q.opts.map((o,k)=>{let c='opt';if(done){if(k===q.ans)c+=' right';else if(k===q.picked)c+=' wrong'}return `<div class="${c}${done?' done':''}" ${done?'':'data-act="ans" role="button" tabindex="0"'} data-k="${k}" lang="ja">${rb(o)}</div>`}).join('')}</div>
     ${done?`<div class="react pop" role="status"><img src="${ok?'chii.jpg':'hachi.jpg'}" alt="${ok?'ちいかわ':'ハチワレ'}" width="64" height="64"><div class="bub"><div class="jp" lang="ja">${ok?'えらい！':'ドンマイ！'}</div><div class="ko">${ok?'정답이야!':'정답은 「'+esc(plain(q.opts[q.ans]))+'」'} ${esc(q.note||'')}</div></div></div>
       <div class="row" style="margin-top:14px;justify-content:flex-end">${sayBtn(q.opts[q.ans])}<button class="soft" data-act="nextq" id="nextq">다음 거</button></div>`:''}
   </div></div>`;
@@ -357,12 +405,46 @@ function render(){
   $('#tabs').innerHTML=VIEWS.map(([v,l])=>`<button class="tab ${view===v?'on':''}" data-act="go" data-v="${v}" ${view===v?'aria-current="page"':''}>${l}</button>`).join('')+`<button class="furi" id="furi-btn" data-act="furi"></button>`;
   $('#main').innerHTML=R[view]();applyFuri();
 }
-function go(v){if(!R[v])v='today';view=v;try{history.replaceState(null,'','#'+v)}catch(e){}render()}
+function go(v){closePop();if(!R[v])v='today';view=v;try{history.replaceState(null,'','#'+v)}catch(e){}render()}
 
+function copyText(t){
+  const ok=()=>toast('복사했어요: '+t);
+  const fallback=()=>{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(e){toast('복사하지 못했어요. 글자를 길게 눌러 복사해 주세요')}ta.remove()};
+  try{navigator.clipboard.writeText(t).then(ok,fallback)}catch(e){fallback()}
+}
+let pop=null;
+function closePop(){if(pop){pop.remove();pop=null}}
+function showWord(el){
+  closePop();const key=el.dataset.k,[w,r]=key.split('|'),[b,m]=DICT[key];
+  pop=document.createElement('div');pop.className='kw-pop';pop.setAttribute('role','dialog');
+  pop.innerHTML=`<div class="w" lang="ja">${w}</div><div class="r" lang="ja">${r}</div>${b?`<div class="b">기본형 ${esc(b)}</div>`:''}<div class="m">${esc(m)}</div><div class="row">${sayBtn(b?b.split('（')[0]:w)}</div>`;
+  document.body.appendChild(pop);
+  const rc=el.getBoundingClientRect(),pw=pop.offsetWidth;
+  pop.style.left=Math.max(16,Math.min(rc.left+scrollX,scrollX+document.documentElement.clientWidth-pw-16))+'px';
+  pop.style.top=(rc.bottom+scrollY+8)+'px';
+}
+const selecting=()=>{const s=getSelection();return s&&!s.isCollapsed&&s.toString().trim()!==''};
+// 복사할 때 후리가나는 빼고 한자만
+document.addEventListener('copy',e=>{
+  const s=getSelection();if(!s||s.isCollapsed||!e.clipboardData)return;
+  const box=document.createElement('div');for(let i=0;i<s.rangeCount;i++)box.appendChild(s.getRangeAt(i).cloneContents());
+  box.querySelectorAll('rt').forEach(x=>x.remove());
+  e.clipboardData.setData('text/plain',box.textContent);e.preventDefault();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closePop();
+  const t=e.target;if((e.key==='Enter'||e.key===' ')&&t.matches&&t.matches('.kw,.opt[data-act]')){e.preventDefault();t.click()}
+});
 document.addEventListener('click',e=>{
+  const kw=e.target.closest('.kw');
+  if(kw){if(selecting())return;showWord(kw);return}
+  if(pop&&!e.target.closest('.kw-pop'))closePop();
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(b.tagName!=='BUTTON'&&selecting())return;
   if(a==='go')go(b.dataset.v);
   else if(a==='say')say(b.dataset.t);
+  else if(a==='copy')copyText(b.dataset.t);
+  else if(a==='flip')b.classList.toggle('open');
   else if(a==='furi'){furi=!furi;store.set('chii_furi',furi);applyFuri()}
   else if(a==='another'){let i;do{i=rnd(range(PHRASES.length))}while(i===todayIdx);todayIdx=i;render()}
   else if(a==='ans')answer(+b.dataset.k);
