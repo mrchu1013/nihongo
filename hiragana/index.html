@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>우사기 히라가나</title>
+<style>
+  :root{
+    --bg:#fff7f0; --paper:#fffdf9; --ink:#3b2f2a; --soft:#8a7468; --line:#f0dccd;
+    --pink:#ff8fab; --pink-soft:#ffe1ea; --sea:#3d8bfd; --sea-soft:#e3efff; --ok:#2fa36b; --bad:#e2554f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic","Apple SD Gothic Neo","Yu Gothic",sans-serif;line-height:1.6}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 16px 80px}
+  /* 상소문 두루마리 느낌 */
+  .scroll{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 30px rgba(120,70,40,.08);padding:28px 26px;position:relative}
+  .scroll:before,.scroll:after{content:"";position:absolute;left:-6px;right:-6px;height:14px;border-radius:8px;background:linear-gradient(#e9c9a8,#d8ad85)}
+  .scroll:before{top:-8px}.scroll:after{bottom:-8px}
+  .photo{margin:0 0 20px;text-align:center}
+  .photo img{width:100%;max-height:380px;object-fit:contain;border-radius:16px;background:#fff;border:1px solid var(--line)}
+  .photo figcaption{font-size:13px;color:var(--soft);margin-top:4px}
+  .head{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+  .usagi{width:150px;height:150px;flex:none;animation:bounce 1.6s ease-in-out infinite;cursor:pointer}
+  .usagi img,.usagi svg{width:100%;height:100%;object-fit:contain}
+  .usagi img{object-fit:cover;border-radius:50%;border:4px solid #fff;box-shadow:0 4px 14px rgba(255,143,171,.35)}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .bubble{flex:1;min-width:240px;background:var(--pink-soft);border-radius:18px;padding:14px 18px;position:relative}
+  .bubble:before{content:"";position:absolute;left:-12px;top:40px;border:8px solid transparent;border-right-color:var(--pink-soft);border-width:8px 12px 8px 0}
+  .date{color:var(--soft);font-size:13px}
+  h1{font-size:22px;margin:2px 0 6px}
+  .say{font-size:16px}
+  .count{display:inline-block;margin-top:8px;background:#fff;border-radius:999px;padding:3px 12px;font-size:13px;color:var(--sea);font-weight:bold}
+  h2{font-size:18px;margin:34px 0 12px;padding-bottom:6px;border-bottom:2px dashed var(--line)}
+  h2 small{font-weight:normal;color:var(--soft);font-size:13px}
+  .today{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  .big{background:#fff;border:2px solid var(--pink);border-radius:16px;text-align:center;padding:14px 4px;cursor:pointer;transition:.15s}
+  .big:hover{transform:translateY(-3px);background:var(--pink-soft)}
+  .big .k{font-size:46px;line-height:1.1;font-family:"Yu Gothic","Meiryo","MS Gothic",sans-serif}
+  .big .r{font-size:15px;color:var(--soft)}
+  .big .hint{font-size:12px;color:var(--pink);min-height:18px}
+  .big.sel{background:var(--pink-soft);box-shadow:0 0 0 3px var(--pink) inset}
+  .stroke{display:flex;gap:18px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:12px}
+  .stroke svg{width:190px;height:190px;flex:none;background:
+    linear-gradient(var(--line),var(--line)) center/100% 1px no-repeat,
+    linear-gradient(var(--line),var(--line)) center/1px 100% no-repeat,#fffaf6;border-radius:12px}
+  .stroke .guide{fill:none;stroke:#eadfd6;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .stroke .ink{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .stroke .ink.cur{stroke:var(--pink)}
+  .stroke .num{font-size:8px;fill:var(--pink);font-weight:bold;font-family:sans-serif}
+  .stroke-side{flex:1;min-width:200px}
+  .stroke-title{font-size:18px;font-weight:bold}
+  .stroke-desc{font-size:13px;color:var(--soft);margin:4px 0}
+  .stroke-modal{position:fixed;inset:0;background:rgba(59,47,42,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+  .stroke-modal .stroke{max-width:460px;width:100%;margin:0}
+  .write{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;text-align:center}
+  .write-q{font-size:18px}
+  .write-q b{font-size:34px;color:var(--pink);margin:0 4px}
+  .write-pad{display:flex;justify-content:center;margin:10px 0}
+  .write-pad svg{width:min(280px,100%);aspect-ratio:1;touch-action:none;cursor:crosshair;border:2px solid var(--line);border-radius:14px;background:
+    linear-gradient(var(--line),var(--line)) center/100% 1px no-repeat,
+    linear-gradient(var(--line),var(--line)) center/1px 100% no-repeat,#fffaf6}
+  .write-pad .hint{fill:none;stroke:#efe4dc;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+  .write-pad .mine{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .write-pad .mine.good{stroke:var(--ok)} .write-pad .mine.bad{stroke:var(--bad)}
+  .write-pad .ans{fill:none;stroke:var(--sea);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:.7}
+  .write-pad .num{font-size:7px;font-weight:bold;font-family:sans-serif}
+  .write-msg{font-size:15px;min-height:24px}
+  .tip{background:var(--sea-soft);border-radius:12px;padding:10px 14px;font-size:14px;margin-top:12px}
+  table.chart{border-collapse:separate;border-spacing:6px;width:100%}
+  .chart td{background:#fff;border:1px solid var(--line);border-radius:10px;text-align:center;padding:6px 0;cursor:pointer;width:20%}
+  .chart td.learned{border-color:var(--pink)}
+  .chart td.now{background:var(--pink-soft);border:2px solid var(--pink)}
+  .chart td.empty{background:transparent;border:none;cursor:default}
+  .chart .k{font-size:26px;font-family:"Yu Gothic","Meiryo",sans-serif;display:block;line-height:1.2}
+  .chart .r{font-size:12px;color:var(--soft)}
+  .chart.hide-r .r{visibility:hidden}
+  table.chart{table-layout:fixed}
+  .chart td.row-label{font-size:12px;color:var(--soft);white-space:nowrap;width:46px}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+  button:hover{background:var(--pink-soft)}
+  button.primary{background:var(--pink);color:#fff;border-color:var(--pink)}
+  .quiz{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;text-align:center}
+  .quiz .q{font-size:70px;font-family:"Yu Gothic","Meiryo",sans-serif;line-height:1.2}
+  .opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+  .opts button{border-radius:12px;padding:12px 0;font-size:18px}
+  .opts button.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+  .opts button.bad{background:var(--bad);color:#fff;border-color:var(--bad)}
+  .score{color:var(--soft);font-size:14px;margin-top:10px}
+  .phrase{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:10px}
+  .phrase .jp{font-size:22px;font-family:"Yu Gothic","Meiryo",sans-serif}
+  .phrase .jp span{cursor:pointer}
+  .phrase .jp span:hover{color:var(--pink)}
+  .phrase .rd{color:var(--soft);font-size:14px}
+  .phrase .ko{font-size:15px}
+  .phrase .tag{font-size:11px;background:var(--sea-soft);color:var(--sea);border-radius:999px;padding:1px 8px;margin-right:6px}
+  .phrase .cover{cursor:pointer;user-select:none}
+  .phrase .cover .rd,.phrase .cover .ko{filter:blur(6px);transition:.2s}
+  .phrase .cover[data-step="1"] .rd,.phrase .cover[data-step="2"] .rd,.phrase .cover[data-step="2"] .ko{filter:none}
+  .phrase .cover .step{font-size:12px;color:var(--pink)}
+  details{margin-top:8px}
+  summary{cursor:pointer;color:var(--sea)}
+  .foot{text-align:center;color:var(--soft);font-size:12px;margin-top:30px}
+  @media (max-width:560px){
+    .today{grid-template-columns:repeat(3,1fr)}
+    .big .k{font-size:38px}
+    .opts{grid-template-columns:repeat(2,1fr)}
+    .usagi{width:110px;height:110px}
+    .scroll{padding:22px 14px}
+    .chart .k{font-size:20px}
+    table.chart{border-spacing:3px}
+    .chart td.row-label{width:34px;font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<div class="scroll">
+
+  <figure class="photo" id="photo" hidden>
+    <img id="photoImg" alt="오늘의 치이카와">
+    <figcaption id="photoCap"></figcaption>
+  </figure>
+
+  <div class="head">
+    <div class="usagi" id="usagi" title="눌러보세요!"></div>
+    <div class="bubble">
+      <div class="date" id="date"></div>
+      <h1 id="title">오늘의 히라가나</h1>
+      <div class="say" id="say"></div>
+      <div class="count" id="count"></div>
+    </div>
+  </div>
+
+  <h2>① 오늘 외울 글자 <small>— 글자를 누르면 발음과 획순이 나와요</small></h2>
+  <div class="today" id="today"></div>
+  <div class="stroke" id="strokeBox">
+    <svg id="strokeSvg" viewBox="0 0 109 109"></svg>
+    <div class="stroke-side">
+      <div class="stroke-title" id="strokeTitle"></div>
+      <div class="stroke-desc">숫자 순서대로 써요. 위→아래, 왼쪽→오른쪽이 기본! 손가락으로 허공에 따라 써보세요.</div>
+      <div class="btns">
+        <button class="primary" id="strokePlay">▶ 다시 보기</button>
+        <button id="strokeStep">한 획씩</button>
+      </div>
+    </div>
+  </div>
+  <div class="tip" id="memo"></div>
+
+  <h2>② 우사기 퀴즈 <small>— 지금까지 배운 글자에서 10문제</small></h2>
+  <div class="quiz">
+    <div class="q" id="q">あ</div>
+    <div class="opts" id="opts"></div>
+    <div class="score" id="score"></div>
+    <div class="btns" style="justify-content:center"><button class="primary" id="restart">다시 풀기</button></div>
+  </div>
+
+  <h2>③ 획순 쓰기 퀴즈 <small>— 읽는 법을 보고 마우스/손가락으로 직접 써보세요</small></h2>
+  <div class="write">
+    <div class="write-q" id="wq"></div>
+    <div class="btns" id="wrange" style="justify-content:center">
+      <button data-r="learned" class="primary">배운 글자</button><button data-r="all">히라가나 전체</button><button data-r="daku">탁음·반탁음</button>
+    </div>
+    <div class="write-pad">
+      <svg id="wpad" viewBox="0 0 109 109"></svg>
+    </div>
+    <div class="write-msg" id="wmsg">획 순서대로 한 획씩 떼면서 써요.</div>
+    <div class="btns" style="justify-content:center">
+      <button id="wundo">↶ 한 획 지우기</button>
+      <button id="wclear">전부 지우기</button>
+      <button id="whint">힌트(흐린 글씨)</button>
+      <button class="primary" id="wcheck">채점하기</button>
+      <button id="wnext">다음 문제 ▶</button>
+    </div>
+    <div class="score" id="wscore"></div>
+  </div>
+
+  <h2>④ 오늘의 여행 문장 <small>— 히라가나로만 읽어보기 (1번 누르면 읽는 법, 2번 누르면 뜻)</small></h2>
+  <div id="phrases"></div>
+
+  <h2>⑤ 히라가나 전체표 <small>— 분홍 테두리 = 배운 글자, 분홍 칸 = 오늘 · 누르면 획순</small></h2>
+  <div class="btns">
+    <button id="toggleR">읽는 법 가리기 (셀프 테스트)</button>
+  </div>
+  <table class="chart" id="chart"></table>
+  <details>
+    <summary>보너스: 탁음·반탁음 (が・ざ・だ・ば・ぱ) — 점 두 개(゛)면 탁하게, 동그라미(゜)면 ㅍ</summary>
+    <table class="chart" id="chart2"></table>
+  </details>
+
+  <div class="foot">하루에 한 행씩, 열흘이면 히라가나 끝! ぴょん!<br>캐릭터 그림 © nagano · 개인 학습용 팬 페이지 · 기록은 이 기기 브라우저에만 저장돼요<br>획순 데이터: <a href="https://kanjivg.tagaini.net" target="_blank">KanjiVG</a> (CC BY-SA 3.0)</div>
+</div>
+</div>
+
+<script src="strokes.js"></script>
+<script>
+// ───────── 데이터 ─────────
+const ROWS = [
+  {name:"あ행", kana:[["あ","아"],["い","이"],["う","우"],["え","에"],["お","오"]],
+   memo:"あ는 십자가에 꼬리, お는 あ랑 닮았지만 오른쪽에 점(ㆍ)이 붙어요. い는 두 개의 빗금 = '이'!"},
+  {name:"か행", kana:[["か","카"],["き","키"],["く","쿠"],["け","케"],["こ","코"]],
+   memo:"く는 '<' 모양 부리 = 쿠! こ는 두 줄 = 코(코 구멍 두 개). き는 さ에 가로줄 하나 더."},
+  {name:"さ행", kana:[["さ","사"],["し","시"],["す","스"],["せ","세"],["そ","소"]],
+   memo:"し는 낚싯바늘 모양 = 시! す는 끝에 동그란 고리. さ와 き 헷갈리면 가로줄 개수를 세어봐요(さ 1개, き 2개)."},
+  {name:"た행", kana:[["た","타"],["ち","치"],["つ","츠"],["て","테"],["と","토"]],
+   memo:"つ는 파도 모양 — 낚시(つり)의 つ! ち는 さ를 뒤집은 모양. て는 손(て)을 뻗은 모양."},
+  {name:"な행", kana:[["な","나"],["に","니"],["ぬ","누"],["ね","네"],["の","노"]],
+   memo:"の는 '~의' 라는 뜻으로 제일 많이 나와요. ぬ(누)는 끝이 고리, ね(네)는 끝이 고리+꼬리. め(메)와 ぬ 구분!"},
+  {name:"は행", kana:[["は","하"],["ひ","히"],["ふ","후"],["へ","헤"],["ほ","호"]],
+   memo:"へ는 산 모양 = 헤~. ふ는 점 네 개 흩어진 '후'. は가 조사로 쓰이면 '와'로 읽어요 (きょうは = 쿄-와)."},
+  {name:"ま행", kana:[["ま","마"],["み","미"],["む","무"],["め","메"],["も","모"]],
+   memo:"も는 낚싯바늘에 줄 두 개 = 모. み는 21 같은 모양. め는 ぬ에서 고리 빼면!"},
+  {name:"や행", kana:[["や","야"],["ゆ","유"],["よ","요"]],
+   memo:"작게 쓰면(ゃゅょ) 앞 글자와 합쳐요: き+ょ = きょ(쿄). 'きょう(오늘)'를 읽을 수 있게 돼요!"},
+  {name:"ら행", kana:[["ら","라"],["り","리"],["る","루"],["れ","레"],["ろ","로"]],
+   memo:"る(루)는 끝이 고리, ろ(로)는 고리 없음. り는 い랑 닮았지만 오른쪽이 길어요. つり(낚시)의 り!"},
+  {name:"わ행", kana:[["わ","와"],["を","오"],["ん","응"]],
+   memo:"を는 '~을/를' 조사로만 써요(오). ん은 받침 'ㄴ/ㅇ' 역할 — さかなん… 이 아니라 'ん' 하나로 끝나요."},
+];
+const DAKU = [
+  ["が행",[["が","가"],["ぎ","기"],["ぐ","구"],["げ","게"],["ご","고"]]],
+  ["ざ행",[["ざ","자"],["じ","지"],["ず","즈"],["ぜ","제"],["ぞ","조"]]],
+  ["だ행",[["だ","다"],["ぢ","지"],["づ","즈"],["で","데"],["ど","도"]]],
+  ["ば행",[["ば","바"],["び","비"],["ぶ","부"],["べ","베"],["ぼ","보"]]],
+  ["ぱ행",[["ぱ","파"],["ぴ","피"],["ぷ","푸"],["ぺ","페"],["ぽ","포"]]],
+];
+// 여행·낚시 문장 (가타카나 단어도 연습용으로 히라가나로 표기)
+const PHRASES = [
+  ["여행","すみません","스미마셍","저기요 / 실례합니다"],
+  ["여행","ありがとう ございます","아리가토- 고자이마스","감사합니다"],
+  ["낚시","つり","츠리","낚시"],
+  ["낚시","さかな","사카나","물고기"],
+  ["여행","これ ください","코레 쿠다사이","이거 주세요"],
+  ["낚시","えさ","에사","미끼"],
+  ["여행","いくら ですか","이쿠라 데스카","얼마예요?"],
+  ["낚시","つりざお","츠리자오","낚싯대"],
+  ["낚시","はり","하리","낚싯바늘"],
+  ["낚시","うき","우키","찌"],
+  ["낚시","いと","이토","낚싯줄"],
+  ["여행","おいしい","오이시-","맛있어요"],
+  ["낚시","あじ","아지","전갱이"],
+  ["낚시","さば","사바","고등어"],
+  ["낚시","たい","타이","도미"],
+  ["낚시","いか","이카","오징어"],
+  ["낚시","ふね","후네","배"],
+  ["낚시","みなと","미나토","항구"],
+  ["여행","つしま","츠시마","대마도"],
+  ["여행","ひたかつ","히타카츠","히타카츠(대마도 북쪽 항구)"],
+  ["여행","いづはら","이즈하라","이즈하라(대마도 남쪽 항구)"],
+  ["낚시","つれた!","츠레타!","낚았다!"],
+  ["낚시","なにが つれますか","나니가 츠레마스카","뭐가 잡혀요?"],
+  ["낚시","きょうは つれますか","쿄-와 츠레마스카","오늘 잘 잡혀요?"],
+  ["낚시","ここで つりを しても いいですか","코코데 츠리오 시테모 이-데스카","여기서 낚시해도 되나요?"],
+  ["낚시","えさを ください","에사오 쿠다사이","미끼 주세요"],
+  ["낚시","おおきい!","오-키-!","크다!"],
+  ["낚시","ちいさい","치-사이","작다"],
+  ["여행","といれは どこですか","토이레와 도코데스카","화장실 어디예요? (원래 トイレ는 가타카나)"],
+  ["여행","えきは どこですか","에키와 도코데스카","역은 어디예요?"],
+  ["여행","おすすめは なんですか","오스스메와 난데스카","추천 메뉴는 뭐예요?"],
+  ["여행","おかいけい おねがいします","오카이케- 오네가이시마스","계산 부탁합니다"],
+  ["여행","かんぱい!","캄파이!","건배!"],
+  ["여행","かんこくから きました","캉코쿠카라 키마시타","한국에서 왔어요"],
+  ["낚시","つりぐや","츠리구야","낚시점"],
+  ["낚시","いそづり","이소즈리","갯바위 낚시"],
+  ["낚시","きれいな うみ ですね","키레-나 우미 데스네","바다가 예쁘네요"],
+  ["여행","おはよう ございます","오하요- 고자이마스","좋은 아침입니다"],
+  ["여행","こんにちは","콘니치와","안녕하세요 (낮 인사, 끝의 は는 '와')"],
+  ["여행","わかりません","와카리마셍","모르겠어요"],
+  ["여행","にほんごが すこし わかります","니홍고가 스코시 와카리마스","일본어 조금 알아요"],
+];
+const SAYS = [
+  "오늘도 ぴょん! 히라가나 다섯 글자만 외우면 돼요. ヤハ~!",
+  "일본 여행 가서 간판 읽을 날을 상상해봐요 ✈️",
+  "어제 배운 글자, 기억나요? 퀴즈로 확인해봐요 ウラ!",
+  "하루 10분이면 2월엔 간판을 읽을 수 있어요!",
+  "틀려도 괜찮아요. 우사기도 처음엔 さ랑 ち를 헷갈렸어요~",
+  "소리 내서 읽으면 두 배로 잘 외워져요. 글자를 눌러봐요!",
+  "오늘의 문장은 낚싯배 위에서 꼭 써먹어봐요 🐟",
+  "꾸준함이 최고! 오늘도 출석 완료 ぴょんぴょん!",
+];
+
+// ───────── 날짜 계산 ─────────
+const now = new Date();
+const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+// 학습 시작일: 이 기기에서 처음 들어온 날 (저장 안 되면 오늘)
+const START = (()=>{ try{ let v=localStorage.getItem("usagi-start"); if(!v){ v=String(today0.getTime()); localStorage.setItem("usagi-start",v); } return new Date(+v); }catch(e){ return today0; } })();
+const day = Math.max(0, Math.round((today0-START)/86400000));   // 0부터
+const firstLoop = day < ROWS.length;
+const rowIdx = day % ROWS.length;
+const row = ROWS[rowIdx];
+const learnedRows = firstLoop ? ROWS.slice(0,day+1) : ROWS;
+const learned = learnedRows.flatMap(r=>r.kana);
+
+const $ = id => document.getElementById(id);
+const wd = ["일","월","화","수","목","금","토"][now.getDay()];
+$("date").textContent = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${wd}) · 학습 ${day+1}일째`;
+$("title").textContent = firstLoop ? `오늘은 「${row.name}」 외우는 날!` : `복습 ${Math.floor(day/ROWS.length)}바퀴째 — 「${row.name}」 다시 보기`;
+$("say").textContent = SAYS[day % SAYS.length];
+$("count").textContent = firstLoop ? `🐰 히라가나 완주까지 ${ROWS.length-day-1}일 남았어요` : "🎉 히라가나 한 바퀴 완주! 복습 중이에요";
+$("memo").innerHTML = "🐰 <b>외우는 꿀팁</b> — " + row.memo;
+
+// ───────── 발음 (윈도우 일본어 음성이 있으면 재생) ─────────
+function speak(t){
+  try{
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang="ja-JP"; u.rate=.8;
+    const v = speechSynthesis.getVoices().find(v=>v.lang && v.lang.startsWith("ja"));
+    if(v) u.voice=v;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+// ───────── ① 오늘 글자 ─────────
+$("today").innerHTML = row.kana.map(([k,r])=>`<div class="big" data-k="${k}" data-r="${r}"><div class="k">${k}</div><div class="r">${r}</div><div class="hint">🔊</div></div>`).join("");
+// ───────── 획순 애니메이션 (KanjiVG 데이터) ─────────
+function makeStroke(svg, titleEl, playBtn, stepBtn){
+  const NS="http://www.w3.org/2000/svg"; let paths=[], timers=[], stepAt=0;
+  function clear(){ timers.forEach(clearTimeout); timers=[]; }
+  function set(k, r){
+    clear(); svg.innerHTML=""; paths=[]; stepAt=0;
+    const d=(window.STROKES||{})[k];
+    titleEl.textContent = d ? `「${k}」(${r}) — 총 ${d.length}획` : `「${k}」 획순 데이터 없음`;
+    if(!d) return;
+    d.forEach(p=>{ const g=document.createElementNS(NS,"path"); g.setAttribute("d",p); g.setAttribute("class","guide"); svg.appendChild(g); });
+    d.forEach((p,i)=>{
+      const e=document.createElementNS(NS,"path"); e.setAttribute("d",p); e.setAttribute("class","ink"); svg.appendChild(e);
+      const len=e.getTotalLength(); e.style.strokeDasharray=len; e.style.strokeDashoffset=len; e.dataset.len=len;
+      paths.push(e);
+      const m=p.match(/^[Mm]\s*([\d.]+)[ ,]*([\d.]+)/);
+      if(m){ const t=document.createElementNS(NS,"text"); t.setAttribute("x",+m[1]-7); t.setAttribute("y",+m[2]-2); t.setAttribute("class","num"); t.textContent=i+1; svg.appendChild(t); }
+    });
+  }
+  function draw(e, ms){
+    e.classList.add("cur");
+    e.style.transition="none"; e.style.strokeDashoffset=e.dataset.len; e.getBoundingClientRect();
+    e.style.transition=`stroke-dashoffset ${ms}ms ease-in-out`; e.style.strokeDashoffset=0;
+    timers.push(setTimeout(()=>e.classList.remove("cur"), ms));
+  }
+  function play(){
+    clear(); stepAt=paths.length;
+    paths.forEach(e=>{ e.style.transition="none"; e.style.strokeDashoffset=e.dataset.len; });
+    paths.forEach((e,i)=>timers.push(setTimeout(()=>draw(e,700), 300+i*900)));
+  }
+  function step(){
+    clear();
+    if(stepAt>=paths.length){ stepAt=0; paths.forEach(e=>{ e.style.transition="none"; e.style.strokeDashoffset=e.dataset.len; }); }
+    draw(paths[stepAt++], 700);
+  }
+  playBtn.onclick=play; stepBtn.onclick=step;
+  return { show(k,r){ set(k,r); play(); } };
+}
+const todayStroke = makeStroke($("strokeSvg"), $("strokeTitle"), $("strokePlay"), $("strokeStep"));
+function pick(b){
+  document.querySelectorAll(".big").forEach(x=>x.classList.toggle("sel", x===b));
+  todayStroke.show(b.dataset.k, b.dataset.r);
+}
+$("today").onclick = e => { const b=e.target.closest(".big"); if(b){ speak(b.dataset.k); pick(b); } };
+pick($("today").querySelector(".big"));
+
+// 전체표 글자를 누르면 획순 팝업
+function strokeModal(k, r){
+  const m=document.createElement("div"); m.className="stroke-modal";
+  m.innerHTML=`<div class="stroke"><svg viewBox="0 0 109 109"></svg><div class="stroke-side"><div class="stroke-title"></div>
+    <div class="stroke-desc">숫자 순서대로 써요. 바깥을 누르면 닫혀요.</div>
+    <div class="btns"><button class="primary">▶ 다시 보기</button><button>한 획씩</button><button>닫기</button></div></div></div>`;
+  document.body.appendChild(m);
+  const b=m.querySelectorAll("button");
+  const s=makeStroke(m.querySelector("svg"), m.querySelector(".stroke-title"), b[0], b[1]);
+  b[2].onclick=()=>m.remove();
+  m.onclick=e=>{ if(e.target===m) m.remove(); };
+  s.show(k, r);
+}
+
+// ───────── ④ 전체표 ─────────
+const learnedSet = new Set(learned.map(x=>x[0]));
+const curSet = new Set(row.kana.map(x=>x[0]));
+function cell(x){
+  if(!x) return `<td class="empty"></td>`;
+  const [k,r]=x; const cls=[curSet.has(k)?"now":"", learnedSet.has(k)?"learned":""].join(" ");
+  return `<td class="${cls}" data-k="${k}"><span class="k">${k}</span><span class="r">${r}</span></td>`;
+}
+function layout(r){ // や・わ행은 빈칸 맞춤
+  const k=r.kana;
+  if(r.name==="や행") return [k[0],null,k[1],null,k[2]];
+  if(r.name==="わ행") return [k[0],null,null,null,k[1]];
+  return k;
+}
+$("chart").innerHTML = ROWS.map(r=>`<tr><td class="empty row-label">${r.name}</td>${layout(r).map(cell).join("")}</tr>`).join("")
+  + `<tr><td class="empty row-label">ん</td>${cell(ROWS[9].kana[2])}<td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr>`;
+$("chart2").innerHTML = DAKU.map(([n,k])=>`<tr><td class="empty row-label">${n}</td>${k.map(([a,b])=>`<td data-k="${a}"><span class="k">${a}</span><span class="r">${b}</span></td>`).join("")}</tr>`).join("");
+document.querySelectorAll(".chart").forEach(t=>t.onclick=e=>{const c=e.target.closest("td[data-k]"); if(c){ speak(c.dataset.k); strokeModal(c.dataset.k, c.querySelector(".r").textContent); }});
+$("toggleR").onclick = () => {
+  const t=$("chart"); t.classList.toggle("hide-r"); $("chart2").classList.toggle("hide-r");
+  $("toggleR").textContent = t.classList.contains("hide-r") ? "읽는 법 보이기" : "읽는 법 가리기 (셀프 테스트)";
+};
+
+// ───────── ② 퀴즈 ─────────
+let qs=[], qi=0, right=0, wrongs=[];
+function store(k,v){ try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; } }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function newQuiz(){
+  // 오늘 글자 비중 높게 + 배운 글자 복습
+  const pool = shuffle(row.kana).concat(shuffle(learned));
+  const seen=new Set(); qs=[];
+  for(const x of pool){ if(!seen.has(x[0])){ seen.add(x[0]); qs.push(x);} if(qs.length>=10) break; }
+  qs=shuffle(qs); qi=0; right=0; wrongs=[]; showQ();
+}
+function showQ(){
+  if(qi>=qs.length){
+    const best = store("usagi-best")||0;
+    if(right>best) store("usagi-best", right);
+    $("q").textContent = right===qs.length ? "💮" : "🐰";
+    $("opts").innerHTML="";
+    $("score").innerHTML = `<b>${qs.length}문제 중 ${right}개 정답!</b> ` +
+      (right===qs.length ? "완벽해요! すごい!" : `틀린 글자: ${wrongs.map(w=>w[0]+"("+w[1]+")").join(", ")}`) +
+      `<br>최고 기록 ${Math.max(best,right)}개`;
+    return;
+  }
+  const [k,r]=qs[qi];
+  const allR=[...new Set(ROWS.flatMap(x=>x.kana).map(x=>x[1]))].filter(x=>x!==r);
+  const others=shuffle(learned.map(x=>x[1]).filter(x=>x!==r));
+  const wrong=[...new Set(others.concat(shuffle(allR)))].slice(0,3);
+  const opts=shuffle([r,...wrong]);
+  $("q").textContent=k;
+  $("score").textContent=`${qi+1} / ${qs.length} · 맞힌 개수 ${right}`;
+  $("opts").innerHTML=opts.map(o=>`<button data-o="${o}">${o}</button>`).join("");
+  $("opts").onclick=e=>{
+    const b=e.target.closest("button"); if(!b||$("opts").dataset.lock) return;
+    $("opts").dataset.lock=1; speak(k);
+    if(b.dataset.o===r){ b.classList.add("ok"); right++; }
+    else{ b.classList.add("bad"); wrongs.push(qs[qi]); [...$("opts").children].find(x=>x.dataset.o===r).classList.add("ok"); }
+    setTimeout(()=>{ delete $("opts").dataset.lock; qi++; showQ(); }, 800);
+  };
+}
+$("restart").onclick=newQuiz;
+newQuiz();
+
+// ───────── ③ 획순 쓰기 퀴즈 ─────────
+(function writeQuiz(){
+  const NS="http://www.w3.org/2000/svg", pad=$("wpad"), N=24, OK=22;
+  let cur=null, strokes=[], live=null, hint=false, checked=false, streak=0, range=store("usagi-wrange")||"learned";
+  function markRange(){ $("wrange").querySelectorAll("button").forEach(b=>b.classList.toggle("primary", b.dataset.r===range)); }
+  $("wrange").onclick=e=>{ const b=e.target.closest("button"); if(!b) return; range=b.dataset.r; store("usagi-wrange",range); markRange(); newQ(); };
+  markRange();
+  const el=(t,a)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); return e; };
+  const ptsToD=p=>p.map((q,i)=>(i?"L":"M")+q[0].toFixed(1)+" "+q[1].toFixed(1)).join("");
+
+  function resample(p){            // 획을 같은 간격 N개 점으로
+    if(p.length<2) p=[p[0],p[0]];
+    const seg=[0]; for(let i=1;i<p.length;i++) seg.push(seg[i-1]+Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]));
+    const L=seg[seg.length-1]||1, out=[]; let j=0;
+    for(let n=0;n<N;n++){ const t=L*n/(N-1); while(j<p.length-2&&seg[j+1]<t) j++;
+      const f=(t-seg[j])/((seg[j+1]-seg[j])||1); out.push([p[j][0]+(p[j+1][0]-p[j][0])*f, p[j][1]+(p[j+1][1]-p[j][1])*f]); }
+    return out;
+  }
+  function refStrokes(k){          // KanjiVG 경로를 점으로
+    const g=el("g",{}); pad.appendChild(g);
+    const r=STROKES[k].map(d=>{ const p=el("path",{d}); g.appendChild(p); const L=p.getTotalLength();
+      return Array.from({length:N},(_,i)=>{ const q=p.getPointAtLength(L*i/(N-1)); return [q.x,q.y]; }); });
+    g.remove(); return r;
+  }
+  function normalize(list){        // 글자 전체 크기·위치 맞추기 (비율 유지)
+    const all=list.flat(); const xs=all.map(p=>p[0]), ys=all.map(p=>p[1]);
+    const x0=Math.min(...xs), y0=Math.min(...ys), w=Math.max(...xs)-x0, h=Math.max(...ys)-y0;
+    const s=100/Math.max(w,h,1), cx=(w*s)/2, cy=(h*s)/2;
+    return list.map(st=>st.map(([x,y])=>[(x-x0)*s-cx+50,(y-y0)*s-cy+50]));
+  }
+  const dist=(a,b)=>a.reduce((s,p,i)=>s+Math.hypot(p[0]-b[i][0],p[1]-b[i][1]),0)/a.length;
+
+  function draw(){
+    pad.innerHTML="";
+    if(hint&&cur) STROKES[cur[0]].forEach(d=>pad.appendChild(el("path",{d,class:"hint"})));
+    strokes.forEach(s=>pad.appendChild(el("path",{d:ptsToD(s.p),class:"mine "+(s.cls||"")})));
+    if(live) pad.appendChild(el("path",{d:ptsToD(live),class:"mine"}));
+  }
+  function pt(e){ const m=pad.getScreenCTM().inverse(); const q=new DOMPoint(e.clientX,e.clientY).matrixTransform(m); return [q.x,q.y]; }
+  pad.addEventListener("pointerdown",e=>{ if(checked) return; pad.setPointerCapture(e.pointerId); live=[pt(e)]; draw(); });
+  pad.addEventListener("pointermove",e=>{ if(!live) return; live.push(pt(e)); draw(); });
+  const end=()=>{ if(!live) return; if(live.length>1) strokes.push({p:live}); live=null; draw(); };
+  pad.addEventListener("pointerup",end); pad.addEventListener("pointercancel",end);
+
+  function newQ(){
+    const pool = range==="all" ? ROWS.flatMap(r=>r.kana) : range==="daku" ? DAKU.flatMap(d=>d[1]) : row.kana.concat(learned);
+    cur=pool[Math.floor(Math.random()*pool.length)];
+    strokes=[]; live=null; hint=false; checked=false;
+    const r = cur[0]==="を" ? "오 (조사 '~을/를')" : cur[1];
+    $("wq").innerHTML=`「<b>${r}</b>」<br>이 소리를 히라가나로 써보세요`;
+    $("wmsg").textContent=`힌트: ${STROKES[cur[0]].length}획이에요. 한 획 쓸 때마다 손을 떼요.`;
+    $("whint").textContent="힌트(흐린 글씨)";
+    draw();
+  }
+  function check(){
+    if(checked||!cur) return;
+    if(!strokes.length){ $("wmsg").textContent="먼저 글자를 써주세요!"; return; }
+    const k=cur[0], ref=refStrokes(k), need=ref.length;
+    checked=true;
+    let msg, pass=false;
+    if(strokes.length!==need){
+      msg=`❌ 획 수가 달라요 — 「${k}」는 ${need}획인데 ${strokes.length}획으로 썼어요.`;
+      strokes.forEach(s=>s.cls="bad");
+    }else{
+      const R=normalize(ref), U=normalize(strokes.map(s=>resample(s.p)));
+      const notes=[];
+      U.forEach((u,i)=>{
+        const d=dist(u,R[i]), rev=dist(u.slice().reverse(),R[i]);
+        if(d<=OK){ strokes[i].cls="good"; return; }
+        strokes[i].cls="bad";
+        if(rev<=OK) notes.push(`${i+1}획 방향이 반대예요`);
+        else if(R.some((r,j)=>j!==i&&dist(u,r)<=OK)) notes.push(`${i+1}획 순서가 달라요`);
+        else notes.push(`${i+1}획 모양이 달라요`);
+      });
+      pass=!notes.length;
+      msg = pass ? `⭕ 정답! 「${k}」 획순까지 완벽해요 すごい!` : "🔺 거의 다 왔어요 — "+notes.join(", ");
+    }
+    streak = pass ? streak+1 : 0;
+    const best=Math.max(store("usagi-write-best")||0, streak); if(pass) store("usagi-write-best", best);
+    $("wmsg").textContent=msg;
+    $("wscore").textContent=`연속 정답 ${streak}개 · 최고 기록 ${best}개 · 파란 선이 정답 획순이에요`;
+    draw();
+    STROKES[k].forEach((d,i)=>{ pad.appendChild(el("path",{d,class:"ans"}));
+      const m=d.match(/^[Mm]\s*([\d.]+)[ ,]*([\d.]+)/);
+      if(m){ const t=el("text",{x:+m[1]-6,y:+m[2]-2,class:"num",fill:"var(--sea)"}); t.textContent=i+1; pad.appendChild(t); } });
+    speak(k);
+  }
+  $("wundo").onclick=()=>{ if(checked) return; strokes.pop(); draw(); };
+  $("wclear").onclick=()=>{ strokes=[]; checked=false; strokes.forEach(s=>s.cls=""); draw(); $("wscore").textContent=""; };
+  $("whint").onclick=()=>{ hint=!hint; $("whint").textContent=hint?"힌트 끄기":"힌트(흐린 글씨)"; if(!checked) draw(); };
+  $("wcheck").onclick=check;
+  $("wnext").onclick=newQ;
+  newQ();
+})();
+
+// ───────── ④ 오늘의 문장 (매일 4개씩 회전) ─────────
+const todays=[0,1,2,3].map(i=>PHRASES[(day*4+i)%PHRASES.length]);
+$("phrases").innerHTML = todays.map(([tag,jp,rd,ko])=>`
+  <div class="phrase">
+    <div><span class="tag">${tag}</span><span class="jp">${[...jp].map(c=>c===" "?"&nbsp;":`<span>${c}</span>`).join("")}</span> <button data-say="${jp}">🔊</button></div>
+    <div class="cover" data-step="0"><div class="rd">${rd}</div><div class="ko">${ko}</div><div class="step">👆 눌러서 읽는 법 보기</div></div>
+  </div>`).join("");
+$("phrases").onclick=e=>{
+  const s=e.target.closest("[data-say]"); if(s) return speak(s.dataset.say);
+  const c=e.target.closest(".cover");
+  if(c){ // 1번 누르면 읽는 법, 2번 누르면 뜻, 3번째는 다시 가리기
+    const s=(+c.dataset.step+1)%3; c.dataset.step=s;
+    c.querySelector(".step").textContent=["👆 눌러서 읽는 법 보기","👆 한 번 더 누르면 뜻","👆 누르면 다시 가리기"][s];
+    return;
+  }
+  const ch=e.target.closest(".jp span"); if(ch) speak(ch.textContent);
+};
+
+// ───────── 오늘의 치이카와 사진: 치이카와 폴더의 1.jpg, 2.jpg, 3.png … 를 날마다 하나씩 돌려가며 보여줌 ─────────
+(function dailyPhoto(){
+  const exts=["jpg","png","jpeg","gif","webp"], found=[];
+  function tryLoad(src){ return new Promise(ok=>{ const im=new Image(); im.onload=()=>ok(true); im.onerror=()=>ok(false); im.src=src; }); }
+  (async()=>{
+    for(let n=1;n<=2;n++){
+      let hit=null;
+      const s=`photo${n}.jpg`; if(await tryLoad(s)) hit=s;
+      if(!hit) break;            // 번호가 끊기면 거기까지
+      found.push(hit);
+    }
+    if(!found.length) return;
+    const i=day%found.length;
+    $("photoImg").src=found[i];
+    $("photoCap").textContent=`오늘의 치이카와 (${i+1}/${found.length})`;
+    $("photo").hidden=false;
+  })();
+})();
+
+// ───────── 우사기 그림: 폴더에 우사기.png/jpg/gif/webp 있으면 그 사진, 없으면 내장 그림 ─────────
+const SVG = `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="72" cy="52" rx="16" ry="46" fill="#fff" stroke="#e8c9b6" stroke-width="3" transform="rotate(-10 72 52)"/>
+  <ellipse cx="72" cy="56" rx="7" ry="32" fill="#ffc6d6" transform="rotate(-10 72 56)"/>
+  <ellipse cx="128" cy="52" rx="16" ry="46" fill="#fff" stroke="#e8c9b6" stroke-width="3" transform="rotate(10 128 52)"/>
+  <ellipse cx="128" cy="56" rx="7" ry="32" fill="#ffc6d6" transform="rotate(10 128 56)"/>
+  <ellipse cx="100" cy="130" rx="62" ry="54" fill="#fff" stroke="#e8c9b6" stroke-width="3"/>
+  <circle cx="78" cy="124" r="6" fill="#3b2f2a"/><circle cx="122" cy="124" r="6" fill="#3b2f2a"/>
+  <circle cx="80" cy="122" r="2" fill="#fff"/><circle cx="124" cy="122" r="2" fill="#fff"/>
+  <ellipse cx="64" cy="142" rx="10" ry="6" fill="#ffc6d6"/><ellipse cx="136" cy="142" rx="10" ry="6" fill="#ffc6d6"/>
+  <path d="M92 138 Q100 148 108 138" fill="none" stroke="#3b2f2a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M100 132 v6" stroke="#3b2f2a" stroke-width="3" stroke-linecap="round"/>
+  <line x1="150" y1="170" x2="190" y2="60" stroke="#8a5a3c" stroke-width="4" stroke-linecap="round"/>
+  <path d="M190 60 Q196 110 186 150" fill="none" stroke="#9ab" stroke-width="1.5"/>
+  <path d="M186 150 q-6 6 0 10" fill="none" stroke="#9ab" stroke-width="2"/>
+</svg>`;
+(function loadUsagi(){
+  // 치이카와_얼굴.png → 우사기.png/jpg… 순서로 찾고, 다 없으면 내장 토끼 그림
+  const box=$("usagi"); const srcs=["chii-face.png"]; let i=0;
+  function next(){
+    if(i>=srcs.length){ box.innerHTML=SVG; return; }
+    const img=new Image(); img.alt="치이카와";
+    img.onload=()=>{ box.innerHTML=""; box.appendChild(img); };
+    img.onerror=()=>{ i++; next(); };
+    img.src=srcs[i];
+  }
+  next();
+  const cries=["ヤハ!","ウラ!","ぴょん!","フゥン!"];
+  box.onclick=()=>{ const c=cries[Math.floor(Math.random()*cries.length)]; $("say").textContent=c+" "+SAYS[Math.floor(Math.random()*SAYS.length)]; speak(c); };
+})();
+</script>
+
+</body>
+</html>

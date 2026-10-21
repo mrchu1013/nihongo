@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>치이카와랑 일본어</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Zen+Maru+Gothic:wght@500;700&display=swap">
+<style>
+  body{margin:0}
+/* Layout: 하늘색 바탕에 둥근 말풍선 대화. 색은 사진 속 볼터치 분홍·하치와레 파랑·우사기 노랑에서 가져옴. */
+:root{
+  --sky:#eaf4fb; --card:#ffffff; --ink:#3d3b4a; --muted:#8b889a; --line:#dde7f0;
+  --pink:#f39bb0; --pink-soft:#fde9ee; --blue:#5f9fd6; --blue-soft:#e3f0fb; --yellow:#f3d27a; --yellow-soft:#fdf5dc;
+  --me:#dff3d6;
+  --f-kr:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --sky:#18202d; --card:#222b3a; --ink:#eef0f6; --muted:#a2a8b8; --line:#2f3a4c;
+  --pink:#f4a0b4; --pink-soft:#3d2632; --blue:#8cc0ec; --blue-soft:#20344a; --yellow:#f3d27a; --yellow-soft:#3a3322;
+  --me:#2c4430; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --sky:#18202d; --card:#222b3a; --ink:#eef0f6; --muted:#a2a8b8; --line:#2f3a4c;
+  --pink:#f4a0b4; --pink-soft:#3d2632; --blue:#8cc0ec; --blue-soft:#20344a; --yellow:#f3d27a; --yellow-soft:#3a3322;
+  --me:#2c4430; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--sky);color:var(--ink);font-family:var(--f-kr);font-size:15.5px;line-height:1.7}
+[lang="ja"]{font-family:var(--f-jp)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+h1,h2,h3{margin:0;text-wrap:balance;font-weight:400}
+img{display:block}
+
+/* 첫 화면 */
+.hero{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:22px;align-items:center;padding-block:28px 10px}
+.hero-pic{border-radius:28px;overflow:hidden;border:4px solid var(--card);box-shadow:0 6px 0 var(--line);transform:rotate(-2deg)}
+.hero-pic img{width:100%;height:auto}
+.hero h1{font-family:var(--f-jp);font-weight:700;font-size:30px;line-height:1.35}
+.hero h1 small{display:block;font-family:var(--f-kr);font-size:16px;color:var(--muted);font-weight:400;margin-top:4px}
+.hello{margin-top:14px;display:inline-block;background:var(--card);border-radius:18px 18px 18px 4px;padding:9px 16px;font-family:var(--f-jp);font-size:16px}
+.hello span{display:block;font-family:var(--f-kr);font-size:13px;color:var(--muted)}
+
+.tabs{display:flex;flex-wrap:wrap;gap:8px;padding-block:18px 6px}
+.tab{border:0;background:var(--card);border-radius:999px;padding:8px 16px;font-size:14.5px;color:var(--muted)}
+.tab:hover{color:var(--ink)}
+.tab.on{background:var(--pink);color:#fff}
+.furi{margin-left:auto;border:1px dashed var(--line);background:none;border-radius:999px;padding:7px 14px;font-size:13px;color:var(--muted)}
+
+main{padding-block:16px 48px}
+.intro{margin:0 0 18px;color:var(--muted);font-size:14.5px;max-width:58ch}
+.box{background:var(--card);border-radius:24px;padding:20px 20px 16px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.label{font-size:13px;color:var(--muted);margin:0 0 10px}
+
+/* 말풍선 */
+.chat{display:flex;flex-direction:column;gap:12px}
+.msg{display:flex;gap:10px;align-items:flex-end;max-width:100%}
+.msg.r{flex-direction:row-reverse}
+.ava{flex:none;width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--card);box-shadow:0 0 0 2px var(--line)}
+.bub{min-width:0;max-width:min(520px,100%);background:var(--sky);border-radius:18px 18px 18px 4px;padding:9px 14px}
+.msg.r .bub{background:var(--me);border-radius:18px 18px 4px 18px}
+.bub .jp{font-family:var(--f-jp);font-size:17px;line-height:2}
+.bub .ko{font-size:13px;color:var(--muted);line-height:1.5}
+.name{font-size:11.5px;color:var(--muted);margin-bottom:2px}
+rt{font-size:.5em;color:var(--muted)}
+.no-furi rt{display:none}
+
+.big{font-family:var(--f-jp);font-weight:700;font-size:34px;line-height:1.4;color:var(--blue)}
+.big-ko{font-size:17px;margin-top:2px}
+.tip{margin:12px 0 0;font-size:13.5px;color:var(--muted);background:var(--yellow-soft);border-radius:12px;padding:8px 12px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.say{display:inline-flex;align-items:center;gap:5px;border:0;background:var(--blue-soft);color:var(--blue);border-radius:999px;padding:5px 12px;font-size:13px}
+.say svg{width:14px;height:14px}
+.soft{border:0;background:var(--pink-soft);color:var(--ink);border-radius:999px;padding:8px 16px;font-size:14px}
+
+.mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+.mini > *{min-width:0}
+.mini .box{padding:16px}
+.mini .jp{font-family:var(--f-jp);font-size:19px;font-weight:700;line-height:1.8}
+.mini .ko{color:var(--muted);font-size:13.5px}
+
+/* 목록 */
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.list > *{min-width:0}
+.item{background:var(--card);border-radius:20px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.item .jp{font-family:var(--f-jp);font-weight:700;font-size:20px;line-height:1.9;color:var(--ink)}
+.item .ko{font-size:14px}
+.item .sub{font-size:12.5px;color:var(--muted)}
+.item .ex{font-family:var(--f-jp);font-size:15px;line-height:1.9;background:var(--sky);border-radius:12px;padding:6px 10px;margin-top:4px}
+.item .ex span{display:block;font-family:var(--f-kr);font-size:12.5px;color:var(--muted);line-height:1.5}
+.item .say{align-self:flex-start;margin-top:6px}
+.book{font-size:13px;color:var(--muted);font-family:var(--f-jp);text-decoration:line-through;text-decoration-color:var(--pink)}
+.arrow{font-size:12px;color:var(--pink)}
+.tag{align-self:flex-start;font-size:11.5px;border-radius:999px;padding:1px 9px;background:var(--blue-soft);color:var(--blue)}
+.tag.eat{background:var(--yellow-soft);color:var(--ink)}
+.group{margin:22px 0 10px;font-size:15px;display:flex;align-items:center;gap:8px}
+.group:first-of-type{margin-top:0}
+
+/* 놀이 */
+.play{max-width:620px;margin:0 auto}
+.q{font-size:18px;margin:4px 0 2px}
+.q-sub{font-size:13px;color:var(--muted);margin:0}
+.opts{display:grid;gap:9px;margin-top:16px}
+.opt{text-align:left;border:2px solid var(--line);background:var(--card);border-radius:16px;padding:10px 14px;font-family:var(--f-jp);font-size:17px;line-height:1.8}
+.opt:hover:not(:disabled){border-color:var(--blue)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:#7cc49a;background:var(--me)}
+.opt.wrong{border-color:var(--pink);background:var(--pink-soft)}
+.react{display:flex;gap:12px;align-items:center;margin-top:16px}
+.react img{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:none}
+.react .bub{background:var(--sky)}
+.streak{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pop{animation:pop .35s ease-out}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.08)}100%{transform:scale(1)}}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sky);padding:9px 16px;border-radius:999px;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
+footer{color:var(--muted);font-size:12.5px}
+footer .wrap{padding-block:8px 32px;display:flex;gap:14px;align-items:center}
+footer img{width:110px;border-radius:14px;flex:none}
+
+@media (max-width:600px){
+  .hero{grid-template-columns:1fr;gap:16px}
+  .hero-pic{max-width:300px}
+  .hero h1{font-size:25px}
+  .big{font-size:28px}
+  .furi{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-pic"><img src="scene1.jpg" alt="치이카와, 하치와레, 우사기가 종이를 함께 들여다보는 장면" width="340" height="289"></div>
+    <div>
+      <h1 lang="ja">ちいかわと にほんご<small>교과서엔 없는, 진짜 일본 사람 말투</small></h1>
+      <p class="hello"><span lang="ja">きょうも いっしょに しゃべろ〜</span><span>오늘도 같이 수다 떨자~</span></p>
+    </div>
+  </section>
+  <nav class="tabs" id="tabs" aria-label="메뉴"></nav>
+</div>
+
+<main class="wrap" id="main"></main>
+
+<footer><div class="wrap"><img src="scene2.jpg" alt="하치와레와 치이카와가 음료를 마시는 장면" width="340" height="192"><span>캐릭터 그림 © nagano. 개인 학습용 팬 페이지예요. 듣기는 기기에 일본어 음성이 있어야 나와요.</span></div></footer>
+
+<script>
+// 표기: {漢字|かな} = 후리가나
+const WHO={c:['ちいかわ','chii.jpg'],h:['ハチワレ','hachi.jpg'],u:['うさぎ','usagi.jpg']};
+
+// 오늘의 한마디: [표현, 뜻, 팁, 대화]
+const PHRASES=[
+ ['それな','그니까, ㄹㅇ (강한 공감)','친구끼리만. 윗사람에겐 「ですよね」.',[['h','{月曜日|げつようび}の{朝|あさ}って、ほんと{眠|ねむ}いよね。','월요일 아침은 진짜 졸리지.'],['c','それな…','그니까…']]],
+ ['どうりで','어쩐지','',[['c','{昨日|きのう}、{夜中|よなか}までゲームしてた。','어제 밤늦게까지 게임했어.'],['h','どうりで{眠|ねむ}そうなわけだ。','어쩐지 졸려 보이더라.']]],
+ ['なんとかなるって','어떻게든 될 거야','',[['c','{明日|あした}のテスト、{全然|ぜんぜん}{勉強|べんきょう}してない…','내일 시험 하나도 공부 안 했어…'],['h','だいじょうぶ、なんとかなるって！','괜찮아, 어떻게든 될 거야!']]],
+ ['言われてみれば','듣고 보니','',[['h','この{店|みせ}、{前|まえ}より{混|こ}んでない？','이 가게 전보다 붐비지 않아?'],['c','{言|い}われてみれば、たしかに。','듣고 보니 그러네.']]],
+ ['せっかくだから','모처럼이니까','',[['h','せっかく{来|き}たんだし、{写真|しゃしん}{撮|と}ろうよ。','모처럼 왔으니까 사진 찍자.'],['c','うん、{撮|と}ろう{撮|と}ろう！','응, 찍자 찍자!']]],
+ ['さすがに無理','아무리 그래도 무리','',[['h','ラーメン、もう{一杯|いっぱい}いく？','라멘 한 그릇 더 갈래?'],['c','さすがにもう{無理|むり}…','아무리 그래도 이제 무리…']]],
+ ['お言葉に甘えて','그럼 사양 않고','호의를 받을 때 쓰는 조금 정중한 말. 초대받았을 때 딱 좋아요.',[['h','{遠慮|えんりょ}しないで、{食|た}べて{食|た}べて。','사양 말고 먹어 먹어.'],['c','じゃあ、お{言葉|ことば}に{甘|あま}えて…いただきます！','그럼 사양 않고… 잘 먹겠습니다!']]],
+ ['なんか悪いね','왠지 미안하네 (고마움 + 미안함)','',[['h','これ、お{土産|みやげ}。','이거 선물이야.'],['c','えっ、なんか{悪|わる}いね。ありがとう！','어, 왠지 미안하네. 고마워!']]],
+ ['バタバタしてて','정신이 없어서','',[['h','{最近|さいきん}、{連絡|れんらく}なかったね。','요즘 연락 없었네.'],['c','ごめん、ちょっとバタバタしてて。','미안, 좀 정신이 없어서.']]],
+ ['ついつい','나도 모르게 그만','',[['c','ついつい{買|か}っちゃった…','나도 모르게 사 버렸어…'],['h','わかる、セールだもんね。','알지, 세일이니까.']]],
+ ['微妙','좀 애매해, 별로','"별로"를 돌려 말할 때 정말 많이 써요.',[['h','この{新作|しんさく}のお{菓子|かし}、どう？','이 신상 과자 어때?'],['c','うーん…ちょっと{微妙|びみょう}かも。','음… 좀 애매한 듯.']]],
+ ['よかったら','괜찮으면','',[['h','よかったら、{今度|こんど}いっしょにピクニック{行|い}かない？','괜찮으면 다음에 같이 피크닉 안 갈래?'],['c','{行|い}く{行|い}く！','갈래 갈래!']]],
+ ['むしろ','오히려','',[['c','{雨|あめ}だね…{残念|ざんねん}。','비 오네… 아쉽다.'],['h','むしろ{家|いえ}でゴロゴロできて、うれしいかも。','오히려 집에서 뒹굴 수 있어서 좋은 걸지도.']]],
+ ['やっぱやめとく','역시 관둘래','',[['h','{激辛|げきから}カレー、{挑戦|ちょうせん}する？','엄청 매운 카레 도전할래?'],['c','…やっぱやめとく。','…역시 관둘래.']]],
+ ['ワンチャンある','혹시 모르지, 가능성 있어','젊은 사람들 말투. 영어 one chance에서 왔어요.',[['c','{今|いま}から{走|はし}れば{間|ま}に{合|あ}うかな？','지금 뛰면 늦지 않을까?'],['h','ワンチャンある！{急|いそ}ごう！','혹시 몰라! 서두르자!']]],
+ ['楽しみにしてるね','기대할게','',[['c','{今度|こんど}、{手作|てづく}りのお{菓子|かし}{持|も}ってくるね。','다음에 직접 만든 과자 가져올게.'],['h','やった！{楽|たの}しみにしてるね。','앗싸! 기대할게.']]],
+ ['気にしないで','신경 쓰지 마','',[['c','ごめん、{遅|おく}れちゃった…','미안, 늦었어…'],['h','{全然|ぜんぜん}！{気|き}にしないで。','전혀! 신경 쓰지 마.']]],
+ ['一理ある','일리 있네','',[['h','{早|はや}く{寝|ね}れば、{朝|あさ}もっと{楽|らく}だよ。','일찍 자면 아침이 더 편해.'],['c','…{一理|いちり}ある。','…일리 있네.']]],
+ ['なんだかんだ','이러니저러니 해도','',[['c','{草|くさ}むしり、{大変|たいへん}だったね。','풀 뽑기 힘들었지.'],['h','でも、なんだかんだ{楽|たの}しかったね。','그래도 이러니저러니 해도 재밌었어.']]],
+ ['いい感じ','좋은데? 괜찮은 느낌','',[['h','この{写真|しゃしん}、どう？','이 사진 어때?'],['c','いい{感|かん}じ！','좋은데!']]]
+];
+
+// 진짜 말투: [교과서, 실제, 뜻, 포인트]
+const REAL=[
+ ['分かりません','わかんない','모르겠어','ら행이 ん으로 줄어드는 건 회화의 기본'],
+ ['そうですか','そっか / そうなんだ','그렇구나',''],
+ ['本当ですか','マジで？ / ほんとに？','진짜?','マジ는 친구끼리만'],
+ ['何をしているんですか','何してんの？','뭐 해?','ている → てる, の → ん'],
+ ['行かなければなりません','行かなきゃ','가야 돼','なければ → なきゃ'],
+ ['食べてしまいました','食べちゃった','먹어 버렸다','てしまう → ちゃう'],
+ ['やっておきます','やっとく','해 둘게','ておく → とく'],
+ ['と言っていました','って言ってた','~래 (~라고 했어)','と → って'],
+ ['いいですね','いいじゃん','좋네','じゃん은 맞장구를 구하는 느낌'],
+ ['面白いですね','ウケる','웃기다','웃음이 터졌을 때'],
+ ['とても','めっちゃ','엄청','간사이 말이 전국으로 퍼졌어요'],
+ ['寝ていない','寝てない','안 잤어','い가 빠져요'],
+ ['これは何ですか','これ何？','이거 뭐야?',''],
+ ['しなくてもいいです','しなくていいよ','안 해도 돼',''],
+ ['どうしたんですか','どしたの？','왜 그래?',''],
+ ['とても疲れました','もうクタクタ','완전 녹초야','의태어로 바꾸면 훨씬 일본어다워요']
+];
+
+// 리액션: [말, 뜻, 언제]
+const REACT=[
+ ['うんうん','응응','듣고 있다는 신호'],['へぇ〜','오~ 그렇구나','몰랐던 걸 들었을 때'],['なるほどね','아하','납득했을 때'],
+ ['たしかに','맞아, 확실히','상대 말에 동의할 때'],['わかる〜','알지~','공감할 때'],['うそでしょ','말도 안 돼','믿기지 않을 때'],
+ ['やばっ','헐, 대박','좋을 때도 나쁠 때도'],['まじか…','진짜냐…','실망하거나 놀랐을 때'],['いいなぁ','좋겠다~','부러울 때'],
+ ['えらい！','장하다! 대단해!','상대가 뭔가 해냈을 때'],['おつかれ〜','수고했어~','뭔가 끝났을 때'],['ドンマイ','괜찮아 괜찮아','실수한 친구에게'],
+ ['よかったね〜','잘됐다~','좋은 소식을 들었을 때'],['ほんとそれ','진짜 그거','완전 동의할 때'],['かわいい〜！','귀여워~!','일본에선 정말 자주 써요'],
+ ['おいしそう！','맛있겠다!','음식을 보면 반사적으로']
+];
+
+// 여행·낚시: [말, 뜻, 분류]
+const TRIP=[
+ ['この{辺|へん}で{釣|つ}りしても{大丈夫|だいじょうぶ}ですか？','이 근처에서 낚시해도 괜찮아요?','낚시'],
+ ['{今日|きょう}は{何|なに}が{釣|つ}れてますか？','오늘 뭐가 잡혀요?','낚시'],
+ ['エサはどこで{買|か}えますか？','미끼는 어디서 살 수 있어요?','낚시'],
+ ['おすすめの{仕掛|しか}けってありますか？','추천하는 채비 있어요?','낚시'],
+ ['アタリが{来|き}た！','입질 왔다!','낚시'],
+ ['{釣|つ}れた！でかい！','잡았다! 크다!','낚시'],
+ ['あ〜、バラしちゃった…','아~ 놓쳤다… (걸었다가 빠짐)','낚시'],
+ ['{根掛|ねが}かりしちゃった','밑걸림 됐어','낚시'],
+ ['{今日|きょう}はボウズだった…','오늘은 꽝이었어… (한 마리도 못 잡음)','낚시'],
+ ['{船|ふね}は{何時|なんじ}に{出|で}ますか？','배는 몇 시에 나가요?','낚시'],
+ ['{釣|つ}った{魚|さかな}、さばいてもらえますか？','잡은 물고기 손질해 주실 수 있어요?','낚시'],
+ ['{地元|じもと}の{人|ひと}がよく{行|い}くお{店|みせ}ってありますか？','현지 사람들이 자주 가는 가게 있어요?','먹고 다니기'],
+ ['おすすめは{何|なん}ですか？','추천 메뉴는 뭐예요?','먹고 다니기'],
+ ['これと{同|おな}じものをください','이거랑 같은 걸로 주세요','먹고 다니기'],
+ ['カードって{使|つか}えますか？','카드 쓸 수 있어요?','먹고 다니기'],
+ ['{写真|しゃしん}、{撮|と}ってもらってもいいですか？','사진 좀 찍어 주실 수 있어요?','먹고 다니기'],
+ ['{韓国|かんこく}から{来|き}ました','한국에서 왔어요','먹고 다니기'],
+ ['ごちそうさまでした。おいしかったです！','잘 먹었습니다. 맛있었어요!','먹고 다니기']
+];
+
+// 요즘 말: [말, 뜻, 예문, 예문 뜻]
+const SLANG=[
+ ['エモい','감성 터진다, 아련하다','この{夕焼|ゆうや}け、エモい…','이 노을 감성 터진다…'],
+ ['ぴえん','힝 (귀엽게 울먹)','{財布|さいふ}{忘|わす}れた、ぴえん','지갑 두고 왔어, 힝'],
+ ['草','ㅋㅋ (인터넷 웃음)','それは{草|くさ}','그건 ㅋㅋ'],
+ ['{推|お}し','최애','{私|わたし}の{推|お}しはハチワレ！','내 최애는 하치와레!'],
+ ['{尊|とうと}い','너무 소중해 (감동)','この{二人|ふたり}、{尊|とうと}い…','이 둘 너무 소중해…'],
+ ['{沼|ぬま}る','(취미에) 푹 빠지다','{最近|さいきん}キャンプに{沼|ぬま}ってる','요즘 캠핑에 푹 빠져 있어'],
+ ['ガチで','진짜로, 진심으로','ここのパン、ガチでおいしい','여기 빵 진짜 맛있어'],
+ ['{詰|つ}んだ','망했다','{終電|しゅうでん}{逃|のが}した。{詰|つ}んだ…','막차 놓쳤어. 망했다…'],
+ ['{秒|びょう}で','순식간에, 바로','{秒|びょう}で{返信|へんしん}きた','답장이 바로 왔어'],
+ ['あざす','감사요','{了解|りょうかい}、あざす！','알겠어, 감사요!'],
+ ['りょ','ㅇㅋ','「{駅前|えきまえ}に7{時|じ}ね」「りょ」','"역 앞에 7시" "ㅇㅋ"'],
+ ['{映|ば}える','사진발 잘 받다','このパフェ、{映|ば}える〜','이 파르페 사진발 좋다~']
+];
+
+/* ── 유틸 ── */
+const $=s=>document.querySelector(s);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const RUBY=/\{([^|{}]+)\|([^{}]+)\}/g;
+const rb=s=>esc(s).replace(RUBY,'<ruby>$1<rt>$2</rt></ruby>');
+const plain=s=>s.replace(RUBY,'$1');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const range=n=>Array.from({length:n},(_,i)=>i);
+
+let furi=store.get('chii_furi',true);
+function applyFuri(){document.body.classList.toggle('no-furi',!furi);const b=$('#furi-btn');if(b)b.textContent=furi?'후리가나 끄기':'후리가나 켜기'}
+let toastT;
+function toast(m){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2200)}
+
+let jaVoice=null;
+function loadVoice(){try{const v=speechSynthesis.getVoices();jaVoice=v.find(x=>/ja[-_]JP/i.test(x.lang))||v.find(x=>/^ja/i.test(x.lang))||null}catch(e){}}
+if('speechSynthesis' in window){loadVoice();try{speechSynthesis.onvoiceschanged=loadVoice}catch(e){}}
+function say(t){
+  if(!('speechSynthesis' in window)){toast('이 브라우저에서는 듣기를 쓸 수 없어요');return}
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='ja-JP';u.rate=.9;if(jaVoice)u.voice=jaVoice;speechSynthesis.speak(u)}catch(e){toast('소리를 내지 못했어요')}
+}
+const ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>';
+const sayBtn=t=>`<button class="say" data-act="say" data-t="${esc(plain(t).replace(/ \/ /g,'、'))}">${ICON}듣기</button>`;
+
+/* 날짜마다 바뀌는 오늘의 한마디 — 같은 날엔 모두 같은 걸 봐요 */
+const now=new Date();
+const DAY=Math.round((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())-Date.UTC(2026,9,21))/864e5);
+const pick=(arr,salt)=>((DAY*7+salt)%arr.length+arr.length)%arr.length;
+let todayIdx=pick(PHRASES,0);
+
+function chat(lines){return `<div class="chat">${lines.map(([w,jp,ko],k)=>`<div class="msg ${k%2?'r':''}"><img class="ava" src="${WHO[w][1]}" alt="${WHO[w][0]}" width="44" height="44"><div class="bub"><div class="name" lang="ja">${WHO[w][0]}</div><div class="jp" lang="ja">${rb(jp)}</div><div class="ko">${esc(ko)}</div></div></div>`).join('')}</div>`}
+
+/* ── 화면 ── */
+const VIEWS=[['today','오늘의 한마디'],['real','진짜 말투'],['react','리액션'],['trip','대마도 여행·낚시'],['slang','요즘 말'],['play','이럴 땐 뭐라고?']];
+let view='today';
+
+const R={
+ today(){
+  const p=PHRASES[todayIdx],r=REAL[pick(REAL,3)],x=REACT[pick(REACT,5)],t=TRIP[pick(TRIP,2)];
+  const d=now.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
+  return `<div class="box">
+    <p class="label">${d}${todayIdx!==pick(PHRASES,0)?' · 다른 한마디':''}</p>
+    <div class="big" lang="ja">${rb(p[0])}</div><div class="big-ko">${esc(p[1])}</div>
+    <div style="margin-top:16px">${chat(p[3])}</div>
+    ${p[2]?`<p class="tip">${esc(p[2])}</p>`:''}
+    <div class="row" style="margin-top:14px">${sayBtn(p[3].map(l=>l[1]).join('　'))}<button class="soft" data-act="another">다른 한마디 보기</button></div>
+  </div>
+  <div class="mini">
+    <div class="box"><p class="label">오늘의 진짜 말투</p><div class="book" lang="ja">${esc(r[0])}</div><div class="jp" lang="ja">${esc(r[1])}</div><div class="ko">${esc(r[2])}</div></div>
+    <div class="box"><p class="label">오늘의 리액션</p><div class="jp" lang="ja">${esc(x[0])}</div><div class="ko">${esc(x[1])} · ${esc(x[2])}</div></div>
+    <div class="box"><p class="label">대마도에서 써 볼 말</p><div class="jp" lang="ja" style="font-size:16px">${rb(t[0])}</div><div class="ko">${esc(t[1])}</div></div>
+  </div>`;
+ },
+ real(){
+  return `<p class="intro">교과서에서 배운 말을 친구끼리 하면 이렇게 바뀌어요. 줄어드는 규칙만 알아도 드라마·유튜브가 훨씬 잘 들려요.</p>
+  <div class="list">${REAL.map(r=>`<div class="item"><div class="book" lang="ja">${esc(r[0])}</div><div class="jp" lang="ja">${esc(r[1])}</div><div class="ko">${esc(r[2])}</div>${r[3]?`<div class="sub">${esc(r[3])}</div>`:''}${sayBtn(r[1])}</div>`).join('')}</div>`;
+ },
+ react(){
+  return `<p class="intro">일본 사람들은 맞장구를 정말 많이 쳐요. 대화 중간중간 하나씩 넣기만 해도 확 자연스러워져요.</p>
+  <div class="list">${REACT.map(r=>`<div class="item"><div class="jp" lang="ja">${esc(r[0])}</div><div class="ko">${esc(r[1])}</div><div class="sub">${esc(r[2])}</div>${sayBtn(r[0])}</div>`).join('')}</div>`;
+ },
+ trip(){
+  const g=k=>TRIP.filter(t=>t[2]===k).map(t=>`<div class="item"><div class="jp" lang="ja" style="font-size:17px">${rb(t[0])}</div><div class="ko">${esc(t[1])}</div>${sayBtn(t[0])}</div>`).join('');
+  return `<p class="intro">2027년 2월 대마도 낚시 여행에서 바로 쓸 말들이에요. 낚시 용어(아타리·바라시·보즈)는 현지 낚시꾼들이 진짜 쓰는 말이에요.</p>
+  <h2 class="group">낚시할 때</h2><div class="list">${g('낚시')}</div>
+  <h2 class="group">먹고 다닐 때</h2><div class="list">${g('먹고 다니기')}</div>`;
+ },
+ slang(){
+  return `<p class="intro">SNS랑 친구 사이에서 쓰는 말이에요. 처음 보는 사람이나 윗사람한테는 쓰지 마세요.</p>
+  <div class="list">${SLANG.map(s=>`<div class="item"><div class="jp" lang="ja">${rb(s[0])}</div><div class="ko">${esc(s[1])}</div><div class="ex" lang="ja">${rb(s[2])}<span>${esc(s[3])}</span></div>${sayBtn(s[2])}</div>`).join('')}</div>`;
+ },
+ play(){
+  if(!P)newQ();
+  const q=P,done=q.picked!=null,ok=q.picked===q.ans;
+  return `<div class="play"><div class="box">
+    <div class="row" style="justify-content:space-between"><p class="label" style="margin:0">${esc(q.kind)}</p><span class="streak">연속 ${streak}개 · 최고 ${best}개</span></div>
+    <p class="q">${q.q}</p>${q.sub?`<p class="q-sub">${q.sub}</p>`:''}
+    <div class="opts">${q.opts.map((o,k)=>{let c='opt';if(done){if(k===q.ans)c+=' right';else if(k===q.picked)c+=' wrong'}return `<button class="${c}" data-act="ans" data-k="${k}" lang="ja" ${done?'disabled':''}>${rb(o)}</button>`}).join('')}</div>
+    ${done?`<div class="react pop" role="status"><img src="${ok?'chii.jpg':'hachi.jpg'}" alt="${ok?'ちいかわ':'ハチワレ'}" width="64" height="64"><div class="bub"><div class="jp" lang="ja">${ok?'えらい！':'ドンマイ！'}</div><div class="ko">${ok?'정답이야!':'정답은 「'+esc(plain(q.opts[q.ans]))+'」'} ${esc(q.note||'')}</div></div></div>
+      <div class="row" style="margin-top:14px;justify-content:flex-end">${sayBtn(q.opts[q.ans])}<button class="soft" data-act="nextq" id="nextq">다음 거</button></div>`:''}
+  </div></div>`;
+ }
+};
+
+/* ── 이럴 땐 뭐라고? ── */
+let P=null,streak=0,best=store.get('chii_best',0);
+function build(kind,q,sub,arr,key,i,note){
+  const opts=shuffle([key(arr[i]),...shuffle(range(arr.length).filter(x=>x!==i)).slice(0,3).map(x=>key(arr[x]))]);
+  P={kind,q,sub,opts,ans:opts.indexOf(key(arr[i])),note,picked:null};
+}
+function newQ(){
+  const t=rnd(['p','p','r','x','t','s']);
+  if(t==='p'){const i=rnd(range(PHRASES.length));build('오늘의 한마디',`"${esc(PHRASES[i][1])}"는 일본어로?`,'',PHRASES,a=>a[0],i,'')}
+  if(t==='r'){const i=rnd(range(REAL.length));build('진짜 말투',`친구한테 「<span lang="ja">${esc(REAL[i][0])}</span>」를 편하게 말하면?`,esc(REAL[i][2]),REAL,a=>a[1],i,REAL[i][3])}
+  if(t==='x'){const i=rnd(range(REACT.length));build('리액션',`${esc(REACT[i][2])}, 뭐라고 할까?`,'',REACT,a=>a[0],i,'· '+REACT[i][1])}
+  if(t==='t'){const i=rnd(range(TRIP.length));build('대마도 여행·낚시',`"${esc(TRIP[i][1])}"`,'일본어로 어떻게 말할까?',TRIP,a=>a[0],i,'')}
+  if(t==='s'){const i=rnd(range(SLANG.length));build('요즘 말',`"${esc(SLANG[i][1])}"라는 뜻의 말은?`,'',SLANG,a=>a[0],i,'')}
+}
+function answer(k){
+  if(!P||P.picked!=null)return;P.picked=k;
+  if(k===P.ans){streak++;if(streak>best){best=streak;store.set('chii_best',best)}}else streak=0;
+  render();const n=$('#nextq');if(n)n.focus({preventScroll:true});
+}
+
+function render(){
+  $('#tabs').innerHTML=VIEWS.map(([v,l])=>`<button class="tab ${view===v?'on':''}" data-act="go" data-v="${v}" ${view===v?'aria-current="page"':''}>${l}</button>`).join('')+`<button class="furi" id="furi-btn" data-act="furi"></button>`;
+  $('#main').innerHTML=R[view]();applyFuri();
+}
+function go(v){if(!R[v])v='today';view=v;try{history.replaceState(null,'','#'+v)}catch(e){}render()}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='go')go(b.dataset.v);
+  else if(a==='say')say(b.dataset.t);
+  else if(a==='furi'){furi=!furi;store.set('chii_furi',furi);applyFuri()}
+  else if(a==='another'){let i;do{i=rnd(range(PHRASES.length))}while(i===todayIdx);todayIdx=i;render()}
+  else if(a==='ans')answer(+b.dataset.k);
+  else if(a==='nextq'){newQ();render()}
+});
+document.addEventListener('keydown',e=>{
+  if(view!=='play'||!P||e.metaKey||e.ctrlKey||e.altKey)return;
+  if(P.picked==null&&/^[1-4]$/.test(e.key))answer(+e.key-1);
+  else if(P.picked!=null&&e.key==='Enter'&&document.activeElement?.dataset?.act!=='say'){e.preventDefault();newQ();render()}
+});
+
+const h=(location.hash||'').slice(1);
+go(R[h]?h:'today');
+</script>
+
+</body>
+</html>
