@@ -151,7 +151,7 @@
   </div>
   <div class="tip" id="memo"></div>
 
-  <h2>② 우사기 퀴즈 <small>— 지금까지 배운 글자에서 10문제</small></h2>
+  <h2>② 우사기 퀴즈 <small id="quizRange">— 지금까지 배운 글자에서 10문제</small></h2>
   <div class="quiz">
     <div class="q" id="q">あ</div>
     <div class="opts" id="opts"></div>
@@ -295,7 +295,8 @@ const todayKey = `${today0.getFullYear()}-${today0.getMonth()+1}-${today0.getDat
 const pickedRow = (()=>{ try{ const o=JSON.parse(localStorage.getItem("usagi-pick")||"null"); return o&&o.d===todayKey ? o.r : null; }catch(e){ return null; } })();
 const rowIdx = pickedRow ?? day % ROWS.length;
 const row = ROWS[rowIdx];
-const learnedRows = firstLoop ? [...new Set(ROWS.slice(0,day+1).concat(row))] : ROWS;
+// 행을 직접 골랐으면 あ행부터 그 행까지만 (퀴즈·쓰기 문제 범위)
+const learnedRows = pickedRow!=null ? ROWS.slice(0,pickedRow+1) : firstLoop ? ROWS.slice(0,day+1) : ROWS;
 const learned = learnedRows.flatMap(r=>r.kana);
 
 const $ = id => document.getElementById(id);
@@ -304,6 +305,7 @@ $("date").textContent = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.ge
 $("title").textContent = pickedRow!=null ? `오늘은 내가 고른 「${row.name}」 외우는 날!` : firstLoop ? `오늘은 「${row.name}」 외우는 날!` : `복습 ${Math.floor(day/ROWS.length)}바퀴째 — 「${row.name}」 다시 보기`;
 $("say").textContent = SAYS[day % SAYS.length];
 $("count").textContent = firstLoop ? `🐰 히라가나 완주까지 ${ROWS.length-day-1}일 남았어요` : "🎉 히라가나 한 바퀴 완주! 복습 중이에요";
+if(pickedRow!=null) $("quizRange").textContent = `— あ행부터 고른 「${row.name}」까지에서 10문제`;
 $("memo").innerHTML = "🐰 <b>외우는 꿀팁</b> — " + row.memo;
 
 // ───────── 발음 (윈도우 일본어 음성이 있으면 재생) ─────────
