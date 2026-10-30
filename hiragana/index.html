@@ -75,6 +75,9 @@
   .chart .r{font-size:12px;color:var(--soft)}
   .chart.hide-r .r{visibility:hidden}
   table.chart{table-layout:fixed}
+  .chart td.row-label.pick{background:var(--pink-soft);border:1px dashed var(--pink);color:var(--ink);cursor:pointer;font-weight:bold}
+  .chart td.row-label.pick:hover{background:var(--pink);color:#fff}
+  .chart td.row-label.cur{background:var(--pink);color:#fff;border-style:solid}
   .chart td.row-label{font-size:12px;color:var(--soft);white-space:nowrap;width:46px}
   .btns{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
   button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--ink)}
@@ -179,9 +182,10 @@
   <h2>④ 오늘의 여행 문장 <small>— 히라가나로만 읽어보기 (1번 누르면 읽는 법, 2번 누르면 뜻)</small></h2>
   <div id="phrases"></div>
 
-  <h2>⑤ 히라가나 전체표 <small>— 분홍 테두리 = 배운 글자, 분홍 칸 = 오늘 · 누르면 획순</small></h2>
+  <h2>⑤ 히라가나 전체표 <small>— 왼쪽 <b>행 이름</b>을 누르면 그 행을 오늘 배워요 · 글자를 누르면 획순</small></h2>
   <div class="btns">
     <button id="toggleR">읽는 법 가리기 (셀프 테스트)</button>
+    <button id="pickReset" hidden>원래 순서로 돌아가기</button>
   </div>
   <table class="chart" id="chart"></table>
   <details>
@@ -287,15 +291,17 @@ const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 const START = (()=>{ try{ let v=localStorage.getItem("usagi-start"); if(!v){ v=String(today0.getTime()); localStorage.setItem("usagi-start",v); } return new Date(+v); }catch(e){ return today0; } })();
 const day = Math.max(0, Math.round((today0-START)/86400000));   // 0부터
 const firstLoop = day < ROWS.length;
-const rowIdx = day % ROWS.length;
+const todayKey = `${today0.getFullYear()}-${today0.getMonth()+1}-${today0.getDate()}`;
+const pickedRow = (()=>{ try{ const o=JSON.parse(localStorage.getItem("usagi-pick")||"null"); return o&&o.d===todayKey ? o.r : null; }catch(e){ return null; } })();
+const rowIdx = pickedRow ?? day % ROWS.length;
 const row = ROWS[rowIdx];
-const learnedRows = firstLoop ? ROWS.slice(0,day+1) : ROWS;
+const learnedRows = firstLoop ? [...new Set(ROWS.slice(0,day+1).concat(row))] : ROWS;
 const learned = learnedRows.flatMap(r=>r.kana);
 
 const $ = id => document.getElementById(id);
 const wd = ["일","월","화","수","목","금","토"][now.getDay()];
 $("date").textContent = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${wd}) · 학습 ${day+1}일째`;
-$("title").textContent = firstLoop ? `오늘은 「${row.name}」 외우는 날!` : `복습 ${Math.floor(day/ROWS.length)}바퀴째 — 「${row.name}」 다시 보기`;
+$("title").textContent = pickedRow!=null ? `오늘은 내가 고른 「${row.name}」 외우는 날!` : firstLoop ? `오늘은 「${row.name}」 외우는 날!` : `복습 ${Math.floor(day/ROWS.length)}바퀴째 — 「${row.name}」 다시 보기`;
 $("say").textContent = SAYS[day % SAYS.length];
 $("count").textContent = firstLoop ? `🐰 히라가나 완주까지 ${ROWS.length-day-1}일 남았어요` : "🎉 히라가나 한 바퀴 완주! 복습 중이에요";
 $("memo").innerHTML = "🐰 <b>외우는 꿀팁</b> — " + row.memo;
@@ -386,10 +392,16 @@ function layout(r){ // や・わ행은 빈칸 맞춤
   if(r.name==="わ행") return [k[0],null,null,null,k[1]];
   return k;
 }
-$("chart").innerHTML = ROWS.map(r=>`<tr><td class="empty row-label">${r.name}</td>${layout(r).map(cell).join("")}</tr>`).join("")
+$("chart").innerHTML = ROWS.map((r,i)=>`<tr><td class="row-label pick${i===rowIdx?" cur":""}" data-row="${i}" title="이 행을 오늘 배우기">${r.name}</td>${layout(r).map(cell).join("")}</tr>`).join("")
   + `<tr><td class="empty row-label">ん</td>${cell(ROWS[9].kana[2])}<td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr>`;
 $("chart2").innerHTML = DAKU.map(([n,k])=>`<tr><td class="empty row-label">${n}</td>${k.map(([a,b])=>`<td data-k="${a}"><span class="k">${a}</span><span class="r">${b}</span></td>`).join("")}</tr>`).join("");
-document.querySelectorAll(".chart").forEach(t=>t.onclick=e=>{const c=e.target.closest("td[data-k]"); if(c){ speak(c.dataset.k); strokeModal(c.dataset.k, c.querySelector(".r").textContent); }});
+function pickRow(i){
+  try{ if(i==null) localStorage.removeItem("usagi-pick"); else localStorage.setItem("usagi-pick", JSON.stringify({d:todayKey, r:i})); }catch(e){}
+  location.hash=""; location.reload();
+}
+$("pickReset").hidden = pickedRow==null;
+$("pickReset").onclick = () => pickRow(null);
+document.querySelectorAll(".chart").forEach(t=>t.onclick=e=>{const pr=e.target.closest("td[data-row]"); if(pr){ pickRow(+pr.dataset.row); return; } const c=e.target.closest("td[data-k]"); if(c){ speak(c.dataset.k); strokeModal(c.dataset.k, c.querySelector(".r").textContent); }});
 $("toggleR").onclick = () => {
   const t=$("chart"); t.classList.toggle("hide-r"); $("chart2").classList.toggle("hide-r");
   $("toggleR").textContent = t.classList.contains("hide-r") ? "읽는 법 보이기" : "읽는 법 가리기 (셀프 테스트)";
