@@ -104,11 +104,54 @@
       linear-gradient(90deg,var(--rule) 1px,transparent 1px) 0 0/calc(100%/10) 100%,
       #fff}
   .padbtn{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}
-  .padbtn button{font-size:13px;padding:4px 12px}
+  .padbtn{flex-wrap:wrap}
+  .padbtn button,.kbtn button,.savebar button{font-size:13px;padding:4px 12px;white-space:nowrap}
+  .kshow{display:none;font-size:13px;padding:4px 12px;white-space:nowrap}
   @media (max-width:560px){ .hand{aspect-ratio:5/2;background:
       linear-gradient(var(--rule),var(--rule)) 0 50%/100% 1px no-repeat,
       linear-gradient(90deg,var(--rule) 1px,transparent 1px) 0 0/calc(100%/6) 100%,#fff} }
-  .saved{font-size:12.5px;color:var(--soft);text-align:right;margin-top:-6px}
+  .pads{display:flex;flex-direction:column;gap:6px}
+  .padrow{position:relative}
+  .padrow .del{position:absolute;top:4px;right:4px;font-size:12px;padding:0 8px;line-height:1.6;opacity:.7}
+  .savebar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:8px}
+  .savebar .msg{font-size:13px;color:var(--ok);margin-right:auto}
+  /* 저장한 답 (위 칸) */
+  .shelf{display:flex;flex-direction:column;gap:8px;margin:8px 0 4px}
+  .shelf:empty{display:none}
+  .entry{background:var(--mint-soft);border:1px solid #bfe3d6;border-radius:12px;padding:6px 10px 8px}
+  .entry .eh{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--soft);margin-bottom:4px}
+  .entry .eh button{margin-left:auto;font-size:12px;padding:0 9px;line-height:1.7}
+  .entry canvas{display:block;width:100%;aspect-ratio:4/1;background:#fff;border-radius:8px;border:1px solid var(--rule)}
+  .entry canvas + canvas{margin-top:4px}
+  .entry .txt{font-family:var(--jp);font-size:19px;background:#fff;border-radius:8px;padding:2px 10px;border:1px solid var(--rule)}
+  /* 오른쪽 한자 획순 창 */
+  .wlayout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:16px;align-items:start}
+  .kpanel{position:sticky;top:12px;background:#fff;border:1px solid var(--rule);border-radius:14px;padding:12px;box-shadow:0 4px 14px rgba(40,80,70,.08)}
+  .kpanel h3{margin:0 0 2px;font-size:15px;font-weight:400}
+  .kpanel .for{font-size:12.5px;color:var(--soft);margin:0 0 8px}
+  .kchips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+  .kchips button{font-family:var(--jp);font-size:20px;padding:0 10px;line-height:1.7;border-radius:10px}
+  .kchips button.on{background:var(--mint);color:#fff;border-color:var(--mint)}
+  .kbox{width:100%;aspect-ratio:1;border:1px solid var(--rule);border-radius:12px;background:
+    linear-gradient(var(--rule),var(--rule)) center/100% 1px no-repeat,
+    linear-gradient(var(--rule),var(--rule)) center/1px 100% no-repeat,#fbfefc}
+  .kbox .guide{fill:none;stroke:#e3ece8;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .kbox .ink{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .kbox .ink.cur{stroke:var(--mint)}
+  .kbox .num{font-size:7px;fill:var(--bad);font-family:sans-serif;font-weight:bold}
+  .kinfo{text-align:center;margin:6px 0}
+  .kinfo .jp{font-size:18px}
+  .kinfo small{display:block;color:var(--soft);font-size:12.5px}
+  .kbtn{display:flex;gap:6px;justify-content:center}
+  .kbtn button{font-size:13px;padding:4px 12px}
+  @media (max-width:760px){
+    .wlayout{grid-template-columns:1fr}
+    .kpanel{position:static;display:grid;grid-template-columns:140px minmax(0,1fr);gap:4px 12px}
+    .kpanel h3,.kpanel .for,.kchips{grid-column:1/-1}
+    .kbox{grid-row:span 2}
+    .wq .kpanel{margin:10px 0}
+    .kshow{display:inline-block;margin-right:auto}
+  }
   .foot{text-align:center;color:var(--soft);font-size:12px;margin-top:20px}
   .foot a{color:var(--mint)}
 
@@ -150,9 +193,9 @@
 
   <section>
     <h2><span class="no">3</span>일본어로 써 보기</h2>
-    <p class="lead">단어 카드를 참고해서 일본어로 직접 써요. 마우스나 손가락으로 칸에 쓰거나, 키보드로 입력해도 돼요. 히라가나로 써도, 한자로 써도 좋아요. 정답은 나오지 않아요. 쓴 내용은 이 기기에 저장돼요.</p>
-    <div id="write"></div>
-    <div style="display:flex;justify-content:flex-end"><button id="wipe">쓴 답 모두 지우기</button></div>
+    <p class="lead">단어 카드를 참고해서 일본어로 직접 써요. 마우스나 손가락으로 칸에 쓰거나, 키보드로 입력해도 돼요. 칸이 모자라면 <b>＋ 칸 추가</b>, 다 썼으면 <b>💾 저장</b> — 저장한 답은 문제 위쪽에 차곡차곡 쌓여요. 오른쪽 창에서 한자 획순을 볼 수 있어요. 정답은 나오지 않아요.</p>
+    <div class="wlayout"><div id="write"></div><aside class="kpanel" id="kpanel" aria-label="한자 획순"></aside></div>
+    <div style="display:flex;justify-content:flex-end"><button id="wipe">쓰던 것·저장한 답 모두 지우기</button></div>
   </section>
 
   </div>
@@ -160,6 +203,7 @@
 <div class="foot"><a href="../">처음으로</a> · <a href="../hiragana/">히라가나</a> · <a href="../katakana/">가타카나</a><br>캐릭터 그림 © nagano · 개인 학습용 팬 페이지</div>
 </div>
 
+<script src="kanji.js"></script>
 <script>
 // 표기: {漢字|かな} = 한자 위 후리가나, [ ] = 형광펜(대명사)
 const PRONOUNS = [
@@ -285,49 +329,94 @@ BUILD.forEach((b,i)=>{
 });
 
 // ───────── 3. 직접 써 보기 ─────────
-const saved = store("pron-write") || {};
+// 획은 칸 크기 대비 비율(0~1)로 저장 → 화면 크기가 바뀌어도 그대로 다시 그림
+const saved = store("pron-write") || {};      // 키보드로 쓰는 중인 글
+const hand  = store("pron-hand2") || {};      // 손으로 쓰는 중인 칸들: {문제: [칸: [획: [[x,y]...]]]}
+const book  = store("pron-saved") || {};      // 저장한 답: {문제: [{pads, text, t}]}
+let mode = store("pron-mode") || "pen";
+{ // 예전 형식(칸 하나) 옮겨 오기
+  const old = store("pron-hand"); if(old) Object.keys(old).forEach(i=>{ if(!hand[i] && old[i]&&old[i].length) hand[i]=[old[i]]; });
+}
+
 $("#write").innerHTML = WRITE.map((w,i)=>`
-  <div class="wq q">
+  <div class="wq q" data-q="${i}">
     <p class="ko"><span class="n">(${i+1})</span>${w.ko}</p>
     ${vocab(w.cards.concat(w.wrong), false)}
+    <div class="shelf" id="s${i}"></div>
     <div class="mode"><button data-m="pen">✍️ 손으로 쓰기</button><button data-m="key">⌨️ 키보드로 쓰기</button></div>
-    <div class="penbox"><canvas class="hand" id="h${i}" aria-label="${w.ko} 손으로 쓰는 칸"></canvas>
-      <div class="padbtn"><button data-pad="undo">↶ 한 획 지우기</button><button data-pad="clear">전부 지우기</button></div></div>
+    <div class="penbox"><div class="pads" id="pads${i}"></div>
+      <div class="padbtn"><button data-pad="add">＋ 칸 추가</button><button data-pad="undo">↶ 한 획 지우기</button><button data-pad="clear">전부 지우기</button></div></div>
     <textarea id="w${i}" lang="ja" placeholder="여기에 일본어로 써 보세요 (히라가나·한자 모두 OK)" aria-label="${w.ko} 일본어로 쓰기"></textarea>
+    <div class="savebar"><button class="kshow" data-pad="kanji">✏️ 한자 획순 보기</button><span class="msg" id="m${i}" role="status"></span><button class="main" data-pad="save">💾 저장</button></div>
   </div>`).join("");
+
+function paint(cv, strokes, live){
+  const ctx=cv.getContext("2d");
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.lineCap="round"; ctx.lineJoin="round"; ctx.strokeStyle="#2f3b37";
+  ctx.lineWidth=Math.max(2, cv.width*0.006);
+  strokes.concat(live?[live]:[]).forEach(st=>{ if(!st.length) return; ctx.beginPath();
+    st.forEach(([x,y],k)=>k?ctx.lineTo(x*cv.width,y*cv.height):ctx.moveTo(x*cv.width,y*cv.height));
+    if(st.length===1) ctx.lineTo(st[0][0]*cv.width+.1,st[0][1]*cv.height);
+    ctx.stroke(); });
+}
+function sizeTo(cv){ const r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1; if(!r.width) return false;
+  cv.width=Math.round(r.width*d); cv.height=Math.round(r.height*d); return true; }
+
+let lastPad = {};                     // 문제별로 마지막에 쓴 칸 (한 획 지우기용)
+function renderPads(i){
+  const box=$("#pads"+i), list=hand[i] && hand[i].length ? hand[i] : (hand[i]=[[]]);
+  box.innerHTML = list.map((_,k)=>`<div class="padrow"><canvas class="hand" data-k="${k}" aria-label="${k+1}번째 쓰는 칸"></canvas>${k?`<button class="del" data-pad="del" data-k="${k}" aria-label="이 칸 지우기">✕</button>`:""}</div>`).join("");
+  box.querySelectorAll("canvas").forEach(cv=>{
+    const k=+cv.dataset.k; let live=null;
+    const redraw=()=>paint(cv, hand[i][k], live);
+    cv._fit=()=>{ if(sizeTo(cv)) redraw(); };
+    const pt=e=>{ const r=cv.getBoundingClientRect(); return [+((e.clientX-r.left)/r.width).toFixed(4), +((e.clientY-r.top)/r.height).toFixed(4)]; };
+    cv.addEventListener("pointerdown",e=>{ cv.setPointerCapture(e.pointerId); live=[pt(e)]; lastPad[i]=k; if(!narrow()) setActive(i); redraw(); });
+    cv.addEventListener("pointermove",e=>{ if(live){ live.push(pt(e)); redraw(); } });
+    const end=()=>{ if(!live) return; hand[i][k].push(live); live=null; store("pron-hand2",hand); redraw(); };
+    cv.addEventListener("pointerup",end); cv.addEventListener("pointercancel",end);
+    cv._fit();
+  });
+}
+function renderShelf(i){
+  const list=book[i]||[];
+  $("#s"+i).innerHTML = list.map((e,n)=>`<div class="entry">
+      <div class="eh">📒 저장 ${n+1} · ${new Date(e.t).toLocaleString("ko-KR",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}<button data-pad="drop" data-n="${n}" aria-label="저장 ${n+1} 지우기">지우기</button></div>
+      ${e.pads.map(()=>`<canvas></canvas>`).join("")}${e.text?`<div class="txt" lang="ja">${e.text.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</div>`:""}
+    </div>`).join("");
+  $("#s"+i).querySelectorAll(".entry").forEach((el,n)=>el.querySelectorAll("canvas").forEach((cv,k)=>{ if(sizeTo(cv)) paint(cv, list[n].pads[k]); }));
+}
+function flash(i,msg){ const m=$("#m"+i); m.textContent=msg; clearTimeout(m._t); m._t=setTimeout(()=>m.textContent="",2200); }
+
 WRITE.forEach((_,i)=>{
   const t=$("#w"+i); t.value=saved[i]||"";
   t.addEventListener("input",()=>{ saved[i]=t.value; store("pron-write",saved); });
+  t.addEventListener("focus",()=>{ if(!narrow()) setActive(i); });
+  renderPads(i); renderShelf(i);
 });
-// ── 손으로 쓰기 (마우스·손가락) ──
-// 획은 칸 크기 대비 비율(0~1)로 저장 → 화면 크기가 바뀌어도 그대로 다시 그림
-const hand = store("pron-hand") || {};
-let mode = store("pron-mode") || "pen";
-const pads = WRITE.map((_,i)=>{
-  const cv=$("#h"+i), ctx=cv.getContext("2d"); let live=null;
-  const strokes = () => hand[i] || (hand[i]=[]);
-  function fit(){ const r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1;
-    if(!r.width) return; cv.width=Math.round(r.width*d); cv.height=Math.round(r.height*d); draw(); }
-  function draw(){
-    ctx.clearRect(0,0,cv.width,cv.height);
-    ctx.lineCap="round"; ctx.lineJoin="round"; ctx.strokeStyle="#2f3b37";
-    ctx.lineWidth=Math.max(2.5, cv.width*0.006);
-    strokes().concat(live?[live]:[]).forEach(st=>{ if(!st.length) return; ctx.beginPath();
-      st.forEach(([x,y],k)=>k?ctx.lineTo(x*cv.width,y*cv.height):ctx.moveTo(x*cv.width,y*cv.height));
-      if(st.length===1) ctx.lineTo(st[0][0]*cv.width+.1,st[0][1]*cv.height);
-      ctx.stroke(); });
+
+$("#write").addEventListener("click",e=>{
+  const m=e.target.closest(".mode [data-m]"); if(m) return setMode(m.dataset.m);
+  const b=e.target.closest("[data-pad]"); if(!b) return;
+  const i=+b.closest(".wq").dataset.q, a=b.dataset.pad; if(!narrow()) setActive(i);
+  if(a==="kanji"){ setActive(i,true); return; }
+  if(a==="add"){ hand[i].push([]); store("pron-hand2",hand); renderPads(i); lastPad[i]=hand[i].length-1; return; }
+  if(a==="del"){ hand[i].splice(+b.dataset.k,1); store("pron-hand2",hand); renderPads(i); return; }
+  if(a==="undo"){ const k = lastPad[i]!=null && hand[i][lastPad[i]] && hand[i][lastPad[i]].length ? lastPad[i] : hand[i].map(x=>x.length).findLastIndex(n=>n>0);
+    if(k>=0) hand[i][k].pop(); store("pron-hand2",hand); renderPads(i); return; }
+  if(a==="clear"){ hand[i]=hand[i].map(()=>[]); store("pron-hand2",hand); renderPads(i); return; }
+  if(a==="drop"){ book[i].splice(+b.dataset.n,1); store("pron-saved",book); renderShelf(i); return; }
+  if(a==="save"){
+    const pads=hand[i].filter(p=>p.length), text=($("#w"+i).value||"").trim();
+    if(!pads.length && !text) return flash(i,"먼저 써 주세요");
+    (book[i]=book[i]||[]).push({pads, text, t:Date.now()});
+    store("pron-saved",book);
+    hand[i]=hand[i].map(()=>[]); store("pron-hand2",hand); $("#w"+i).value=""; saved[i]=""; store("pron-write",saved);
+    renderPads(i); renderShelf(i); flash(i,"✔ 위 칸에 저장했어요");
   }
-  const pt=e=>{ const r=cv.getBoundingClientRect(); return [+((e.clientX-r.left)/r.width).toFixed(4), +((e.clientY-r.top)/r.height).toFixed(4)]; };
-  cv.addEventListener("pointerdown",e=>{ cv.setPointerCapture(e.pointerId); live=[pt(e)]; draw(); });
-  cv.addEventListener("pointermove",e=>{ if(live){ live.push(pt(e)); draw(); } });
-  const end=()=>{ if(!live) return; strokes().push(live); live=null; store("pron-hand",hand); draw(); };
-  cv.addEventListener("pointerup",end); cv.addEventListener("pointercancel",end);
-  cv.closest(".wq").querySelector(".padbtn").addEventListener("click",e=>{
-    const b=e.target.closest("[data-pad]"); if(!b) return;
-    if(b.dataset.pad==="undo") strokes().pop(); else hand[i]=[];
-    store("pron-hand",hand); draw(); });
-  return {fit, clear(){ hand[i]=[]; draw(); }};
 });
+
 function setMode(m){
   mode=m; store("pron-mode",m);
   document.querySelectorAll("#write .wq").forEach(q=>{
@@ -335,13 +424,70 @@ function setMode(m){
     q.querySelector("textarea").hidden = m!=="key";
     q.querySelectorAll(".mode button").forEach(b=>b.classList.toggle("on", b.dataset.m===m));
   });
-  if(m==="pen") pads.forEach(p=>p.fit());
+  refit();
 }
-document.querySelector("#write").addEventListener("click",e=>{ const b=e.target.closest(".mode [data-m]"); if(b) setMode(b.dataset.m); });
-window.addEventListener("resize",()=>{ if(mode==="pen") pads.forEach(p=>p.fit()); });
+function refit(){ document.querySelectorAll("#write canvas").forEach(cv=>cv._fit && cv._fit()); WRITE.forEach((_,i)=>renderShelf(i)); }
+window.addEventListener("resize",refit);
 setMode(mode);
 
-$("#wipe").onclick=()=>{ WRITE.forEach((_,i)=>{ $("#w"+i).value=""; delete saved[i]; }); store("pron-write",saved); pads.forEach(p=>p.clear()); store("pron-hand",hand); };
+$("#wipe").onclick=()=>{
+  WRITE.forEach((_,i)=>{ $("#w"+i).value=""; delete saved[i]; hand[i]=[[]]; book[i]=[]; renderPads(i); renderShelf(i); });
+  store("pron-write",saved); store("pron-hand2",hand); store("pron-saved",book);
+};
+
+// ───────── 오른쪽 한자 획순 창 ─────────
+const KAN = /[\u4e00-\u9fff]/g;
+let active=-1, kCur=null, kTimers=[], kStep=0;
+function kanjiFor(i){
+  const w=WRITE[i], out=[];
+  w.cards.concat(w.wrong).forEach(c=>{ const text=c[0].replace(RUBY,"$1"); (text.match(KAN)||[]).forEach(k=>{ if(!out.some(x=>x.k===k)) out.push({k, c}); }); });
+  return out;
+}
+const narrow = () => matchMedia("(max-width:760px)").matches;
+// 넓은 화면: 오른쪽 칸에 고정 / 폰: 누른 문제의 저장 버튼 아래로 옮김
+function placePanel(){ const p=$("#kpanel");
+  if(!narrow() && active<0){ p.hidden=false; setActive(0); return; }
+  if(narrow() && active>=0) document.querySelector(`#write .wq[data-q="${active}"] .savebar`).after(p);
+  else if(p.parentElement!==$(".wlayout")) $(".wlayout").appendChild(p); }
+window.addEventListener("resize",placePanel);
+function setActive(i,scroll){
+  if(i===active){ placePanel(); return; } active=i;
+  const list=kanjiFor(i), p=$("#kpanel");
+  placePanel(); if(scroll) p.scrollIntoView({block:"nearest",behavior:"smooth"});
+  p.innerHTML = `<h3>✏️ 한자 획순</h3><p class="for">(${i+1}) ${WRITE[i].ko}</p>
+    <div class="kchips">${list.map(x=>`<button data-k="${x.k}" class="jp">${x.k}</button>`).join("") || `<span class="for">이 문제엔 한자가 없어요</span>`}</div>
+    ${list.length?`<svg class="kbox" viewBox="0 0 109 109" id="kbox"></svg><div><div class="kinfo" id="kinfo"></div>
+    <div class="kbtn"><button id="kplay">▶ 다시 보기</button><button id="kstep">한 획씩</button></div></div>`:""}`;
+  if(!list.length) return;
+  p.querySelector(".kchips").onclick=e=>{ const b=e.target.closest("button[data-k]"); if(b) showKanji(b.dataset.k); };
+  $("#kplay").onclick=()=>kPlay(); $("#kstep").onclick=()=>kOne();
+  showKanji(list[0].k);
+}
+function showKanji(k){
+  kCur=k; const box=$("#kbox"), NS="http://www.w3.org/2000/svg", d=(window.KANJI||{})[k];
+  $("#kpanel").querySelectorAll(".kchips button").forEach(b=>b.classList.toggle("on", b.dataset.k===k));
+  const hit=kanjiFor(active).find(x=>x.k===k), c=hit.c;
+  // 대명사 카드는 써 보기에서 뜻을 가리므로 여기서도 읽기만 보여 줌
+  $("#kinfo").innerHTML = `<div class="jp">${c[0].includes("{")?rb(c[0]):c[1]?`<ruby>${c[0]}<rt>${c[1]}</rt></ruby>`:c[0]}</div><small>${c[3]==="p"?"인칭 대명사":c[2]}${d?` · 총 ${d.length}획`:""}</small>`;
+  kTimers.forEach(clearTimeout); kTimers=[]; box.innerHTML=""; kStep=0;
+  if(!d){ box.innerHTML=`<text x="54.5" y="58" text-anchor="middle" font-size="9" fill="#76857f">획순 데이터가 없어요</text>`; return; }
+  d.forEach(p=>{ const g=document.createElementNS(NS,"path"); g.setAttribute("d",p); g.setAttribute("class","guide"); box.appendChild(g); });
+  d.forEach((p,n)=>{ const e=document.createElementNS(NS,"path"); e.setAttribute("d",p); e.setAttribute("class","ink"); box.appendChild(e);
+    const L=e.getTotalLength(); e.style.strokeDasharray=L; e.style.strokeDashoffset=L; e.dataset.len=L;
+    const m=p.match(/^[Mm]\s*([\d.]+)[ ,]*([\d.]+)/);
+    if(m){ const t=document.createElementNS(NS,"text"); t.setAttribute("x",+m[1]-6); t.setAttribute("y",+m[2]-1); t.setAttribute("class","num"); t.textContent=n+1; box.appendChild(t); } });
+  kPlay();
+}
+function kInk(){ return [...$("#kbox").querySelectorAll(".ink")]; }
+function kDraw(e,ms){ e.classList.add("cur"); e.style.transition="none"; e.style.strokeDashoffset=e.dataset.len; e.getBoundingClientRect();
+  e.style.transition=`stroke-dashoffset ${ms}ms ease-in-out`; e.style.strokeDashoffset=0; kTimers.push(setTimeout(()=>e.classList.remove("cur"),ms)); }
+function kPlay(){ kTimers.forEach(clearTimeout); kTimers=[]; const ink=kInk(); kStep=ink.length;
+  ink.forEach(e=>{ e.style.transition="none"; e.style.strokeDashoffset=e.dataset.len; });
+  ink.forEach((e,n)=>kTimers.push(setTimeout(()=>kDraw(e,550),250+n*650))); }
+function kOne(){ kTimers.forEach(clearTimeout); kTimers=[]; const ink=kInk(); if(!ink.length) return;
+  if(kStep>=ink.length){ kStep=0; ink.forEach(e=>{ e.style.transition="none"; e.style.strokeDashoffset=e.dataset.len; }); }
+  kDraw(ink[kStep++],550); }
+if(narrow()){ active=-1; $("#kpanel").hidden=true; document.addEventListener("click",e=>{ if(e.target.closest("[data-pad=kanji]")) $("#kpanel").hidden=false; }); } else setActive(0);
 
 // ───────── 후리가나 ─────────
 let furi = store("pron-furi"); if(furi===null) furi=true;
