@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>히라가나 시험</title>
+<style>
+  /* 히라가나 학습 페이지와 같은 분홍·살구 색감, 시험지 느낌으로 칸을 또렷하게 */
+  :root{
+    --bg:#fff7f0; --paper:#fffdf9; --ink:#3b2f2a; --soft:#8a7468; --line:#f0dccd;
+    --pink:#ff8fab; --pink-soft:#ffe1ea; --sea:#3d8bfd; --sea-soft:#e3efff; --ok:#2fa36b; --ok-soft:#e2f5ea; --bad:#e2554f; --bad-soft:#fde6e5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic","Apple SD Gothic Neo","Yu Gothic",sans-serif;line-height:1.6}
+  .wrap{max-width:720px;margin:0 auto;padding:24px 16px 60px}
+  .sheet{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 30px rgba(120,70,40,.08);padding:26px 24px;position:relative}
+  .sheet:before{content:"";position:absolute;left:-6px;right:-6px;top:-8px;height:14px;border-radius:8px;background:linear-gradient(#e9c9a8,#d8ad85)}
+  .jp{font-family:"Yu Gothic","Meiryo","Hiragino Sans",sans-serif}
+  h1{font-size:24px;margin:0}
+  .sub{color:var(--soft);font-size:14px;margin:2px 0 0}
+  .hello{display:flex;gap:16px;align-items:center;margin-bottom:18px}
+  .hello img{width:96px;height:96px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:0 4px 14px rgba(255,143,171,.35);flex:none}
+  .rules{background:#fff;border:1px dashed var(--line);border-radius:14px;padding:12px 16px;font-size:14.5px}
+  .rules li{margin:2px 0}
+  .opts-row{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+  button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 16px;cursor:pointer;color:var(--ink)}
+  button:hover{background:var(--pink-soft)}
+  button.primary{background:var(--pink);color:#fff;border-color:var(--pink);font-weight:bold}
+  button.on{border-color:var(--pink);background:var(--pink-soft);font-weight:bold}
+  button:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+  .best{font-size:13px;color:var(--soft)}
+  /* 문제 */
+  .top{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums}
+  .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:8px 0 18px}
+  .bar i{display:block;height:100%;background:var(--pink);transition:width .3s}
+  .part{display:inline-block;font-size:12px;background:var(--sea-soft);color:var(--sea);border-radius:999px;padding:1px 10px;margin-bottom:6px}
+  .ask{font-size:17px;margin:0 0 6px}
+  .big{font-size:84px;line-height:1.15;text-align:center;margin:8px 0}
+  .word{font-size:28px;font-weight:bold;text-align:center;margin:8px 0;color:var(--sea)}
+  .word small{display:block;font-size:14px;color:var(--soft);font-weight:normal}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .choices button{border-radius:14px;padding:14px 8px;font-size:22px}
+  .choices button.jp{font-size:28px}
+  .say{font-size:13px;padding:4px 12px;margin:0 auto;display:block}
+  /* 쓰기 */
+  .pad{display:flex;justify-content:center;margin:10px 0}
+  .pad svg{width:min(280px,100%);aspect-ratio:1;touch-action:none;cursor:crosshair;border:2px solid var(--line);border-radius:14px;background:
+    linear-gradient(var(--line),var(--line)) center/100% 1px no-repeat,
+    linear-gradient(var(--line),var(--line)) center/1px 100% no-repeat,#fffaf6}
+  .pad .mine{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .center{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .note{font-size:13px;color:var(--soft);text-align:center;margin:4px 0}
+  /* 결과 */
+  .result{text-align:center}
+  .score{font-size:56px;font-weight:bold;line-height:1.1;font-variant-numeric:tabular-nums}
+  .score small{font-size:20px;color:var(--soft)}
+  .grade{display:inline-block;margin:10px auto 6px;width:96px;height:96px;border:4px solid var(--bad);color:var(--bad);border-radius:50%;
+    font-size:26px;font-weight:bold;line-height:1.05;display:grid;place-items:center;transform:rotate(-12deg);font-family:"Yu Mincho","MS Mincho",serif}
+  .face{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:0 4px 14px rgba(120,70,40,.15)}
+  .row2{display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap;margin:6px 0 10px}
+  .parts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:14px 0}
+  .parts div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;font-size:13px}
+  .parts b{display:block;font-size:18px;font-variant-numeric:tabular-nums}
+  .review{text-align:left;margin-top:16px}
+  .review h3{font-size:16px;margin:0 0 8px}
+  .rv{display:flex;gap:10px;align-items:center;background:var(--bad-soft);border-radius:12px;padding:8px 12px;margin-bottom:6px;font-size:14px}
+  .rv .k{font-size:26px;min-width:2.2em;text-align:center}
+  .rv .mine-a{color:var(--bad)} .rv .ok-a{color:var(--ok);font-weight:bold}
+  .allok{background:var(--ok-soft);border-radius:12px;padding:10px;color:var(--ok)}
+  .foot{text-align:center;color:var(--soft);font-size:12px;margin-top:24px}
+  .foot a{color:var(--sea)}
+  @media (max-width:520px){ .big{font-size:70px} .sheet{padding:22px 14px} .hello img{width:76px;height:76px} }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sheet" id="app"></div>
+  <div class="foot"><a href="../hiragana/">히라가나 공부하러 가기</a> · <a href="../">처음으로</a><br>캐릭터 그림 © nagano · 개인 학습용 팬 페이지 · 기록은 이 기기 브라우저에만 저장돼요 · 획순 데이터 KanjiVG (CC BY-SA 3.0)</div>
+</div>
+
+<script src="../hiragana/strokes.js"></script>
+<script>
+// ───────── 데이터 ─────────
+const BASIC = [..."あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん"];
+const BASIC_R = ["아","이","우","에","오","카","키","쿠","케","코","사","시","스","세","소","타","치","츠","테","토","나","니","누","네","노","하","히","후","헤","호","마","미","무","메","모","야","유","요","라","리","루","레","로","와","오 (조사 を)","응"];
+// ぢ·づ는 じ·ず와 소리가 같아 시험에서 뺌
+const DAKU = [..."がぎぐげござじずぜぞだでどばびぶべぼぱぴぷぺぽ"];
+const DAKU_R = ["가","기","구","게","고","자","지","즈","제","조","다","데","도","바","비","부","베","보","파","피","푸","페","포"];
+// 헷갈리는 글자 묶음
+const LOOK = [["さ","ち","き"],["ぬ","め","の"],["る","ろ","ら"],["は","ほ","け"],["わ","ね","れ"],["い","り","こ"],["こ","に","た"],["う","つ","ら"],["あ","お","め"],["し","つ","く"],["ま","よ","も"],["て","そ","ん"],["が","か","ぎ"],["ば","ぱ","は"]];
+// 단어: [히라가나, 읽기, 뜻]
+const WORDS = [
+  ["つり","츠리","낚시"],["さかな","사카나","물고기"],["えさ","에사","미끼"],["はり","하리","낚싯바늘"],["うき","우키","찌"],
+  ["いと","이토","낚싯줄"],["あじ","아지","전갱이"],["さば","사바","고등어"],["たい","타이","도미"],["いか","이카","오징어"],
+  ["ふね","후네","배"],["みなと","미나토","항구"],["うみ","우미","바다"],["ねこ","네코","고양이"],["いぬ","이누","개"],
+  ["うさぎ","우사기","토끼"],["おいしい","오이시이","맛있다"],["ありがとう","아리가토-","고마워"],["すみません","스미마센","실례합니다"],
+  ["おはよう","오하요-","좋은 아침"],["みず","미즈","물"],["すし","스시","초밥"],["ごはん","고항","밥"],["やま","야마","산"],
+  ["そら","소라","하늘"],["はな","하나","꽃"],["くも","쿠모","구름"],["ともだち","토모다치","친구"],["さくら","사쿠라","벚꽃"],["ひこうき","히코-키","비행기"]
+];
+const PARTS = {read:"글자 읽기", pick:"듣고 고르기", look:"헷갈리는 글자", word:"단어 읽기", write:"직접 쓰기"};
+const PLAN = {read:10, pick:8, look:4, word:5, write:3};   // 총 30문제
+
+// ───────── 유틸 ─────────
+const $ = s => document.querySelector(s);
+const app = $("#app");
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+const pick = a => a[Math.floor(Math.random()*a.length)];
+function store(k,v){ try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; } }
+function speak(t){
+  try{ const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=.8;
+    const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("ja")); if(v) u.voice=v;
+    speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){}
+}
+
+let withDaku = store("hira-test-daku") || false;
+let T = null;   // 진행 중인 시험
+
+function pool(){
+  const k = withDaku ? BASIC.concat(DAKU) : BASIC;
+  const r = withDaku ? BASIC_R.concat(DAKU_R) : BASIC_R;
+  return k.map((c,i)=>[c,r[i]]);
+}
+const readOf = c => { const p=pool().find(x=>x[0]===c); return p ? p[1] : (BASIC_R[BASIC.indexOf(c)] || DAKU_R[DAKU.indexOf(c)]); };
+function lookalikes(c){ const g=LOOK.filter(g=>g.includes(c)).flat(); return [...new Set(g)].filter(x=>x!==c); }
+
+// 단어 하나를 헷갈리는 글자로 살짝 바꾼 오답 만들기
+function mutate(w){
+  const chars=[...w], outs=new Set();
+  for(let tries=0; tries<60 && outs.size<3; tries++){
+    const i=Math.floor(Math.random()*chars.length);
+    const alt = lookalikes(chars[i]);
+    const repl = alt.length && Math.random()<.8 ? pick(alt) : pick(BASIC.slice(0,45));
+    if(repl===chars[i]) continue;
+    const c=chars.slice(); c[i]=repl; const s=c.join("");
+    if(s!==w && !WORDS.some(x=>x[0]===s)) outs.add(s);
+  }
+  return [...outs];
+}
+
+// ───────── 문제 만들기 ─────────
+function build(){
+  const P = shuffle(pool()), qs=[];
+  // 1) 글자 → 읽기
+  P.slice(0,PLAN.read).forEach(([c,r])=>{
+    const wrong = shuffle(pool().filter(x=>x[1]!==r && x[0]!==c)).slice(0,3).map(x=>x[1]);
+    qs.push({part:"read", c, ans:r, opts:shuffle([r,...wrong]), jp:false});
+  });
+  // 2) 소리 → 글자 (헷갈리는 글자를 오답에 섞음)
+  P.slice(PLAN.read, PLAN.read+PLAN.pick).forEach(([c,r])=>{
+    const near = lookalikes(c).filter(x=>pool().some(p=>p[0]===x));
+    const rest = shuffle(pool().map(x=>x[0]).filter(x=>x!==c && !near.includes(x)));
+    const wrong = shuffle(near).slice(0,2).concat(rest).slice(0,3);
+    qs.push({part:"pick", c, r, ans:c, opts:shuffle([c,...wrong]), jp:true});
+  });
+  // 3) 헷갈리는 글자
+  shuffle(LOOK.filter(g=>g.every(x=>pool().some(p=>p[0]===x)))).slice(0,PLAN.look).forEach(g=>{
+    const c=pick(g);
+    qs.push({part:"look", c, r:readOf(c), ans:c, opts:shuffle(g.concat(shuffle(pool().map(x=>x[0]).filter(x=>!g.includes(x))).slice(0,4-g.length))), jp:true});
+  });
+  // 4) 단어 읽기: 바르게 쓴 것 고르기
+  shuffle(WORDS).slice(0,PLAN.word).forEach(([w,r,m])=>{
+    const wrong = mutate(w);
+    for(const x of shuffle(WORDS)) if(wrong.length<3 && x[0]!==w) wrong.push(x[0]);
+    qs.push({part:"word", w, r, m, ans:w, opts:shuffle([w,...wrong.slice(0,3)]), jp:true});
+  });
+  // 5) 직접 쓰기 (획 수 3획 이하 위주는 피하고 골고루)
+  shuffle(BASIC.filter(c=>window.STROKES&&STROKES[c])).slice(0,PLAN.write).forEach(c=>{
+    qs.push({part:"write", c, r:readOf(c), ans:c});
+  });
+  return qs;
+}
+
+// ───────── 화면 ─────────
+function home(){
+  const best = store("hira-test-best"), hist = store("hira-test-hist")||[];
+  app.innerHTML = `
+    <div class="hello"><img src="../hiragana/chii-face.png" alt="치이카와"><div>
+      <h1>히라가나 시험</h1><p class="sub">다 배웠으면 실력 확인! 30문제, 끝나고 한 번에 채점해요.</p></div></div>
+    <ul class="rules">
+      <li><b>글자 읽기</b> 10문제 — 글자를 보고 소리 고르기</li>
+      <li><b>듣고 고르기</b> 8문제 — 소리를 보고(듣고) 글자 고르기</li>
+      <li><b>헷갈리는 글자</b> 4문제 — さ·ち, ぬ·め, る·ろ…</li>
+      <li><b>단어 읽기</b> 5문제 — 바르게 쓴 단어 고르기</li>
+      <li><b>직접 쓰기</b> 3문제 — 손가락·마우스로 써서 획순까지 채점</li>
+    </ul>
+    <div class="opts-row">
+      <button id="dk0" class="${withDaku?"":"on"}">기본 46자만</button>
+      <button id="dk1" class="${withDaku?"on":""}">탁음·반탁음 포함 (が·ぱ…)</button>
+    </div>
+    <button class="primary" id="go">시험 시작</button>
+    <p class="best">${best!=null?`최고 점수 ${best}점`:"아직 시험 기록이 없어요"}${hist.length?` · 최근 ${hist.slice(-5).reverse().map(h=>h.s+"점").join(", ")}`:""}</p>`;
+  $("#dk0").onclick=()=>{ withDaku=false; store("hira-test-daku",false); home(); };
+  $("#dk1").onclick=()=>{ withDaku=true; store("hira-test-daku",true); home(); };
+  $("#go").onclick=()=>start(build());
+}
+
+function start(qs){ T={qs, i:0, ans:[], t0:Date.now()}; show(); }
+
+function head(){
+  const n=T.qs.length, q=T.qs[T.i];
+  return `<div class="top"><span>${T.i+1} / ${n}</span><button id="quit" style="font-size:12px;padding:3px 10px">그만두기</button></div>
+    <div class="bar"><i style="width:${T.i/n*100}%"></i></div><span class="part">${PARTS[q.part]}</span>`;
+}
+function show(){
+  const q=T.qs[T.i];
+  if(q.part==="write") return showWrite(q);
+  let body="";
+  if(q.part==="read") body=`<p class="ask">이 글자는 어떻게 읽을까요?</p><div class="big jp">${q.c}</div>`;
+  if(q.part==="pick") body=`<p class="ask">「<b>${q.r}</b>」 소리에 맞는 글자는?</p><button class="say" id="say">🔊 소리 듣기</button>`;
+  if(q.part==="look") body=`<p class="ask">「<b>${q.r}</b>」 는 어느 글자일까요? <small style="color:var(--soft)">닮은 글자 주의!</small></p>`;
+  if(q.part==="word") body=`<p class="ask">이 단어를 히라가나로 바르게 쓴 것은?</p><div class="word">「${q.r}」<small>${q.m}</small></div>`;
+  app.innerHTML = head() + body + `<div class="choices">${q.opts.map((o,k)=>`<button class="${q.jp?"jp":""}" data-k="${k}">${o}</button>`).join("")}</div>
+    <p class="note">숫자키 1~4로도 고를 수 있어요</p>`;
+  bindCommon();
+  if($("#say")) $("#say").onclick=()=>speak(q.c);
+  app.querySelector(".choices").onclick=e=>{ const b=e.target.closest("button"); if(b) answer(q.opts[+b.dataset.k]); };
+}
+function bindCommon(){ $("#quit").onclick=()=>{ T=null; home(); }; }
+function answer(a){
+  T.ans[T.i]=a;
+  T.i++;
+  if(T.i>=T.qs.length) result(); else show();
+}
+
+// ───────── 직접 쓰기 ─────────
+function showWrite(q){
+  app.innerHTML = head() + `<p class="ask">「<b>${q.r}</b>」 를 히라가나로 써 보세요</p>
+    <div class="pad"><svg id="pad" viewBox="0 0 109 109"></svg></div>
+    <p class="note">획 순서대로, 한 획 쓸 때마다 손을 떼요 · 힌트 없음</p>
+    <div class="center"><button id="undo">↶ 한 획 지우기</button><button id="clr">전부 지우기</button><button id="skip">모르겠어요</button><button class="primary" id="done">다 썼어요</button></div>`;
+  bindCommon();
+  const NS="http://www.w3.org/2000/svg", pad=$("#pad"); let strokes=[], live=null;
+  const el=(t,a)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); return e; };
+  const toD=p=>p.map((q,i)=>(i?"L":"M")+q[0].toFixed(1)+" "+q[1].toFixed(1)).join("");
+  const draw=()=>{ pad.innerHTML=""; strokes.concat(live?[live]:[]).forEach(s=>pad.appendChild(el("path",{d:toD(s),class:"mine"}))); };
+  const pt=e=>{ const m=pad.getScreenCTM().inverse(); const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(m); return [p.x,p.y]; };
+  pad.addEventListener("pointerdown",e=>{ pad.setPointerCapture(e.pointerId); live=[pt(e)]; draw(); });
+  pad.addEventListener("pointermove",e=>{ if(live){ live.push(pt(e)); draw(); } });
+  const end=()=>{ if(!live) return; if(live.length>1) strokes.push(live); live=null; draw(); };
+  pad.addEventListener("pointerup",end); pad.addEventListener("pointercancel",end);
+  $("#undo").onclick=()=>{ strokes.pop(); draw(); };
+  $("#clr").onclick=()=>{ strokes=[]; draw(); };
+  $("#skip").onclick=()=>answer({ok:false, why:"건너뜀"});
+  $("#done").onclick=()=>{ if(!strokes.length) return; answer(grade(q.c, strokes, pad, el)); };
+}
+function grade(k, strokes, pad, el){
+  const N=24, OK=22, ref=STROKES[k];
+  if(strokes.length!==ref.length) return {ok:false, why:`획 수가 달라요 (${ref.length}획인데 ${strokes.length}획)`};
+  const resample=p=>{ if(p.length<2) p=[p[0],p[0]];
+    const seg=[0]; for(let i=1;i<p.length;i++) seg.push(seg[i-1]+Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]));
+    const L=seg[seg.length-1]||1, out=[]; let j=0;
+    for(let n=0;n<N;n++){ const t=L*n/(N-1); while(j<p.length-2&&seg[j+1]<t) j++;
+      const f=(t-seg[j])/((seg[j+1]-seg[j])||1); out.push([p[j][0]+(p[j+1][0]-p[j][0])*f, p[j][1]+(p[j+1][1]-p[j][1])*f]); }
+    return out; };
+  const g=el("g",{}); pad.appendChild(g);
+  const R0=ref.map(d=>{ const p=el("path",{d}); g.appendChild(p); const L=p.getTotalLength();
+    return Array.from({length:N},(_,i)=>{ const q=p.getPointAtLength(L*i/(N-1)); return [q.x,q.y]; }); });
+  g.remove();
+  const norm=list=>{ const all=list.flat(), xs=all.map(p=>p[0]), ys=all.map(p=>p[1]);
+    const x0=Math.min(...xs), y0=Math.min(...ys), w=Math.max(...xs)-x0, h=Math.max(...ys)-y0, s=100/Math.max(w,h,1);
+    return list.map(st=>st.map(([x,y])=>[(x-x0)*s-w*s/2+50,(y-y0)*s-h*s/2+50])); };
+  const dist=(a,b)=>a.reduce((s,p,i)=>s+Math.hypot(p[0]-b[i][0],p[1]-b[i][1]),0)/a.length;
+  const R=norm(R0), U=norm(strokes.map(resample)), notes=[];
+  U.forEach((u,i)=>{ if(dist(u,R[i])<=OK) return;
+    if(dist(u.slice().reverse(),R[i])<=OK) notes.push(`${i+1}획 방향 반대`);
+    else if(R.some((r,j)=>j!==i&&dist(u,r)<=OK)) notes.push(`${i+1}획 순서`);
+    else notes.push(`${i+1}획 모양`); });
+  return notes.length ? {ok:false, why:notes.join(", ")} : {ok:true};
+}
+
+// ───────── 채점 ─────────
+function isRight(q,a){ return q.part==="write" ? !!(a&&a.ok) : a===q.ans; }
+function result(){
+  const qs=T.qs, n=qs.length, right=qs.filter((q,i)=>isRight(q,T.ans[i])).length;
+  const score=Math.round(right/n*100), sec=Math.round((Date.now()-T.t0)/1000);
+  const best=Math.max(store("hira-test-best")||0, score); store("hira-test-best", best);
+  const hist=store("hira-test-hist")||[]; hist.push({s:score, d:new Date().toLocaleDateString("ko-KR")}); store("hira-test-hist", hist.slice(-20));
+  const pass = score>=90, ok = score>=70;
+  const face = pass ? "../chiikawa/chii.jpg" : ok ? "../chiikawa/usagi.jpg" : "../chiikawa/hachi.jpg";
+  const msg = pass ? "합격! 히라가나는 이제 완벽해요 すごい!" : ok ? "거의 다 왔어요! 틀린 것만 다시 보면 합격이에요." : "괜찮아요, 하치와레도 처음엔 그랬어요. 틀린 글자부터 다시!";
+  const byPart = Object.keys(PARTS).map(p=>{ const idx=qs.map((q,i)=>i).filter(i=>qs[i].part===p);
+    return `<div>${PARTS[p]}<b>${idx.filter(i=>isRight(qs[i],T.ans[i])).length} / ${idx.length}</b></div>`; }).join("");
+  const wrongs = qs.map((q,i)=>({q,a:T.ans[i]})).filter(x=>!isRight(x.q,x.a));
+  const rv = wrongs.map(({q,a})=>{
+    if(q.part==="read") return `<div class="rv"><span class="k jp">${q.c}</span><span>정답 <span class="ok-a">${q.ans}</span> · 내 답 <span class="mine-a">${a}</span></span></div>`;
+    if(q.part==="word") return `<div class="rv"><span class="k jp" style="font-size:20px">${q.w}</span><span>${q.r} (${q.m}) · 내 답 <span class="mine-a jp">${a}</span></span></div>`;
+    if(q.part==="write") return `<div class="rv"><span class="k jp">${q.c}</span><span>「${q.r}」 쓰기 · ${a?a.why:""}</span></div>`;
+    return `<div class="rv"><span class="k jp">${q.c}</span><span>「${q.r}」 · 내 답 <span class="mine-a jp">${a}</span></span></div>`;
+  }).join("");
+  app.innerHTML = `<div class="result">
+    <div class="row2"><img class="face" src="${face}" alt="">${pass?`<div class="grade">合<br>格</div>`:""}</div>
+    <div class="score">${score}<small>점</small></div>
+    <p>${right} / ${n} 정답 · ${Math.floor(sec/60)}분 ${sec%60}초 · 최고 ${best}점</p>
+    <p><b>${msg}</b></p>
+    <div class="parts">${byPart}</div>
+    <div class="center">${wrongs.length?`<button class="primary" id="retry">틀린 ${wrongs.length}문제 다시 풀기</button>`:""}<button id="again">새 시험 보기</button><button id="home">처음으로</button></div>
+    <div class="review">${wrongs.length?`<h3>틀린 문제</h3>${rv}`:`<div class="allok">전부 맞았어요! 💮</div>`}</div>
+  </div>`;
+  if($("#retry")) $("#retry").onclick=()=>start(wrongs.map(x=>x.q));
+  $("#again").onclick=()=>start(build());
+  $("#home").onclick=()=>{ T=null; home(); };
+  window.scrollTo(0,0);
+}
+
+document.addEventListener("keydown",e=>{
+  if(!T||T.i>=T.qs.length||e.ctrlKey||e.metaKey||e.altKey) return;
+  const q=T.qs[T.i]; if(!q||q.part==="write") return;
+  if(/^[1-4]$/.test(e.key)&&q.opts[+e.key-1]!=null){ e.preventDefault(); answer(q.opts[+e.key-1]); }
+});
+home();
+</script>
+</body>
+</html>
