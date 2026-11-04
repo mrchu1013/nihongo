@@ -67,6 +67,11 @@
   .rv .k{font-size:26px;min-width:2.2em;text-align:center}
   .rv .mine-a{color:var(--bad)} .rv .ok-a{color:var(--ok);font-weight:bold}
   .allok{background:var(--ok-soft);border-radius:12px;padding:10px;color:var(--ok)}
+  .scene{width:100%;max-height:230px;object-fit:cover;border-radius:16px;border:1px solid var(--line);margin-bottom:16px;display:block}
+  .cheer{display:flex;gap:10px;align-items:center;margin:0 0 12px}
+  .cheer img{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:none;border:3px solid #fff;box-shadow:0 2px 8px rgba(255,143,171,.3)}
+  .cheer .b{background:var(--pink-soft);border-radius:14px 14px 14px 4px;padding:6px 12px;font-size:14px}
+  .cheer .b .jp{display:block;font-size:15px}
   .foot{text-align:center;color:var(--soft);font-size:12px;margin-top:24px}
   .foot a{color:var(--sea)}
   @media (max-width:520px){ .big{font-size:70px} .sheet{padding:22px 14px} .hello img{width:76px;height:76px} }
@@ -96,8 +101,11 @@ const WORDS = [
   ["ふね","후네","배"],["みなと","미나토","항구"],["うみ","우미","바다"],["ねこ","네코","고양이"],["いぬ","이누","개"],
   ["うさぎ","우사기","토끼"],["おいしい","오이시이","맛있다"],["ありがとう","아리가토-","고마워"],["すみません","스미마센","실례합니다"],
   ["おはよう","오하요-","좋은 아침"],["みず","미즈","물"],["すし","스시","초밥"],["ごはん","고항","밥"],["やま","야마","산"],
-  ["そら","소라","하늘"],["はな","하나","꽃"],["くも","쿠모","구름"],["ともだち","토모다치","친구"],["さくら","사쿠라","벚꽃"],["ひこうき","히코-키","비행기"]
+  ["そら","소라","하늘"],["はな","하나","꽃"],["くも","쿠모","구름"],["ともだち","토모다치","친구"],["さくら","사쿠라","벚꽃"],["ひこうき","히코-키","비행기"],
+  ["ちいかわ","치이카와","치이카와 (작고 귀여운 녀석)"],["くさむしり","쿠사무시리","풀 뽑기 (치이카와의 일)"],["おにぎり","오니기리","주먹밥"]
 ];
+const FRIENDS = [["../chiikawa/chii.jpg","치이카와"],["../chiikawa/hachi.jpg","하치와레"],["../chiikawa/usagi.jpg","우사기"]];
+const CHEERS = [["がんばれ〜！","힘내~!"],["だいじょうぶ！","괜찮아!"],["ゆっくりでいいよ","천천히 해도 돼"],["できる できる！","할 수 있어!"],["ヤハ〜！","야하~!"],["ウラ！","우라!"],["あと ちょっと！","조금만 더!"],["いいかんじ！","좋은데!"]];
 const PARTS = {read:"글자 읽기", pick:"듣고 고르기", look:"헷갈리는 글자", word:"단어 읽기", write:"직접 쓰기"};
 const PLAN = {read:10, pick:8, look:4, word:5, write:3};   // 총 30문제
 
@@ -175,13 +183,14 @@ function build(){
 function home(){
   const best = store("hira-test-best"), hist = store("hira-test-hist")||[];
   app.innerHTML = `
+    <img class="scene" src="../hiragana/photo2.jpg" alt="하치와레와 치이카와가 음료를 마시는 장면">
     <div class="hello"><img src="../hiragana/chii-face.png" alt="치이카와"><div>
-      <h1>히라가나 시험</h1><p class="sub">다 배웠으면 실력 확인! 30문제, 끝나고 한 번에 채점해요.</p></div></div>
+      <h1>히라가나 시험</h1><p class="sub">다 배웠으면 실력 확인! 30문제, 끝나고 한 번에 채점해요. 치이카와 친구들이 옆에서 응원해 줄 거예요.</p></div></div>
     <ul class="rules">
       <li><b>글자 읽기</b> 10문제 — 글자를 보고 소리 고르기</li>
       <li><b>듣고 고르기</b> 8문제 — 소리를 보고(듣고) 글자 고르기</li>
       <li><b>헷갈리는 글자</b> 4문제 — さ·ち, ぬ·め, る·ろ…</li>
-      <li><b>단어 읽기</b> 5문제 — 바르게 쓴 단어 고르기</li>
+      <li><b>단어 읽기</b> 5문제 — 바르게 쓴 단어 고르기 (ちいかわ도 나와요!)</li>
       <li><b>직접 쓰기</b> 3문제 — 손가락·마우스로 써서 획순까지 채점</li>
     </ul>
     <div class="opts-row">
@@ -195,12 +204,17 @@ function home(){
   $("#go").onclick=()=>start(build());
 }
 
-function start(qs){ T={qs, i:0, ans:[], t0:Date.now()}; show(); }
+function start(qs){ T={qs, i:0, ans:[], t0:Date.now(), seed:Math.floor(Math.random()*8)}; show(); window.scrollTo(0,0); }
 
 function head(){
   const n=T.qs.length, q=T.qs[T.i];
   return `<div class="top"><span>${T.i+1} / ${n}</span><button id="quit" style="font-size:12px;padding:3px 10px">그만두기</button></div>
-    <div class="bar"><i style="width:${T.i/n*100}%"></i></div><span class="part">${PARTS[q.part]}</span>`;
+    <div class="bar"><i style="width:${T.i/n*100}%"></i></div>${cheer()}<span class="part">${PARTS[q.part]}</span>`;
+}
+function cheer(){
+  const f=FRIENDS[T.i%FRIENDS.length], c=CHEERS[(T.i*5+T.seed)%CHEERS.length];
+  const late = T.i===T.qs.length-1 ? ["さいごの もんだい！","마지막 문제!"] : c;
+  return `<div class="cheer"><img src="${f[0]}" alt="${f[1]}"><div class="b"><span class="jp">${late[0]}</span>${f[1]}: ${late[1]}</div></div>`;
 }
 function show(){
   const q=T.qs[T.i];
@@ -289,7 +303,7 @@ function result(){
     return `<div class="rv"><span class="k jp">${q.c}</span><span>「${q.r}」 · 내 답 <span class="mine-a jp">${a}</span></span></div>`;
   }).join("");
   app.innerHTML = `<div class="result">
-    <div class="row2"><img class="face" src="${face}" alt="">${pass?`<div class="grade">合<br>格</div>`:""}</div>
+    ${pass?`<img class="scene" src="../hiragana/photo1.jpg" alt="치이카와, 하치와레, 우사기">`:""}<div class="row2"><img class="face" src="${face}" alt="">${pass?`<div class="grade">合<br>格</div>`:""}</div>
     <div class="score">${score}<small>점</small></div>
     <p>${right} / ${n} 정답 · ${Math.floor(sec/60)}분 ${sec%60}초 · 최고 ${best}점</p>
     <p><b>${msg}</b></p>
