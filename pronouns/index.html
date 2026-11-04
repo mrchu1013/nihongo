@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>인칭 대명사 문제집</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Zen+Maru+Gothic:wght@500;700&display=swap">
+<style>
+  /* 줄 공책 문제집: 민트 표지 띠 + 형광펜 노랑, 문항 번호는 실제 순서 */
+  :root{
+    --desk:#eef5f2; --paper:#fffef9; --ink:#2f3b37; --soft:#76857f; --rule:#dbe9e3; --margin:#f2b8b8;
+    --mint:#2f9e7f; --mint-soft:#dff2eb; --hl:#fff1a8; --ok:#2c8a5a; --ok-soft:#e1f4e8; --bad:#d4553f; --bad-soft:#fbe7e2;
+    --kr:"Gowun Dodum","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+    --jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--desk);color:var(--ink);font-family:var(--kr);line-height:1.7;font-size:15.5px}
+  .wrap{max-width:780px;margin:0 auto;padding:22px 16px 60px}
+  .book{background:var(--paper);border-radius:6px 18px 18px 6px;box-shadow:0 10px 30px rgba(40,80,70,.12);overflow:hidden;
+    border-left:10px solid var(--mint)}
+  .cover{display:flex;gap:16px;align-items:center;padding:22px 24px 18px;border-bottom:2px solid var(--rule)}
+  .cover img{width:78px;height:78px;border-radius:50%;object-fit:cover;flex:none;border:3px solid #fff;box-shadow:0 2px 10px rgba(40,80,70,.18)}
+  .cover h1{margin:0;font-size:25px;font-weight:400}
+  .cover h1 b{font-family:var(--jp);color:var(--mint)}
+  .cover p{margin:2px 0 0;color:var(--soft);font-size:14px}
+  .page{padding:6px 24px 26px;background:
+    linear-gradient(90deg,transparent 30px,var(--margin) 30px,var(--margin) 31px,transparent 31px),
+    repeating-linear-gradient(var(--paper) 0 33px,var(--rule) 33px 34px)}
+  section{padding-left:22px}
+  h2{font-size:19px;font-weight:400;margin:26px 0 4px;display:flex;align-items:baseline;gap:10px}
+  h2 .no{font-family:var(--jp);font-weight:700;color:#fff;background:var(--mint);border-radius:6px;padding:0 9px;font-size:15px}
+  .lead{margin:0 0 12px;color:var(--soft);font-size:14px}
+  .jp{font-family:var(--jp)}
+  ruby rt{font-size:.52em;color:var(--mint);font-family:var(--jp)}
+  .no-furi ruby rt{visibility:hidden}
+  .tools{display:flex;justify-content:flex-end;padding:10px 24px 0;background:var(--paper)}
+  button{font:inherit;border:1px solid var(--rule);background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+  button:hover{border-color:var(--mint)}
+  button:focus-visible,textarea:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
+  button.main{background:var(--mint);color:#fff;border-color:var(--mint)}
+
+  /* 대명사 표 */
+  .group{margin:14px 0 6px;font-size:14px;color:var(--mint);font-weight:bold;letter-spacing:.04em}
+  .pr{display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 16px;background:#fff;border:1px solid var(--rule);border-radius:12px;padding:10px 14px;margin-bottom:8px}
+  .pr .w{font-family:var(--jp);font-weight:700;font-size:26px;line-height:1.9}
+  .pr .w mark{background:linear-gradient(transparent 55%,var(--hl) 55%);color:inherit}
+  .pr .m{font-size:15px}
+  .pr .m small{display:block;color:var(--soft);font-size:13px}
+  .pr .ex{grid-column:1/-1;border-top:1px dashed var(--rule);padding-top:6px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+  .pr .ex .jp{font-size:18px;line-height:2.1}
+  .pr .ex .ko{color:var(--soft);font-size:13.5px}
+  .say{border:0;background:var(--mint-soft);color:var(--mint);padding:2px 10px;font-size:12.5px;margin-left:auto}
+  .note{background:var(--hl);border-radius:10px;padding:10px 14px;font-size:14px;margin:12px 0}
+  .note b{color:var(--ink)}
+
+  /* 문장 만들기 */
+  .q{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+  .q .ko{font-size:16px;margin:0 0 8px}
+  .q .ko .n{font-family:var(--jp);font-weight:700;color:var(--mint);margin-right:6px}
+  .line{min-height:62px;border-bottom:2px solid var(--ink);display:flex;flex-wrap:wrap;gap:6px;align-items:flex-end;padding:4px 0 6px}
+  .line:empty::before{content:"아래 카드를 순서대로 눌러요";color:var(--soft);font-size:13px}
+  .bank{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:44px}
+  .tile{font-family:var(--jp);font-size:18px;border-radius:10px;padding:2px 12px 4px;background:var(--mint-soft);border-color:#bfe3d6;line-height:2}
+  .tile ruby rt{color:var(--soft)}
+  .line .tile{background:#fff;border-color:var(--mint)}
+  .qfoot{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .res{font-size:14px;margin-right:auto}
+  .res.ok{color:var(--ok)} .res.bad{color:var(--bad)}
+  .q.okq{border-color:var(--ok);background:var(--ok-soft)}
+
+  /* 직접 쓰기 */
+  .wq{margin-bottom:16px}
+  .wq .ko{font-size:16px;margin:0 0 4px}
+  .wq .ko .n{font-family:var(--jp);font-weight:700;color:var(--mint);margin-right:6px}
+  textarea{width:100%;min-height:72px;resize:vertical;font-family:var(--jp);font-size:19px;line-height:34px;border:1px solid var(--rule);border-radius:10px;padding:2px 12px;color:var(--ink);
+    background:repeating-linear-gradient(#fff 0 33px,var(--rule) 33px 34px)}
+  .saved{font-size:12.5px;color:var(--soft);text-align:right;margin-top:-6px}
+  .foot{text-align:center;color:var(--soft);font-size:12px;margin-top:20px}
+  .foot a{color:var(--mint)}
+
+  @media (max-width:560px){
+    .pr{grid-template-columns:1fr}
+    .page{padding:6px 12px 22px;background:repeating-linear-gradient(var(--paper) 0 33px,var(--rule) 33px 34px)}
+    section{padding-left:0}
+    .cover{padding:18px 14px}
+    .tools{padding:10px 12px 0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="book">
+  <div class="cover">
+    <img src="../chiikawa/hachi.jpg" alt="하치와레">
+    <div><h1>인칭 대명사 <b>わたし・あなた・かれ</b></h1>
+    <p>나·너·그를 일본어로 · 한자 위에 읽는 법이 있어요 · 끝에 문제 9개</p></div>
+  </div>
+  <div class="tools"><button id="furi">후리가나 가리기</button></div>
+  <div class="page">
+
+  <section>
+    <h2><span class="no">1</span>인칭 대명사 익히기</h2>
+    <p class="lead">누르면 소리가 나와요. 노란 형광펜이 대명사예요.</p>
+    <div id="list"></div>
+    <div class="note"><b>알아 두면 좋아요</b><br>
+      · 일본어는 주어를 자주 빼요. 「{私|わたし}は」 없이 「{学生|がくせい}です」만 말해도 돼요.<br>
+      · 「あなた」는 실제로 잘 안 써요. 상대 이름에 「さん」을 붙여 부르는 게 자연스러워요(예: {田中|たなか}さん).<br>
+      · 「{彼女|かのじょ}」는 '그녀' 말고 '여자친구'라는 뜻도 있어요. 「{彼|かれ}」도 '남자친구'가 될 수 있어요.</div>
+  </section>
+
+  <section>
+    <h2><span class="no">2</span>문장 만들기</h2>
+    <p class="lead">한국어 뜻에 맞게 카드를 순서대로 눌러 문장을 만들어요. 잘못 놓은 카드는 다시 누르면 돌아가요.</p>
+    <div id="build"></div>
+  </section>
+
+  <section>
+    <h2><span class="no">3</span>일본어로 써 보기</h2>
+    <p class="lead">한국어 문장을 보고 일본어로 직접 써요. 힌트도 정답도 없어요 — 공부한 걸 떠올려 보세요. 쓴 내용은 이 기기에 저장돼요.</p>
+    <div id="write"></div>
+    <div style="display:flex;justify-content:flex-end"><button id="wipe">쓴 답 모두 지우기</button></div>
+  </section>
+
+  </div>
+</div>
+<div class="foot"><a href="../">처음으로</a> · <a href="../hiragana/">히라가나</a> · <a href="../katakana/">가타카나</a><br>캐릭터 그림 © nagano · 개인 학습용 팬 페이지</div>
+</div>
+
+<script>
+// 표기: {漢字|かな} = 한자 위 후리가나, [ ] = 형광펜(대명사)
+const PRONOUNS = [
+ ["나 (1인칭)", [
+  ["[{私|わたし}]","저, 나","남녀 모두 쓰는 기본형","[{私|わたし}]は{学生|がくせい}です。","저는 학생입니다."],
+  ["[{僕|ぼく}]","나","남자가 쓰는 부드러운 말","[{僕|ぼく}]はラーメンが{好|す}きだ。","나는 라멘을 좋아해."],
+  ["[{俺|おれ}]","나","남자가 친구끼리 쓰는 거친 말","[{俺|おれ}]が{行|い}くよ！","내가 갈게!"],
+  ["[あたし]","나","여자가 쓰는 친근한 말","[あたし]も{行|い}きたい！","나도 가고 싶어!"],
+  ["[{私|わたくし}]","저","아주 정중한 말 (회사·발표)","[{私|わたくし}]は{田中|たなか}と{申|もう}します。","저는 다나카라고 합니다."]]],
+ ["너 (2인칭)", [
+  ["[あなた]","당신","공손하지만 실제로는 잘 안 씀","[あなた]の{名前|なまえ}は{何|なん}ですか。","당신의 이름은 무엇입니까?"],
+  ["[{君|きみ}]","너","친한 사이·아랫사람에게","[{君|きみ}]は{本当|ほんとう}に{優|やさ}しいね。","너는 정말 착하구나."],
+  ["[{お前|おまえ}]","너","거친 말, 아주 친한 남자끼리","[{お前|おまえ}]、{何|なに}してるの？","너 뭐 하는 거야?"]]],
+ ["그·그녀 (3인칭)", [
+  ["[{彼|かれ}]","그, 그 남자","남자친구라는 뜻도 있음","[{彼|かれ}]は{医者|いしゃ}です。","그는 의사입니다."],
+  ["[{彼女|かのじょ}]","그녀","여자친구라는 뜻도 있음","[{彼女|かのじょ}]は{日本人|にほんじん}です。","그녀는 일본 사람입니다."],
+  ["[あの{人|ひと}]","저 사람","가장 흔하게 쓰는 말","[あの{人|ひと}]は{誰|だれ}ですか。","저 사람은 누구예요?"],
+  ["[あの{方|かた}]","저 분","あの人의 높임말","[あの{方|かた}]は{先生|せんせい}です。","저 분은 선생님입니다."]]],
+ ["여럿 (복수)", [
+  ["[{私|わたし}たち]","우리","たち = ~들","[{私|わたし}たち]は{友達|ともだち}です。","우리는 친구입니다."],
+  ["[{彼|かれ}ら]","그들","ら = ~들","[{彼|かれ}ら]は{韓国|かんこく}から{来|き}ました。","그들은 한국에서 왔습니다."],
+  ["[{皆|みな}さん]","여러분","여러 사람을 부를 때","[{皆|みな}さん]、こんにちは。","여러분, 안녕하세요."]]],
+ ["누구 (물을 때)", [
+  ["[{誰|だれ}]","누구","공손하게는 どなた","これは[{誰|だれ}]の{傘|かさ}ですか。","이건 누구의 우산이에요?"]]]
+];
+
+// 문장 만들기: [한국어, 정답 카드 순서]
+const BUILD = [
+  ["저는 한국 사람입니다.", ["{私|わたし}","は","{韓国人|かんこくじん}","です。"]],
+  ["그녀는 제 친구입니다.", ["{彼女|かのじょ}","は","{私|わたし}","の","{友達|ともだち}","です。"]],
+  ["그들은 내일 일본에 갑니다.", ["{彼|かれ}ら","は","{明日|あした}","{日本|にほん}","に","{行|い}きます。"]],
+  ["당신은 누구입니까?", ["あなた","は","{誰|だれ}","です","か。"]]
+];
+
+// 직접 써 보기 (정답 없음)
+const WRITE = [
+  "저는 회사원입니다.",
+  "그는 제 형입니다.",
+  "우리는 같이 낚시를 갑니다.",
+  "너는 무엇을 좋아해?",
+  "저 분은 누구세요?"
+];
+
+// ───────── 유틸 ─────────
+const $ = s => document.querySelector(s);
+const RUBY = /\{([^|{}]+)\|([^{}]+)\}/g;
+const rb = s => s.replace(RUBY,'<ruby>$1<rt>$2</rt></ruby>').replace(/\[([^\]]+)\]/g,'<mark>$1</mark>');
+const plain = s => s.replace(RUBY,'$2').replace(/[\[\]]/g,'');   // 소리용: 읽는 법으로
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+function store(k,v){ try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; } }
+function speak(t){
+  try{ const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=.85;
+    const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("ja")); if(v) u.voice=v;
+    speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){}
+}
+
+// 노트 안 표기도 루비로
+document.querySelectorAll(".note").forEach(n=>n.innerHTML=rb(n.innerHTML));
+
+// ───────── 1. 대명사 목록 ─────────
+$("#list").innerHTML = PRONOUNS.map(([g,items])=>`<div class="group">${g}</div>`+items.map(([w,m,d,ex,ko])=>`
+  <div class="pr">
+    <div class="w">${rb(w)}</div>
+    <div class="m">${m}<small>${d}</small></div>
+    <div class="ex"><span class="jp">${rb(ex)}</span><span class="ko">${ko}</span><button class="say" data-t="${plain(ex)}">🔊 듣기</button></div>
+  </div>`).join("")).join("");
+document.addEventListener("click",e=>{ const b=e.target.closest(".say"); if(b) speak(b.dataset.t); });
+
+// ───────── 2. 문장 만들기 ─────────
+$("#build").innerHTML = BUILD.map(([ko],i)=>`
+  <div class="q" id="q${i}">
+    <p class="ko"><span class="n">(${i+1})</span>${ko}</p>
+    <div class="line"></div>
+    <div class="bank"></div>
+    <div class="qfoot"><span class="res"></span><button data-act="reset">다시 하기</button><button class="main" data-act="check">채점하기</button></div>
+  </div>`).join("");
+BUILD.forEach(([,ans],i)=>{
+  const q=$("#q"+i), line=q.querySelector(".line"), bank=q.querySelector(".bank"), res=q.querySelector(".res");
+  const deal=()=>{
+    line.innerHTML=""; res.textContent=""; res.className="res"; q.classList.remove("okq");
+    let order=shuffle(ans.map((_,k)=>k)); while(ans.length>1 && order.every((v,k)=>v===k)) order=shuffle(order);
+    bank.innerHTML=order.map(k=>`<button class="tile" data-k="${k}">${rb(ans[k])}</button>`).join("");
+  };
+  deal();
+  q.addEventListener("click",e=>{
+    const t=e.target.closest(".tile");
+    if(t){ (t.parentElement===bank?line:bank).appendChild(t); res.textContent=""; q.classList.remove("okq"); return; }
+    const a=e.target.closest("[data-act]"); if(!a) return;
+    if(a.dataset.act==="reset") return deal();
+    const got=[...line.children].map(x=>+x.dataset.k);
+    if(bank.children.length){ res.textContent="카드를 모두 놓아 주세요"; res.className="res bad"; return; }
+    // 같은 글자 카드가 순서만 바뀐 경우도 정답으로
+    const ok = got.map(k=>ans[k]).join("")===ans.join("");
+    res.textContent = ok ? "⭕ 맞았어요!" : "❌ 순서를 다시 생각해 보세요";
+    res.className = "res "+(ok?"ok":"bad"); q.classList.toggle("okq",ok);
+    if(ok) speak(plain(ans.join("")));
+  });
+});
+
+// ───────── 3. 직접 써 보기 ─────────
+const saved = store("pron-write") || {};
+$("#write").innerHTML = WRITE.map((ko,i)=>`
+  <div class="wq">
+    <p class="ko"><span class="n">(${i+1})</span>${ko}</p>
+    <textarea id="w${i}" lang="ja" placeholder="여기에 일본어로 써 보세요" aria-label="${ko} 일본어로 쓰기"></textarea>
+  </div>`).join("");
+WRITE.forEach((_,i)=>{
+  const t=$("#w"+i); t.value=saved[i]||"";
+  t.addEventListener("input",()=>{ saved[i]=t.value; store("pron-write",saved); });
+});
+$("#wipe").onclick=()=>{ WRITE.forEach((_,i)=>{ $("#w"+i).value=""; delete saved[i]; }); store("pron-write",saved); };
+
+// ───────── 후리가나 ─────────
+let furi = store("pron-furi"); if(furi===null) furi=true;
+const applyFuri=()=>{ document.body.classList.toggle("no-furi",!furi); $("#furi").textContent = furi?"후리가나 가리기":"후리가나 보이기"; };
+$("#furi").onclick=()=>{ furi=!furi; store("pron-furi",furi); applyFuri(); };
+applyFuri();
+</script>
+</body>
+</html>
