@@ -93,6 +93,20 @@
   .wq .ko .n{font-family:var(--jp);font-weight:700;color:var(--mint);margin-right:6px}
   textarea{width:100%;min-height:72px;resize:vertical;font-family:var(--jp);font-size:19px;line-height:34px;border:1px solid var(--rule);border-radius:10px;padding:2px 12px;color:var(--ink);
     background:repeating-linear-gradient(#fff 0 33px,var(--rule) 33px 34px)}
+  /* 손으로 쓰기 */
+  .mode{display:flex;gap:6px;margin:8px 0 6px}
+  .mode button{font-size:13px;padding:4px 12px}
+  .mode button.on{background:var(--mint);color:#fff;border-color:var(--mint)}
+  .hand{display:block;width:100%;aspect-ratio:4/1;touch-action:none;cursor:crosshair;border:1px solid var(--rule);border-radius:10px;
+    background:
+      linear-gradient(var(--rule),var(--rule)) 0 50%/100% 1px no-repeat,
+      linear-gradient(90deg,var(--rule) 1px,transparent 1px) 0 0/calc(100%/10) 100%,
+      #fff}
+  .padbtn{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}
+  .padbtn button{font-size:13px;padding:4px 12px}
+  @media (max-width:560px){ .hand{aspect-ratio:5/2;background:
+      linear-gradient(var(--rule),var(--rule)) 0 50%/100% 1px no-repeat,
+      linear-gradient(90deg,var(--rule) 1px,transparent 1px) 0 0/calc(100%/6) 100%,#fff} }
   .saved{font-size:12.5px;color:var(--soft);text-align:right;margin-top:-6px}
   .foot{text-align:center;color:var(--soft);font-size:12px;margin-top:20px}
   .foot a{color:var(--mint)}
@@ -135,7 +149,7 @@
 
   <section>
     <h2><span class="no">3</span>일본어로 써 보기</h2>
-    <p class="lead">단어 카드를 참고해서 일본어로 직접 써요. 히라가나로 써도, 한자로 써도 좋아요. 정답은 나오지 않아요. 쓴 내용은 이 기기에 저장돼요.</p>
+    <p class="lead">단어 카드를 참고해서 일본어로 직접 써요. 마우스나 손가락으로 칸에 쓰거나, 키보드로 입력해도 돼요. 히라가나로 써도, 한자로 써도 좋아요. 정답은 나오지 않아요. 쓴 내용은 이 기기에 저장돼요.</p>
     <div id="write"></div>
     <div style="display:flex;justify-content:flex-end"><button id="wipe">쓴 답 모두 지우기</button></div>
   </section>
@@ -275,13 +289,58 @@ $("#write").innerHTML = WRITE.map((w,i)=>`
   <div class="wq q">
     <p class="ko"><span class="n">(${i+1})</span>${w.ko}</p>
     ${vocab(w.cards.concat(w.wrong), false)}
+    <div class="mode"><button data-m="pen">✍️ 손으로 쓰기</button><button data-m="key">⌨️ 키보드로 쓰기</button></div>
+    <div class="penbox"><canvas class="hand" id="h${i}" aria-label="${w.ko} 손으로 쓰는 칸"></canvas>
+      <div class="padbtn"><button data-pad="undo">↶ 한 획 지우기</button><button data-pad="clear">전부 지우기</button></div></div>
     <textarea id="w${i}" lang="ja" placeholder="여기에 일본어로 써 보세요 (히라가나·한자 모두 OK)" aria-label="${w.ko} 일본어로 쓰기"></textarea>
   </div>`).join("");
 WRITE.forEach((_,i)=>{
   const t=$("#w"+i); t.value=saved[i]||"";
   t.addEventListener("input",()=>{ saved[i]=t.value; store("pron-write",saved); });
 });
-$("#wipe").onclick=()=>{ WRITE.forEach((_,i)=>{ $("#w"+i).value=""; delete saved[i]; }); store("pron-write",saved); };
+// ── 손으로 쓰기 (마우스·손가락) ──
+// 획은 칸 크기 대비 비율(0~1)로 저장 → 화면 크기가 바뀌어도 그대로 다시 그림
+const hand = store("pron-hand") || {};
+let mode = store("pron-mode") || "pen";
+const pads = WRITE.map((_,i)=>{
+  const cv=$("#h"+i), ctx=cv.getContext("2d"); let live=null;
+  const strokes = () => hand[i] || (hand[i]=[]);
+  function fit(){ const r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1;
+    if(!r.width) return; cv.width=Math.round(r.width*d); cv.height=Math.round(r.height*d); draw(); }
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.lineCap="round"; ctx.lineJoin="round"; ctx.strokeStyle="#2f3b37";
+    ctx.lineWidth=Math.max(2.5, cv.width*0.006);
+    strokes().concat(live?[live]:[]).forEach(st=>{ if(!st.length) return; ctx.beginPath();
+      st.forEach(([x,y],k)=>k?ctx.lineTo(x*cv.width,y*cv.height):ctx.moveTo(x*cv.width,y*cv.height));
+      if(st.length===1) ctx.lineTo(st[0][0]*cv.width+.1,st[0][1]*cv.height);
+      ctx.stroke(); });
+  }
+  const pt=e=>{ const r=cv.getBoundingClientRect(); return [+((e.clientX-r.left)/r.width).toFixed(4), +((e.clientY-r.top)/r.height).toFixed(4)]; };
+  cv.addEventListener("pointerdown",e=>{ cv.setPointerCapture(e.pointerId); live=[pt(e)]; draw(); });
+  cv.addEventListener("pointermove",e=>{ if(live){ live.push(pt(e)); draw(); } });
+  const end=()=>{ if(!live) return; strokes().push(live); live=null; store("pron-hand",hand); draw(); };
+  cv.addEventListener("pointerup",end); cv.addEventListener("pointercancel",end);
+  cv.closest(".wq").querySelector(".padbtn").addEventListener("click",e=>{
+    const b=e.target.closest("[data-pad]"); if(!b) return;
+    if(b.dataset.pad==="undo") strokes().pop(); else hand[i]=[];
+    store("pron-hand",hand); draw(); });
+  return {fit, clear(){ hand[i]=[]; draw(); }};
+});
+function setMode(m){
+  mode=m; store("pron-mode",m);
+  document.querySelectorAll("#write .wq").forEach(q=>{
+    q.querySelector(".penbox").hidden = m!=="pen";
+    q.querySelector("textarea").hidden = m!=="key";
+    q.querySelectorAll(".mode button").forEach(b=>b.classList.toggle("on", b.dataset.m===m));
+  });
+  if(m==="pen") pads.forEach(p=>p.fit());
+}
+document.querySelector("#write").addEventListener("click",e=>{ const b=e.target.closest(".mode [data-m]"); if(b) setMode(b.dataset.m); });
+window.addEventListener("resize",()=>{ if(mode==="pen") pads.forEach(p=>p.fit()); });
+setMode(mode);
+
+$("#wipe").onclick=()=>{ WRITE.forEach((_,i)=>{ $("#w"+i).value=""; delete saved[i]; }); store("pron-write",saved); pads.forEach(p=>p.clear()); store("pron-hand",hand); };
 
 // ───────── 후리가나 ─────────
 let furi = store("pron-furi"); if(furi===null) furi=true;
