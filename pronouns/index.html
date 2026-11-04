@@ -70,6 +70,23 @@
   .res.ok{color:var(--ok)} .res.bad{color:var(--bad)}
   .q.okq{border-color:var(--ok);background:var(--ok-soft)}
 
+  /* 단어 카드 칸 */
+  .vocab{background:#fff;border:1px dashed #bcd9cd;border-radius:12px;padding:8px 10px;margin:8px 0}
+  .vrow{display:flex;gap:8px;align-items:flex-start;padding:4px 0}
+  .vrow + .vrow{border-top:1px dotted var(--rule)}
+  .vlab{flex:none;width:64px;font-size:12px;color:var(--soft);padding-top:12px;line-height:1.3}
+  .cards{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+  .wc{display:flex;flex-direction:column;align-items:center;min-width:60px;padding:2px 10px 6px;border-radius:12px;border:1px solid transparent;line-height:1.2}
+  .wc .big{font-family:var(--jp);font-weight:700;font-size:26px;line-height:2}
+  .wc .big rt{font-size:.45em;font-weight:500}
+  .wc .mean{font-size:12px;color:var(--soft);white-space:nowrap}
+  .wc.p{background:var(--hl);border-color:#efe08a}
+  .wc.w{background:var(--mint-soft);border-color:#bfe3d6}
+  .wc.j{background:#f3ecfb;border-color:#ddd0ee}
+  button.wc:hover{border-color:var(--mint)}
+  button.wc.used{opacity:.35}
+  div.wc{cursor:default}
+  .line .tile.p{background:var(--hl)} .line .tile.j{background:#f3ecfb}
   /* 직접 쓰기 */
   .wq{margin-bottom:16px}
   .wq .ko{font-size:16px;margin:0 0 4px}
@@ -112,13 +129,13 @@
 
   <section>
     <h2><span class="no">2</span>문장 만들기</h2>
-    <p class="lead">한국어 뜻에 맞게 카드를 순서대로 눌러 문장을 만들어요. 잘못 놓은 카드는 다시 누르면 돌아가요.</p>
+    <p class="lead">아래 단어 카드를 순서대로 눌러 문장을 만들어요. <b>인칭 대명사</b> 카드에는 정답이 아닌 것도 섞여 있고, <b>단어</b>·<b>조사</b>는 문장에 쓰는 것만 있어요. 놓은 카드를 다시 누르면 빠져요.</p>
     <div id="build"></div>
   </section>
 
   <section>
     <h2><span class="no">3</span>일본어로 써 보기</h2>
-    <p class="lead">한국어 문장을 보고 일본어로 직접 써요. 힌트도 정답도 없어요 — 공부한 걸 떠올려 보세요. 쓴 내용은 이 기기에 저장돼요.</p>
+    <p class="lead">단어 카드를 참고해서 일본어로 직접 써요. 히라가나로 써도, 한자로 써도 좋아요. 정답은 나오지 않아요. 쓴 내용은 이 기기에 저장돼요.</p>
     <div id="write"></div>
     <div style="display:flex;justify-content:flex-end"><button id="wipe">쓴 답 모두 지우기</button></div>
   </section>
@@ -154,21 +171,31 @@ const PRONOUNS = [
   ["[{誰|だれ}]","누구","공손하게는 どなた","これは[{誰|だれ}]の{傘|かさ}ですか。","이건 누구의 우산이에요?"]]]
 ];
 
-// 문장 만들기: [한국어, 정답 카드 순서]
+// 단어 카드: [글자, 읽기(한자일 때), 한국어 뜻, 종류 p=인칭 대명사 w=단어 j=조사]
+const P = {
+  私:["私","わたし","나, 저","p"], 僕:["僕","ぼく","나 (남자)","p"], 俺:["俺","おれ","나 (거친 말)","p"],
+  あなた:["あなた","","당신","p"], 君:["君","きみ","너","p"], 彼:["彼","かれ","그","p"], 彼女:["彼女","かのじょ","그녀","p"],
+  彼ら:["{彼|かれ}ら","かれら","그들","p"], 私たち:["{私|わたし}たち","わたしたち","우리","p"], 皆さん:["{皆|みな}さん","みなさん","여러분","p"],
+  誰:["誰","だれ","누구","p"], どなた:["どなた","","누구 (높임)","p"], あの人:["あの{人|ひと}","あのひと","저 사람","p"], あの方:["あの{方|かた}","あのかた","저 분","p"]
+};
+const J = { は:["は","","~은/는 (주제)","j"], の:["の","","~의","j"], に:["に","","~에, ~하러","j"], が:["が","","~이/가","j"], か:["か","","~까? (질문)","j"] };
+const W = (t,r,ko) => [t,r,ko,"w"];
+
+// 문장 만들기: 한국어, 정답 순서, 대명사 오답, 끝 문장부호
 const BUILD = [
-  ["저는 한국 사람입니다.", ["{私|わたし}","は","{韓国人|かんこくじん}","です。"]],
-  ["그녀는 제 친구입니다.", ["{彼女|かのじょ}","は","{私|わたし}","の","{友達|ともだち}","です。"]],
-  ["그들은 내일 일본에 갑니다.", ["{彼|かれ}ら","は","{明日|あした}","{日本|にほん}","に","{行|い}きます。"]],
-  ["당신은 누구입니까?", ["あなた","は","{誰|だれ}","です","か。"]]
+  {ko:"저는 한국 사람입니다.", ans:[P.私, J.は, W("韓国人","かんこくじん","한국 사람"), W("です","","~입니다")], wrong:[P.僕, P.彼, P.あなた], end:"。"},
+  {ko:"그녀는 제 친구입니다.", ans:[P.彼女, J.は, P.私, J.の, W("友達","ともだち","친구"), W("です","","~입니다")], wrong:[P.彼, P.君], end:"。"},
+  {ko:"그들은 내일 일본에 갑니다.", ans:[P.彼ら, J.は, W("明日","あした","내일"), W("日本","にほん","일본"), J.に, W("{行|い}きます","いきます","갑니다")], wrong:[P.私たち, P.彼女], end:"。"},
+  {ko:"당신은 누구입니까?", ans:[P.あなた, J.は, P.誰, W("です","","~입니다"), J.か], wrong:[P.彼, P.君, P.皆さん], end:"？"}
 ];
 
-// 직접 써 보기 (정답 없음)
+// 직접 써 보기: 카드는 참고용 (정답은 보여주지 않음)
 const WRITE = [
-  "저는 회사원입니다.",
-  "그는 제 형입니다.",
-  "우리는 같이 낚시를 갑니다.",
-  "너는 무엇을 좋아해?",
-  "저 분은 누구세요?"
+  {ko:"저는 회사원입니다.", cards:[P.私, J.は, W("会社員","かいしゃいん","회사원"), W("です","","~입니다")], wrong:[P.俺, P.彼女]},
+  {ko:"그는 제 형입니다.", cards:[P.彼, J.は, P.私, J.の, W("兄","あに","형, 오빠"), W("です","","~입니다")], wrong:[P.彼女, P.君]},
+  {ko:"우리는 같이 낚시를 갑니다.", cards:[P.私たち, J.は, W("{一緒|いっしょ}に","いっしょに","같이"), W("釣り","つり","낚시"), J.に, W("{行|い}きます","いきます","갑니다")], wrong:[P.彼ら, P.あなた]},
+  {ko:"너는 무엇을 좋아해?", cards:[P.君, J.は, W("何","なに","무엇"), J.が, W("{好|す}き","すき","좋아함")], wrong:[P.僕, P.彼]},
+  {ko:"저 분은 누구세요?", cards:[P.あの方, J.は, P.どなた, W("です","","~입니다"), J.か], wrong:[P.あの人, P.誰]}
 ];
 
 // ───────── 유틸 ─────────
@@ -184,6 +211,19 @@ function speak(t){
     speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){}
 }
 
+const word = c => c[0].includes("{") ? rb(c[0]) : c[1] ? `<ruby>${c[0]}<rt>${c[1]}</rt></ruby>` : `<ruby>${c[0]}<rt>&nbsp;</rt></ruby>`;
+const card = (c,tag,attr="") => `<${tag} class="wc ${c[3]}" ${attr}><span class="big">${word(c)}</span><span class="mean">${c[2]}</span></${tag}>`;
+const LABEL = {p:"인칭 대명사", w:"단어", j:"조사"};
+// 종류별로 나눠서, 각 줄 안의 순서는 섞기 (같은 카드는 한 번만)
+function vocab(cards, clickable){
+  const seen=new Set(), list=[];
+  cards.forEach((c,i)=>{ if(!seen.has(c[0]+c[3])){ seen.add(c[0]+c[3]); list.push([c,i]); } });
+  return `<div class="vocab">`+["p","w","j"].map(k=>{
+    const row=shuffle(list.filter(([c])=>c[3]===k)); if(!row.length) return "";
+    return `<div class="vrow"><span class="vlab">${LABEL[k]}</span><div class="cards">${row.map(([c,i])=>card(c, clickable?"button":"div", clickable?`data-i="${i}"`:"")).join("")}</div></div>`;
+  }).join("")+`</div>`;
+}
+
 // 노트 안 표기도 루비로
 document.querySelectorAll(".note").forEach(n=>n.innerHTML=rb(n.innerHTML));
 
@@ -197,42 +237,45 @@ $("#list").innerHTML = PRONOUNS.map(([g,items])=>`<div class="group">${g}</div>`
 document.addEventListener("click",e=>{ const b=e.target.closest(".say"); if(b) speak(b.dataset.t); });
 
 // ───────── 2. 문장 만들기 ─────────
-$("#build").innerHTML = BUILD.map(([ko],i)=>`
-  <div class="q" id="q${i}">
-    <p class="ko"><span class="n">(${i+1})</span>${ko}</p>
+$("#build").innerHTML = BUILD.map((b,i)=>{
+  b.pool = b.ans.concat(b.wrong);            // 카드 번호 = pool 위치
+  return `<div class="q" id="q${i}">
+    <p class="ko"><span class="n">(${i+1})</span>${b.ko}</p>
     <div class="line"></div>
-    <div class="bank"></div>
+    ${vocab(b.pool, true)}
     <div class="qfoot"><span class="res"></span><button data-act="reset">다시 하기</button><button class="main" data-act="check">채점하기</button></div>
-  </div>`).join("");
-BUILD.forEach(([,ans],i)=>{
-  const q=$("#q"+i), line=q.querySelector(".line"), bank=q.querySelector(".bank"), res=q.querySelector(".res");
-  const deal=()=>{
-    line.innerHTML=""; res.textContent=""; res.className="res"; q.classList.remove("okq");
-    let order=shuffle(ans.map((_,k)=>k)); while(ans.length>1 && order.every((v,k)=>v===k)) order=shuffle(order);
-    bank.innerHTML=order.map(k=>`<button class="tile" data-k="${k}">${rb(ans[k])}</button>`).join("");
-  };
-  deal();
+  </div>`;
+}).join("");
+BUILD.forEach((b,i)=>{
+  const q=$("#q"+i), line=q.querySelector(".line"), res=q.querySelector(".res");
+  const clear=()=>{ res.textContent=""; res.className="res"; q.classList.remove("okq"); };
   q.addEventListener("click",e=>{
-    const t=e.target.closest(".tile");
-    if(t){ (t.parentElement===bank?line:bank).appendChild(t); res.textContent=""; q.classList.remove("okq"); return; }
+    const placed=e.target.closest(".line .tile");
+    if(placed){ q.querySelector(`.vocab [data-i="${placed.dataset.i}"]`).classList.remove("used"); placed.remove(); clear(); return; }
+    const c=e.target.closest(".vocab button.wc");
+    if(c){ if(c.classList.contains("used")) return;
+      const w=b.pool[+c.dataset.i];
+      c.classList.add("used");
+      line.insertAdjacentHTML("beforeend", `<button class="tile ${w[3]}" data-i="${c.dataset.i}">${word(w)}</button>`);
+      clear(); return; }
     const a=e.target.closest("[data-act]"); if(!a) return;
-    if(a.dataset.act==="reset") return deal();
-    const got=[...line.children].map(x=>+x.dataset.k);
-    if(bank.children.length){ res.textContent="카드를 모두 놓아 주세요"; res.className="res bad"; return; }
-    // 같은 글자 카드가 순서만 바뀐 경우도 정답으로
-    const ok = got.map(k=>ans[k]).join("")===ans.join("");
-    res.textContent = ok ? "⭕ 맞았어요!" : "❌ 순서를 다시 생각해 보세요";
-    res.className = "res "+(ok?"ok":"bad"); q.classList.toggle("okq",ok);
-    if(ok) speak(plain(ans.join("")));
+    if(a.dataset.act==="reset"){ line.innerHTML=""; q.querySelectorAll(".vocab .used").forEach(x=>x.classList.remove("used")); clear(); return; }
+    const got=[...line.children].map(x=>b.pool[+x.dataset.i][0]).join("");
+    if(!got){ res.textContent="카드를 눌러 문장을 만들어 주세요"; res.className="res bad"; return; }
+    const ok = got===b.ans.map(c=>c[0]).join("");
+    res.textContent = ok ? "⭕ 맞았어요!" : "❌ 다시 생각해 보세요";
+    res.className="res "+(ok?"ok":"bad"); q.classList.toggle("okq",ok);
+    if(ok) speak(b.ans.map(c=>c[1]||c[0]).join(""));
   });
 });
 
 // ───────── 3. 직접 써 보기 ─────────
 const saved = store("pron-write") || {};
-$("#write").innerHTML = WRITE.map((ko,i)=>`
-  <div class="wq">
-    <p class="ko"><span class="n">(${i+1})</span>${ko}</p>
-    <textarea id="w${i}" lang="ja" placeholder="여기에 일본어로 써 보세요" aria-label="${ko} 일본어로 쓰기"></textarea>
+$("#write").innerHTML = WRITE.map((w,i)=>`
+  <div class="wq q">
+    <p class="ko"><span class="n">(${i+1})</span>${w.ko}</p>
+    ${vocab(w.cards.concat(w.wrong), false)}
+    <textarea id="w${i}" lang="ja" placeholder="여기에 일본어로 써 보세요 (히라가나·한자 모두 OK)" aria-label="${w.ko} 일본어로 쓰기"></textarea>
   </div>`).join("");
 WRITE.forEach((_,i)=>{
   const t=$("#w"+i); t.value=saved[i]||"";
