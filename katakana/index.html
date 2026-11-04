@@ -180,7 +180,7 @@
     <div class="write-pad">
       <svg id="wpad" viewBox="0 0 109 109"></svg>
     </div>
-    <div class="write-react"><img id="wface" src="usagi.jpg" alt="우사기"><div class="write-msg" id="wmsg">획 순서대로 한 획씩 떼면서 써요.</div></div>
+    <div class="write-react"><img id="wface" src="k-usagi.jpg" alt="우사기"><div class="write-msg" id="wmsg">획 순서대로 한 획씩 떼면서 써요.</div></div>
     <div class="btns" style="justify-content:center">
       <button id="wundo">↶ 한 획 지우기</button>
       <button id="wclear">전부 지우기</button>
@@ -330,7 +330,7 @@ $("title").textContent = pickedRow!=null ? `오늘은 내가 고른 「${row.nam
 $("say").textContent = SAYS[day % SAYS.length];
 $("count").textContent = firstLoop ? `🐰 가타카나 완주까지 ${ROWS.length-day-1}일 남았어요` : "🎉 가타카나 한 바퀴 완주! 복습 중이에요";
 if(pickedRow!=null) $("quizRange").textContent = `— ア행부터 고른 「${row.name}」까지에서 10문제`;
-const FRIENDS = [["chii.jpg","치이카와"],["hachi.jpg","하치와레"],["usagi.jpg","우사기"]];
+const FRIENDS = [["k-chii.jpg","치이카와"],["k-hachi.jpg","하치와레"],["k-usagi.jpg","우사기"]];
 const tipBy = FRIENDS[rowIdx % FRIENDS.length];
 $("memo").innerHTML = `<img class="tipface" src="${tipBy[0]}" alt="${tipBy[1]}"><span><b>${tipBy[1]}의 꿀팁</b> — ${row.memo}</span>`;
 
@@ -457,7 +457,7 @@ function showQ(){
   if(qi>=qs.length){
     const best = store("kata-best")||0;
     if(right>best) store("kata-best", right);
-    $("q").innerHTML = `<img class="qface" src="${right===qs.length ? "chii.jpg" : right>=7 ? "usagi.jpg" : "hachi.jpg"}" alt="">`;
+    $("q").innerHTML = `<img class="qface" src="${right===qs.length ? "k-wow.jpg" : right>=7 ? "k-usagi.jpg" : "k-hachi.jpg"}" alt="">`;
     $("opts").innerHTML="";
     $("score").innerHTML = `<b>${qs.length}문제 중 ${right}개 정답!</b> ` +
       (right===qs.length ? "완벽해요! すごい!" : `틀린 글자: ${wrongs.map(w=>w[0]+"("+w[1]+")").join(", ")}`) +
@@ -535,7 +535,7 @@ newQuiz();
     $("wq").innerHTML=`「<b>${r}</b>」<br>이 소리를 가타카나로 써보세요`;
     $("wmsg").textContent=`힌트: ${STROKES[cur[0]].length}획이에요. 한 획 쓸 때마다 손을 떼요.`;
     $("whint").textContent="힌트(흐린 글씨)";
-    $("wface").src="usagi.jpg"; $("wface").alt="우사기";
+    $("wface").src="k-usagi.jpg"; $("wface").alt="우사기";
     draw();
   }
   function check(){
@@ -564,7 +564,7 @@ newQuiz();
     streak = pass ? streak+1 : 0;
     const best=Math.max(store("kata-write-best")||0, streak); if(pass) store("kata-write-best", best);
     $("wmsg").textContent=msg;
-    $("wface").src = pass ? "chii.jpg" : "hachi.jpg"; $("wface").alt = pass ? "치이카와" : "하치와레";
+    $("wface").src = pass ? "k-wow.jpg" : "k-hachi.jpg"; $("wface").alt = pass ? "치이카와" : "하치와레";
     $("wscore").textContent=`연속 정답 ${streak}개 · 최고 기록 ${best}개 · 파란 선이 정답 획순이에요`;
     draw();
     STROKES[k].forEach((d,i)=>{ pad.appendChild(el("path",{d,class:"ans"}));
@@ -605,7 +605,7 @@ $("phrases").onclick=e=>{
   (async()=>{
     for(let n=1;n<=2;n++){
       let hit=null;
-      const s=`photo${n}.jpg`; if(await tryLoad(s)) hit=s;
+      const s=["scene-a.jpg","scene-b.jpg"][n-1]; if(await tryLoad(s)) hit=s;
       if(!hit) break;            // 번호가 끊기면 거기까지
       found.push(hit);
     }
@@ -635,7 +635,7 @@ const SVG = `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
 </svg>`;
 (function loadUsagi(){
   // 치이카와_얼굴.png → 우사기.png/jpg… 순서로 찾고, 다 없으면 내장 토끼 그림
-  const box=$("usagi"); const srcs=["chii-face.png"]; let i=0;
+  const box=$("usagi"); const srcs=["k-wow.jpg"]; let i=0;
   function next(){
     if(i>=srcs.length){ box.innerHTML=SVG; return; }
     const img=new Image(); img.alt="치이카와";
