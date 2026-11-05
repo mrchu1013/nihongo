@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지시대명사 문제집</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Zen+Maru+Gothic:wght@500;700&display=swap">
+<style>
+  /* 줄 공책 문제집: 민트 표지 띠 + 형광펜 노랑, 문항 번호는 실제 순서 */
+  :root{
+    --desk:#eef5f2; --paper:#fffef9; --ink:#2f3b37; --soft:#76857f; --rule:#dbe9e3; --margin:#f2b8b8;
+    --mint:#2f9e7f; --mint-soft:#dff2eb; --hl:#fff1a8; --ok:#2c8a5a; --ok-soft:#e1f4e8; --bad:#d4553f; --bad-soft:#fbe7e2;
+    --kr:"Gowun Dodum","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+    --jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--desk);color:var(--ink);font-family:var(--kr);line-height:1.7;font-size:15.5px}
+  .wrap{max-width:1120px;margin:0 auto;padding:22px 16px 60px}
+  .book{background:var(--paper);border-radius:6px 18px 18px 6px;box-shadow:0 10px 30px rgba(40,80,70,.12);overflow:hidden;
+    border-left:10px solid var(--mint)}
+  .cover{display:flex;gap:16px;align-items:center;padding:22px 24px 18px;border-bottom:2px solid var(--rule)}
+  .cover img{width:78px;height:78px;border-radius:50%;object-fit:cover;flex:none;border:3px solid #fff;box-shadow:0 2px 10px rgba(40,80,70,.18)}
+  .cover h1{margin:0;font-size:25px;font-weight:400}
+  .cover h1 b{font-family:var(--jp);color:var(--mint)}
+  .cover p{margin:2px 0 0;color:var(--soft);font-size:14px}
+  .page{padding:6px 24px 26px;background:
+    linear-gradient(90deg,transparent 30px,var(--margin) 30px,var(--margin) 31px,transparent 31px),
+    repeating-linear-gradient(var(--paper) 0 33px,var(--rule) 33px 34px)}
+  section{padding-left:22px}
+  h2{font-size:19px;font-weight:400;margin:26px 0 4px;display:flex;align-items:baseline;gap:10px}
+  h2 .no{font-family:var(--jp);font-weight:700;color:#fff;background:var(--mint);border-radius:6px;padding:0 9px;font-size:15px}
+  .lead{margin:0 0 12px;color:var(--soft);font-size:14px}
+  .jp{font-family:var(--jp)}
+  ruby rt{font-size:.52em;color:var(--mint);font-family:var(--jp)}
+  .no-furi ruby rt{visibility:hidden}
+  .tools{display:flex;justify-content:flex-end;padding:10px 24px 0;background:var(--paper)}
+  button{font:inherit;border:1px solid var(--rule);background:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+  button:hover{border-color:var(--mint)}
+  button:focus-visible,textarea:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
+  button.main{background:var(--mint);color:#fff;border-color:var(--mint)}
+
+  /* 대명사 표 */
+  .group{margin:14px 0 6px;font-size:14px;color:var(--mint);font-weight:bold;letter-spacing:.04em}
+  .pr{display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 16px;background:#fff;border:1px solid var(--rule);border-radius:12px;padding:10px 14px;margin-bottom:8px}
+  .pr .w{font-family:var(--jp);font-weight:700;font-size:26px;line-height:1.9}
+  .pr .w mark{background:linear-gradient(transparent 55%,var(--hl) 55%);color:inherit}
+  .pr .m{font-size:15px}
+  .pr .m small{display:block;color:var(--soft);font-size:13px}
+  .pr .ex{grid-column:1/-1;border-top:1px dashed var(--rule);padding-top:6px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+  .pr .ex .jp{font-size:18px;line-height:2.1}
+  .pr .ex .ko{color:var(--soft);font-size:13.5px}
+  .say{border:0;background:var(--mint-soft);color:var(--mint);padding:2px 10px;font-size:12.5px;margin-left:auto}
+  .note{background:var(--hl);border-radius:10px;padding:10px 14px;font-size:14px;margin:12px 0}
+  .note b{color:var(--ink)}
+
+  /* 문장 만들기 */
+  .q{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+  .q .ko{font-size:16px;margin:0 0 8px}
+  .q .ko .n{font-family:var(--jp);font-weight:700;color:var(--mint);margin-right:6px}
+  .line{min-height:62px;border-bottom:2px solid var(--ink);display:flex;flex-wrap:wrap;gap:6px;align-items:flex-end;padding:4px 0 6px}
+  .line:empty::before{content:"아래 카드를 순서대로 눌러요";color:var(--soft);font-size:13px}
+  .bank{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:44px}
+  .tile{font-family:var(--jp);font-size:18px;border-radius:10px;padding:2px 12px 4px;background:var(--mint-soft);border-color:#bfe3d6;line-height:2}
+  .tile ruby rt{color:var(--soft)}
+  .line .tile{background:#fff;border-color:var(--mint)}
+  .qfoot{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .res{font-size:14px;margin-right:auto}
+  .res.ok{color:var(--ok)} .res.bad{color:var(--bad)}
+  .q.okq{border-color:var(--ok);background:var(--ok-soft)}
+
+  /* 단어 카드 칸 */
+  .vocab{background:#fff;border:1px dashed #bcd9cd;border-radius:12px;padding:8px 10px;margin:8px 0}
+  .vrow{display:flex;gap:8px;align-items:flex-start;padding:4px 0}
+  .vrow + .vrow{border-top:1px dotted var(--rule)}
+  .vlab{flex:none;width:64px;font-size:12px;color:var(--soft);padding-top:12px;line-height:1.3}
+  .cards{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+  .wc{display:flex;flex-direction:column;align-items:center;min-width:60px;padding:2px 10px 6px;border-radius:12px;border:1px solid transparent;line-height:1.2}
+  .wc .big{font-family:var(--jp);font-weight:700;font-size:26px;line-height:2}
+  .wc .big rt{font-size:.45em;font-weight:500}
+  .wc .mean{font-size:12px;color:var(--soft);white-space:nowrap}
+  .wc.p{background:var(--hl);border-color:#efe08a}
+  .wc.w{background:var(--mint-soft);border-color:#bfe3d6}
+  .wc.j{background:#f3ecfb;border-color:#ddd0ee}
+  button.wc:hover{border-color:var(--mint)}
+  button.wc.used{opacity:.35}
+  div.wc{cursor:default}
+  #write .wc.p .mean{display:none}   /* 써 보기: 대명사 뜻은 가려서 직접 고르게 */
+  .line .tile.p{background:var(--hl)} .line .tile.j{background:#f3ecfb}
+  /* 직접 쓰기 */
+  .wq{margin-bottom:16px}
+  .wq .ko{font-size:16px;margin:0 0 4px}
+  .wq .ko .n{font-family:var(--jp);font-weight:700;color:var(--mint);margin-right:6px}
+  textarea{width:100%;min-height:72px;resize:vertical;font-family:var(--jp);font-size:19px;line-height:34px;border:1px solid var(--rule);border-radius:10px;padding:2px 12px;color:var(--ink);
+    background:repeating-linear-gradient(#fff 0 33px,var(--rule) 33px 34px)}
+  /* 손으로 쓰기 */
+  .mode{display:flex;gap:6px;margin:8px 0 6px}
+  .mode button{font-size:13px;padding:4px 12px}
+  .mode button.on{background:var(--mint);color:#fff;border-color:var(--mint)}
+  .hand{display:block;width:100%;aspect-ratio:4/1;touch-action:none;cursor:crosshair;border:1px solid var(--rule);border-radius:10px;
+    background:
+      linear-gradient(var(--rule),var(--rule)) 0 50%/100% 1px no-repeat,
+      linear-gradient(90deg,var(--rule) 1px,transparent 1px) 0 0/calc(100%/10) 100%,
+      #fff}
+  .padbtn{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}
+  .padbtn{flex-wrap:wrap}
+  .padbtn button,.kbtn button,.savebar button{font-size:13px;padding:4px 12px;white-space:nowrap}
+  .kshow{display:none;font-size:13px;padding:4px 12px;white-space:nowrap}
+  @media (max-width:560px){ .hand{aspect-ratio:5/2;background:
+      linear-gradient(var(--rule),var(--rule)) 0 50%/100% 1px no-repeat,
+      linear-gradient(90deg,var(--rule) 1px,transparent 1px) 0 0/calc(100%/6) 100%,#fff} }
+  .pads{display:flex;flex-direction:column;gap:6px}
+  .padrow{position:relative}
+  .padrow .del{position:absolute;top:4px;right:4px;font-size:12px;padding:0 8px;line-height:1.6;opacity:.7}
+  .savebar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:8px}
+  .savebar .msg{font-size:13px;color:var(--ok);margin-right:auto}
+  /* 저장한 답 (위 칸) */
+  .shelf{display:flex;flex-direction:column;gap:8px;margin:8px 0 4px}
+  .shelf:empty{display:none}
+  .entry{background:var(--mint-soft);border:1px solid #bfe3d6;border-radius:12px;padding:6px 10px 8px}
+  .entry .eh{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--soft);margin-bottom:4px}
+  .entry .eh button{margin-left:auto;font-size:12px;padding:0 9px;line-height:1.7}
+  .entry canvas{display:block;width:100%;aspect-ratio:4/1;background:#fff;border-radius:8px;border:1px solid var(--rule)}
+  .entry canvas + canvas{margin-top:4px}
+  .entry .txt{font-family:var(--jp);font-size:19px;background:#fff;border-radius:8px;padding:2px 10px;border:1px solid var(--rule)}
+  /* 오른쪽 한자 획순 창 */
+  .wlayout{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:14px;align-items:start}
+  .kpanel{position:sticky;top:12px;background:#fff;border:1px solid var(--rule);border-radius:12px;padding:8px;box-shadow:0 4px 14px rgba(40,80,70,.08)}
+  .kpanel h3{margin:0 0 2px;font-size:13px;font-weight:400}
+  .kpanel .for{font-size:11.5px;color:var(--soft);margin:0 0 6px;line-height:1.4}
+  .kchips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+  .kchips button{font-family:var(--jp);font-size:15px;padding:0 7px;line-height:1.7;border-radius:8px}
+  .kchips button.on{background:var(--mint);color:#fff;border-color:var(--mint)}
+  .kbox{display:block;width:100%;max-width:130px;margin:0 auto;aspect-ratio:1;border:1px solid var(--rule);border-radius:12px;background:
+    linear-gradient(var(--rule),var(--rule)) center/100% 1px no-repeat,
+    linear-gradient(var(--rule),var(--rule)) center/1px 100% no-repeat,#fbfefc}
+  .kbox .guide{fill:none;stroke:#e3ece8;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .kbox .ink{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .kbox .ink.cur{stroke:var(--mint)}
+  .kbox .num{font-size:7px;fill:var(--bad);font-family:sans-serif;font-weight:bold}
+  .kinfo{text-align:center;margin:6px 0}
+  .kinfo .jp{font-size:15px}
+  .kinfo small{display:block;color:var(--soft);font-size:11.5px}
+  .kbtn{display:flex;gap:6px;justify-content:center}
+  .kbtn{flex-wrap:wrap}
+  .kbtn button{font-size:12px;padding:3px 9px}
+  @media (max-width:760px){
+    .wlayout{grid-template-columns:1fr}
+    .kpanel{position:static;display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 12px}
+    .kpanel h3,.kpanel .for,.kchips{grid-column:1/-1}
+    .kbox{grid-row:span 2}
+    .wq .kpanel{margin:10px 0}
+    .kshow{display:inline-block;margin-right:auto}
+  }
+  .foot{text-align:center;color:var(--soft);font-size:12px;margin-top:20px}
+  .foot a{color:var(--mint)}
+
+  @media (max-width:560px){
+    .pr{grid-template-columns:1fr}
+    .page{padding:6px 12px 22px;background:repeating-linear-gradient(var(--paper) 0 33px,var(--rule) 33px 34px)}
+    section{padding-left:0}
+    .cover{padding:18px 14px}
+    .tools{padding:10px 12px 0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="book">
+  <div class="cover">
+    <img src="../chiikawa/usagi.jpg" alt="우사기">
+    <div><h1>지시대명사 <b>これ・それ・あれ・どれ</b></h1>
+    <p>이것·그것·저것·어느 것을 일본어로 · 한자 위에 읽는 법이 있어요 · 끝에 문제 9개</p></div>
+  </div>
+  <div class="tools"><button id="furi">후리가나 가리기</button></div>
+  <div class="page">
+
+  <section>
+    <h2><span class="no">1</span>지시대명사 익히기 (こ·そ·あ·ど)</h2>
+    <p class="lead">누르면 소리가 나와요. 노란 형광펜이 지시어예요. 가로로 보면 こ·そ·あ·ど가 한 세트예요.</p>
+    <div id="list"></div>
+    <div class="note"><b>알아 두면 좋아요</b><br>
+      · <b>こ</b> = 말하는 나에게 가까운 것, <b>そ</b> = 듣는 상대에게 가까운 것, <b>あ</b> = 둘 다에게서 먼 것, <b>ど</b> = 물어볼 때.<br>
+      · 「これ·それ·あれ」는 혼자 쓰고, 「この·その·あの」는 꼭 뒤에 명사가 와요. (✕ このは → ○ この{本|ほん}は)<br>
+      · 가게나 회사에서는 「ここ」 대신 「こちら」를 쓰면 공손해요. 예: こちらへどうぞ (이쪽으로 오세요)</div>
+  </section>
+
+  <section>
+    <h2><span class="no">2</span>문장 만들기</h2>
+    <p class="lead">아래 단어 카드를 순서대로 눌러 문장을 만들어요. <b>지시어</b> 카드에는 정답이 아닌 것도 섞여 있고, <b>단어</b>·<b>조사</b>는 문장에 쓰는 것만 있어요. 놓은 카드를 다시 누르면 빠져요.</p>
+    <div id="build"></div>
+  </section>
+
+  <section>
+    <h2><span class="no">3</span>일본어로 써 보기</h2>
+    <p class="lead">단어 카드를 참고해서 일본어로 직접 써요. 마우스나 손가락으로 칸에 쓰거나, 키보드로 입력해도 돼요. 칸이 모자라면 <b>＋ 칸 추가</b>, 다 썼으면 <b>💾 저장</b> — 저장한 답은 문제 위쪽에 차곡차곡 쌓여요. 오른쪽 창에서 한자 획순을 볼 수 있어요. 정답은 나오지 않아요.</p>
+    <div class="wlayout"><div id="write"></div><aside class="kpanel" id="kpanel" aria-label="한자 획순"></aside></div>
+    <div style="display:flex;justify-content:flex-end"><button id="wipe">쓰던 것·저장한 답 모두 지우기</button></div>
+  </section>
+
+  </div>
+</div>
+<div class="foot"><a href="../">처음으로</a> · <a href="../hiragana/">히라가나</a> · <a href="../katakana/">가타카나</a> · <a href="../pronouns/">인칭 대명사</a><br>캐릭터 그림 © nagano · 개인 학습용 팬 페이지</div>
+</div>
+
+<script src="kanji.js"></script>
+<script>
+// 표기: {漢字|かな} = 한자 위 후리가나, [ ] = 형광펜(지시어)
+const PRONOUNS = [
+ ["물건 — 이것·그것·저것·어느 것", [
+  ["[これ]","이것","나에게 가까운 물건","[これ]は{私|わたし}の{本|ほん}です。","이것은 제 책입니다."],
+  ["[それ]","그것","상대에게 가까운 물건","[それ]は{何|なん}ですか。","그것은 무엇입니까?"],
+  ["[あれ]","저것","둘 다에게서 먼 물건","[あれ]は{富士山|ふじさん}です。","저것은 후지산입니다."],
+  ["[どれ]","어느 것","셋 이상 중에서 물을 때","[どれ]が{好|す}きですか。","어느 것을 좋아해요?"]]],
+ ["명사 꾸미기 — 이~·그~·저~·어느~", [
+  ["[この]","이 ~","뒤에 꼭 명사가 와요","[この]{傘|かさ}はいくらですか。","이 우산은 얼마예요?"],
+  ["[その]","그 ~","상대 쪽에 있는 것","[その]{魚|さかな}、おいしそうだね。","그 물고기 맛있어 보이네."],
+  ["[あの]","저 ~","멀리 있는 것","[あの]{店|みせ}は{有名|ゆうめい}です。","저 가게는 유명합니다."],
+  ["[どの]","어느 ~","골라서 물을 때","[どの]{電車|でんしゃ}に{乗|の}りますか。","어느 전철을 타요?"]]],
+ ["장소 — 여기·거기·저기·어디", [
+  ["[ここ]","여기","내가 있는 곳","[ここ]で{釣|つ}りをしてもいいですか。","여기서 낚시해도 돼요?"],
+  ["[そこ]","거기","상대가 있는 곳","[そこ]に{座|すわ}ってください。","거기에 앉아 주세요."],
+  ["[あそこ]","저기","둘 다에게서 먼 곳","[あそこ]が{駅|えき}です。","저기가 역입니다."],
+  ["[どこ]","어디","장소를 물을 때","トイレは[どこ]ですか。","화장실은 어디예요?"]]],
+ ["방향·공손 — 이쪽·그쪽·저쪽·어느 쪽", [
+  ["[こちら]","이쪽 (이분)","ここ의 공손한 말","[こちら]は{田中|たなか}さんです。","이쪽은 다나카 씨입니다."],
+  ["[そちら]","그쪽","상대 쪽 (공손)","[そちら]の{天気|てんき}はどうですか。","그쪽 날씨는 어때요?"],
+  ["[あちら]","저쪽","먼 쪽 (공손)","{出口|でぐち}は[あちら]です。","출구는 저쪽입니다."],
+  ["[どちら]","어느 쪽","둘 중에 고를 때, 어디의 공손한 말","[どちら]がいいですか。","어느 쪽이 좋아요?"]]],
+ ["모양 — 이런·그런·저런·어떤", [
+  ["[こんな]","이런","뒤에 명사가 와요","[こんな]{大|おお}きい{魚|さかな}、{初|はじ}めて{見|み}た！","이렇게 큰 물고기 처음 봤어!"],
+  ["[そんな]","그런","상대가 말한 것","[そんな]ことないよ。","그렇지 않아."],
+  ["[あんな]","저런","멀리 있는 것·둘 다 아는 것","[あんな]{人|ひと}になりたい。","저런 사람이 되고 싶어."],
+  ["[どんな]","어떤","종류를 물을 때","[どんな]{音楽|おんがく}が{好|す}きですか。","어떤 음악을 좋아해요?"]]]
+
+];
+
+// 단어 카드: [글자, 읽기(한자일 때), 한국어 뜻, 종류 p=지시어 w=단어 j=조사]
+const P = {
+  これ:["これ","","이것","p"], それ:["それ","","그것","p"], あれ:["あれ","","저것","p"], どれ:["どれ","","어느 것","p"],
+  この:["この","","이 ~","p"], その:["その","","그 ~","p"], あの:["あの","","저 ~","p"], どの:["どの","","어느 ~","p"],
+  ここ:["ここ","","여기","p"], そこ:["そこ","","거기","p"], あそこ:["あそこ","","저기","p"], どこ:["どこ","","어디","p"],
+  こちら:["こちら","","이쪽","p"], どちら:["どちら","","어느 쪽","p"],
+  こんな:["こんな","","이런","p"], どんな:["どんな","","어떤","p"]
+};
+const J = { は:["は","","~은/는 (주제)","j"], の:["の","","~의","j"], に:["に","","~에, ~하러","j"], が:["が","","~이/가","j"], か:["か","","~까? (질문)","j"] };
+const W = (t,r,ko) => [t,r,ko,"w"];
+
+// 문장 만들기: 한국어, 정답 순서, 지시어 오답, 끝 문장부호
+const BUILD = [
+  {ko:"이것은 제 가방입니다.", ans:[P.これ, J.は, W("{私|わたし}","わたし","나, 저"), J.の, W("かばん","","가방"), W("です","","~입니다")], wrong:[P.それ, P.あれ, P.この], end:"。"},
+  {ko:"저 사람은 누구예요?", ans:[P.あの, W("{人|ひと}","ひと","사람"), J.は, W("{誰|だれ}","だれ","누구"), W("です","","~입니다"), J.か], wrong:[P.その, P.あれ, P.この], end:"？"},
+  {ko:"화장실은 어디예요?", ans:[W("トイレ","","화장실"), J.は, P.どこ, W("です","","~입니다"), J.か], wrong:[P.ここ, P.どれ, P.あそこ], end:"？"},
+  {ko:"그 물고기는 얼마예요?", ans:[P.その, W("{魚|さかな}","さかな","물고기"), J.は, W("いくら","","얼마"), W("です","","~입니다"), J.か], wrong:[P.それ, P.この, P.どの], end:"？"}
+];
+
+// 직접 써 보기: 카드는 참고용 (정답은 보여주지 않음)
+const WRITE = [
+  {ko:"이것은 무엇입니까?", cards:[P.これ, J.は, W("{何|なん}","なん","무엇"), W("です","","~입니다"), J.か], wrong:[P.それ, P.この]},
+  {ko:"여기는 제 집입니다.", cards:[P.ここ, J.は, W("{私|わたし}","わたし","나, 저"), J.の, W("{家|いえ}","いえ","집"), W("です","","~입니다")], wrong:[P.そこ, P.この]},
+  {ko:"저 가게는 맛있어요.", cards:[P.あの, W("{店|みせ}","みせ","가게"), J.は, W("おいしい","","맛있다"), W("です","","~입니다")], wrong:[P.あれ, P.その]},
+  {ko:"어느 쪽이 역이에요?", cards:[P.どちら, J.が, W("{駅|えき}","えき","역"), W("です","","~입니다"), J.か], wrong:[P.どこ, P.こちら]},
+  {ko:"어떤 영화를 좋아해요?", cards:[P.どんな, W("{映画|えいが}","えいが","영화"), J.が, W("{好|す}き","すき","좋아함"), W("です","","~입니다"), J.か], wrong:[P.こんな, P.どの]}
+];
+
+// ───────── 유틸 ─────────
+const $ = s => document.querySelector(s);
+const RUBY = /\{([^|{}]+)\|([^{}]+)\}/g;
+const rb = s => s.replace(RUBY,'<ruby>$1<rt>$2</rt></ruby>').replace(/\[([^\]]+)\]/g,'<mark>$1</mark>');
+const plain = s => s.replace(RUBY,'$2').replace(/[\[\]]/g,'');   // 소리용: 읽는 법으로
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+function store(k,v){ try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; } }
+function speak(t){
+  try{ const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=.85;
+    const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("ja")); if(v) u.voice=v;
+    speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){}
+}
+
+const word = c => c[0].includes("{") ? rb(c[0]) : c[1] ? `<ruby>${c[0]}<rt>${c[1]}</rt></ruby>` : `<ruby>${c[0]}<rt>&nbsp;</rt></ruby>`;
+const card = (c,tag,attr="") => `<${tag} class="wc ${c[3]}" ${attr}><span class="big">${word(c)}</span><span class="mean">${c[2]}</span></${tag}>`;
+const LABEL = {p:"지시어", w:"단어", j:"조사"};
+// 종류별로 나눠서, 각 줄 안의 순서는 섞기 (같은 카드는 한 번만)
+function vocab(cards, clickable){
+  const seen=new Set(), list=[];
+  cards.forEach((c,i)=>{ if(!seen.has(c[0]+c[3])){ seen.add(c[0]+c[3]); list.push([c,i]); } });
+  return `<div class="vocab">`+["p","w","j"].map(k=>{
+    const row=shuffle(list.filter(([c])=>c[3]===k)); if(!row.length) return "";
+    return `<div class="vrow"><span class="vlab">${LABEL[k]}</span><div class="cards">${row.map(([c,i])=>card(c, clickable?"button":"div", clickable?`data-i="${i}"`:"")).join("")}</div></div>`;
+  }).join("")+`</div>`;
+}
+
+// 노트 안 표기도 루비로
+document.querySelectorAll(".note").forEach(n=>n.innerHTML=rb(n.innerHTML));
+
+// ───────── 1. 대명사 목록 ─────────
+$("#list").innerHTML = PRONOUNS.map(([g,items])=>`<div class="group">${g}</div>`+items.map(([w,m,d,ex,ko])=>`
+  <div class="pr">
+    <div class="w">${rb(w)}</div>
+    <div class="m">${m}<small>${d}</small></div>
+    <div class="ex"><span class="jp">${rb(ex)}</span><span class="ko">${ko}</span><button class="say" data-t="${plain(ex)}">🔊 듣기</button></div>
+  </div>`).join("")).join("");
+document.addEventListener("click",e=>{ const b=e.target.closest(".say"); if(b) speak(b.dataset.t); });
+
+// ───────── 2. 문장 만들기 ─────────
+$("#build").innerHTML = BUILD.map((b,i)=>{
+  b.pool = b.ans.concat(b.wrong);            // 카드 번호 = pool 위치
+  return `<div class="q" id="q${i}">
+    <p class="ko"><span class="n">(${i+1})</span>${b.ko}</p>
+    <div class="line"></div>
+    ${vocab(b.pool, true)}
+    <div class="qfoot"><span class="res"></span><button data-act="reset">다시 하기</button><button class="main" data-act="check">채점하기</button></div>
+  </div>`;
+}).join("");
+BUILD.forEach((b,i)=>{
+  const q=$("#q"+i), line=q.querySelector(".line"), res=q.querySelector(".res");
+  const clear=()=>{ res.textContent=""; res.className="res"; q.classList.remove("okq"); };
+  q.addEventListener("click",e=>{
+    const placed=e.target.closest(".line .tile");
+    if(placed){ q.querySelector(`.vocab [data-i="${placed.dataset.i}"]`).classList.remove("used"); placed.remove(); clear(); return; }
+    const c=e.target.closest(".vocab button.wc");
+    if(c){ if(c.classList.contains("used")) return;
+      const w=b.pool[+c.dataset.i];
+      c.classList.add("used");
+      line.insertAdjacentHTML("beforeend", `<button class="tile ${w[3]}" data-i="${c.dataset.i}">${word(w)}</button>`);
+      clear(); return; }
+    const a=e.target.closest("[data-act]"); if(!a) return;
+    if(a.dataset.act==="reset"){ line.innerHTML=""; q.querySelectorAll(".vocab .used").forEach(x=>x.classList.remove("used")); clear(); return; }
+    const got=[...line.children].map(x=>b.pool[+x.dataset.i][0]).join("");
+    if(!got){ res.textContent="카드를 눌러 문장을 만들어 주세요"; res.className="res bad"; return; }
+    const ok = got===b.ans.map(c=>c[0]).join("");
+    res.textContent = ok ? "⭕ 맞았어요!" : "❌ 다시 생각해 보세요";
+    res.className="res "+(ok?"ok":"bad"); q.classList.toggle("okq",ok);
+    if(ok) speak(b.ans.map(c=>c[1]||c[0]).join(""));
+  });
+});
+
+// ───────── 3. 직접 써 보기 ─────────
+// 획은 칸 크기 대비 비율(0~1)로 저장 → 화면 크기가 바뀌어도 그대로 다시 그림
+const saved = store("demo-write") || {};      // 키보드로 쓰는 중인 글
+const hand  = store("demo-hand2") || {};      // 손으로 쓰는 중인 칸들: {문제: [칸: [획: [[x,y]...]]]}
+const book  = store("demo-saved") || {};      // 저장한 답: {문제: [{pads, text, t}]}
+let mode = store("demo-mode") || "pen";
+
+$("#write").innerHTML = WRITE.map((w,i)=>`
+  <div class="wq q" data-q="${i}">
+    <p class="ko"><span class="n">(${i+1})</span>${w.ko}</p>
+    ${vocab(w.cards.concat(w.wrong), false)}
+    <div class="shelf" id="s${i}"></div>
+    <div class="mode"><button data-m="pen">✍️ 손으로 쓰기</button><button data-m="key">⌨️ 키보드로 쓰기</button></div>
+    <div class="penbox"><div class="pads" id="pads${i}"></div>
+      <div class="padbtn"><button data-pad="add">＋ 칸 추가</button><button data-pad="undo">↶ 한 획 지우기</button><button data-pad="clear">전부 지우기</button></div></div>
+    <textarea id="w${i}" lang="ja" placeholder="여기에 일본어로 써 보세요 (히라가나·한자 모두 OK)" aria-label="${w.ko} 일본어로 쓰기"></textarea>
+    <div class="savebar"><button class="kshow" data-pad="kanji">✏️ 한자 획순 보기</button><span class="msg" id="m${i}" role="status"></span><button class="main" data-pad="save">💾 저장</button></div>
+  </div>`).join("");
+
+function paint(cv, strokes, live){
+  const ctx=cv.getContext("2d");
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.lineCap="round"; ctx.lineJoin="round"; ctx.strokeStyle="#2f3b37";
+  ctx.lineWidth=Math.max(2, cv.width*0.006);
+  strokes.concat(live?[live]:[]).forEach(st=>{ if(!st.length) return; ctx.beginPath();
+    st.forEach(([x,y],k)=>k?ctx.lineTo(x*cv.width,y*cv.height):ctx.moveTo(x*cv.width,y*cv.height));
+    if(st.length===1) ctx.lineTo(st[0][0]*cv.width+.1,st[0][1]*cv.height);
+    ctx.stroke(); });
+}
+function sizeTo(cv){ const r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1; if(!r.width) return false;
+  cv.width=Math.round(r.width*d); cv.height=Math.round(r.height*d); return true; }
+
+let lastPad = {};                     // 문제별로 마지막에 쓴 칸 (한 획 지우기용)
+function renderPads(i){
+  const box=$("#pads"+i), list=hand[i] && hand[i].length ? hand[i] : (hand[i]=[[]]);
+  box.innerHTML = list.map((_,k)=>`<div class="padrow"><canvas class="hand" data-k="${k}" aria-label="${k+1}번째 쓰는 칸"></canvas>${k?`<button class="del" data-pad="del" data-k="${k}" aria-label="이 칸 지우기">✕</button>`:""}</div>`).join("");
+  box.querySelectorAll("canvas").forEach(cv=>{
+    const k=+cv.dataset.k; let live=null;
+    const redraw=()=>paint(cv, hand[i][k], live);
+    cv._fit=()=>{ if(sizeTo(cv)) redraw(); };
+    const pt=e=>{ const r=cv.getBoundingClientRect(); return [+((e.clientX-r.left)/r.width).toFixed(4), +((e.clientY-r.top)/r.height).toFixed(4)]; };
+    cv.addEventListener("pointerdown",e=>{ cv.setPointerCapture(e.pointerId); live=[pt(e)]; lastPad[i]=k; if(!narrow()) setActive(i); redraw(); });
+    cv.addEventListener("pointermove",e=>{ if(live){ live.push(pt(e)); redraw(); } });
+    const end=()=>{ if(!live) return; hand[i][k].push(live); live=null; store("demo-hand2",hand); redraw(); };
+    cv.addEventListener("pointerup",end); cv.addEventListener("pointercancel",end);
+    cv._fit();
+  });
+}
+function renderShelf(i){
+  const list=book[i]||[];
+  $("#s"+i).innerHTML = list.map((e,n)=>`<div class="entry">
+      <div class="eh">📒 저장 ${n+1} · ${new Date(e.t).toLocaleString("ko-KR",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}<button data-pad="drop" data-n="${n}" aria-label="저장 ${n+1} 지우기">지우기</button></div>
+      ${e.pads.map(()=>`<canvas></canvas>`).join("")}${e.text?`<div class="txt" lang="ja">${e.text.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</div>`:""}
+    </div>`).join("");
+  $("#s"+i).querySelectorAll(".entry").forEach((el,n)=>el.querySelectorAll("canvas").forEach((cv,k)=>{ if(sizeTo(cv)) paint(cv, list[n].pads[k]); }));
+}
+function flash(i,msg){ const m=$("#m"+i); m.textContent=msg; clearTimeout(m._t); m._t=setTimeout(()=>m.textContent="",2200); }
+
+WRITE.forEach((_,i)=>{
+  const t=$("#w"+i); t.value=saved[i]||"";
+  t.addEventListener("input",()=>{ saved[i]=t.value; store("demo-write",saved); });
+  t.addEventListener("focus",()=>{ if(!narrow()) setActive(i); });
+  renderPads(i); renderShelf(i);
+});
+
+$("#write").addEventListener("click",e=>{
+  const m=e.target.closest(".mode [data-m]"); if(m) return setMode(m.dataset.m);
+  const b=e.target.closest("[data-pad]"); if(!b) return;
+  const i=+b.closest(".wq").dataset.q, a=b.dataset.pad; if(!narrow()) setActive(i);
+  if(a==="kanji"){ setActive(i,true); return; }
+  if(a==="add"){ hand[i].push([]); store("demo-hand2",hand); renderPads(i); lastPad[i]=hand[i].length-1; return; }
+  if(a==="del"){ hand[i].splice(+b.dataset.k,1); store("demo-hand2",hand); renderPads(i); return; }
+  if(a==="undo"){ const k = lastPad[i]!=null && hand[i][lastPad[i]] && hand[i][lastPad[i]].length ? lastPad[i] : hand[i].map(x=>x.length).findLastIndex(n=>n>0);
+    if(k>=0) hand[i][k].pop(); store("demo-hand2",hand); renderPads(i); return; }
+  if(a==="clear"){ hand[i]=hand[i].map(()=>[]); store("demo-hand2",hand); renderPads(i); return; }
+  if(a==="drop"){ book[i].splice(+b.dataset.n,1); store("demo-saved",book); renderShelf(i); return; }
+  if(a==="save"){
+    const pads=hand[i].filter(p=>p.length), text=($("#w"+i).value||"").trim();
+    if(!pads.length && !text) return flash(i,"먼저 써 주세요");
+    (book[i]=book[i]||[]).push({pads, text, t:Date.now()});
+    store("demo-saved",book);
+    hand[i]=hand[i].map(()=>[]); store("demo-hand2",hand); $("#w"+i).value=""; saved[i]=""; store("demo-write",saved);
+    renderPads(i); renderShelf(i); flash(i,"✔ 위 칸에 저장했어요");
+  }
+});
+
+function setMode(m){
+  mode=m; store("demo-mode",m);
+  document.querySelectorAll("#write .wq").forEach(q=>{
+    q.querySelector(".penbox").hidden = m!=="pen";
+    q.querySelector("textarea").hidden = m!=="key";
+    q.querySelectorAll(".mode button").forEach(b=>b.classList.toggle("on", b.dataset.m===m));
+  });
+  refit();
+}
+function refit(){ document.querySelectorAll("#write canvas").forEach(cv=>cv._fit && cv._fit()); WRITE.forEach((_,i)=>renderShelf(i)); }
+window.addEventListener("resize",refit);
+setMode(mode);
+
+$("#wipe").onclick=()=>{
+  WRITE.forEach((_,i)=>{ $("#w"+i).value=""; delete saved[i]; hand[i]=[[]]; book[i]=[]; renderPads(i); renderShelf(i); });
+  store("demo-write",saved); store("demo-hand2",hand); store("demo-saved",book);
+};
+
+// ───────── 오른쪽 한자 획순 창 ─────────
+const KAN = /[\u4e00-\u9fff]/g;
+let active=-1, kCur=null, kTimers=[], kStep=0;
+function kanjiFor(i){
+  const w=WRITE[i], out=[];
+  w.cards.concat(w.wrong).forEach(c=>{ const text=c[0].replace(RUBY,"$1"); (text.match(KAN)||[]).forEach(k=>{ if(!out.some(x=>x.k===k)) out.push({k, c}); }); });
+  return out;
+}
+const narrow = () => matchMedia("(max-width:760px)").matches;
+// 넓은 화면: 오른쪽 칸에 고정 / 폰: 누른 문제의 저장 버튼 아래로 옮김
+function placePanel(){ const p=$("#kpanel");
+  if(!narrow() && active<0){ p.hidden=false; setActive(0); return; }
+  if(narrow() && active>=0) document.querySelector(`#write .wq[data-q="${active}"] .savebar`).after(p);
+  else if(p.parentElement!==$(".wlayout")) $(".wlayout").appendChild(p); }
+window.addEventListener("resize",placePanel);
+function setActive(i,scroll){
+  if(i===active){ placePanel(); return; } active=i;
+  const list=kanjiFor(i), p=$("#kpanel");
+  placePanel(); if(scroll) p.scrollIntoView({block:"nearest",behavior:"smooth"});
+  p.innerHTML = `<h3>✏️ 한자 획순</h3><p class="for">(${i+1}) ${WRITE[i].ko}</p>
+    <div class="kchips">${list.map(x=>`<button data-k="${x.k}" class="jp">${x.k}</button>`).join("") || `<span class="for">이 문제엔 한자가 없어요</span>`}</div>
+    ${list.length?`<svg class="kbox" viewBox="0 0 109 109" id="kbox"></svg><div><div class="kinfo" id="kinfo"></div>
+    <div class="kbtn"><button id="kplay">▶ 다시 보기</button><button id="kstep">한 획씩</button></div></div>`:""}`;
+  if(!list.length) return;
+  p.querySelector(".kchips").onclick=e=>{ const b=e.target.closest("button[data-k]"); if(b) showKanji(b.dataset.k); };
+  $("#kplay").onclick=()=>kPlay(); $("#kstep").onclick=()=>kOne();
+  showKanji(list[0].k);
+}
+function showKanji(k){
+  kCur=k; const box=$("#kbox"), NS="http://www.w3.org/2000/svg", d=(window.KANJI||{})[k];
+  $("#kpanel").querySelectorAll(".kchips button").forEach(b=>b.classList.toggle("on", b.dataset.k===k));
+  const hit=kanjiFor(active).find(x=>x.k===k), c=hit.c;
+  // 대명사 카드는 써 보기에서 뜻을 가리므로 여기서도 읽기만 보여 줌
+  $("#kinfo").innerHTML = `<div class="jp">${c[0].includes("{")?rb(c[0]):c[1]?`<ruby>${c[0]}<rt>${c[1]}</rt></ruby>`:c[0]}</div><small>${c[3]==="p"?"지시어":c[2]}${d?` · 총 ${d.length}획`:""}</small>`;
+  kTimers.forEach(clearTimeout); kTimers=[]; box.innerHTML=""; kStep=0;
+  if(!d){ box.innerHTML=`<text x="54.5" y="58" text-anchor="middle" font-size="9" fill="#76857f">획순 데이터가 없어요</text>`; return; }
+  d.forEach(p=>{ const g=document.createElementNS(NS,"path"); g.setAttribute("d",p); g.setAttribute("class","guide"); box.appendChild(g); });
+  d.forEach((p,n)=>{ const e=document.createElementNS(NS,"path"); e.setAttribute("d",p); e.setAttribute("class","ink"); box.appendChild(e);
+    const L=e.getTotalLength(); e.style.strokeDasharray=L; e.style.strokeDashoffset=L; e.dataset.len=L;
+    const m=p.match(/^[Mm]\s*([\d.]+)[ ,]*([\d.]+)/);
+    if(m){ const t=document.createElementNS(NS,"text"); t.setAttribute("x",+m[1]-6); t.setAttribute("y",+m[2]-1); t.setAttribute("class","num"); t.textContent=n+1; box.appendChild(t); } });
+  kPlay();
+}
+function kInk(){ return [...$("#kbox").querySelectorAll(".ink")]; }
+function kDraw(e,ms){ e.classList.add("cur"); e.style.transition="none"; e.style.strokeDashoffset=e.dataset.len; e.getBoundingClientRect();
+  e.style.transition=`stroke-dashoffset ${ms}ms ease-in-out`; e.style.strokeDashoffset=0; kTimers.push(setTimeout(()=>e.classList.remove("cur"),ms)); }
+function kPlay(){ kTimers.forEach(clearTimeout); kTimers=[]; const ink=kInk(); kStep=ink.length;
+  ink.forEach(e=>{ e.style.transition="none"; e.style.strokeDashoffset=e.dataset.len; });
+  ink.forEach((e,n)=>kTimers.push(setTimeout(()=>kDraw(e,550),250+n*650))); }
+function kOne(){ kTimers.forEach(clearTimeout); kTimers=[]; const ink=kInk(); if(!ink.length) return;
+  if(kStep>=ink.length){ kStep=0; ink.forEach(e=>{ e.style.transition="none"; e.style.strokeDashoffset=e.dataset.len; }); }
+  kDraw(ink[kStep++],550); }
+if(narrow()){ active=-1; $("#kpanel").hidden=true; document.addEventListener("click",e=>{ if(e.target.closest("[data-pad=kanji]")) $("#kpanel").hidden=false; }); } else setActive(0);
+
+// ───────── 후리가나 ─────────
+let furi = store("demo-furi"); if(furi===null) furi=true;
+const applyFuri=()=>{ document.body.classList.toggle("no-furi",!furi); $("#furi").textContent = furi?"후리가나 가리기":"후리가나 보이기"; };
+$("#furi").onclick=()=>{ furi=!furi; store("demo-furi",furi); applyFuri(); };
+applyFuri();
+</script>
+</body>
+</html>
