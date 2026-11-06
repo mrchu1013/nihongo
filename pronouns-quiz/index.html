@@ -47,6 +47,13 @@
   .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
   .opts button{border-radius:14px;padding:10px 8px;font-size:17px;line-height:1.9}
   .opts button.jp{font-size:22px}
+  .rm{display:block;font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;font-weight:600;letter-spacing:.02em}
+  .kn{display:block;font-family:var(--jp);font-size:.6em;color:var(--soft);line-height:1.4}
+  .opts button .rm{font-size:20px;line-height:1.3}
+  .big .rm{font-size:44px;line-height:1.3}
+  .big .kn{font-size:18px}
+  .sent .rm{font-size:22px;line-height:1.8}
+  .sent .kn{font-size:15px}
   .opts button.right{border-color:var(--ok);background:var(--ok-soft)}
   .opts button.wrong{border-color:var(--bad);background:var(--bad-soft)}
   .opts button:disabled{cursor:default;color:var(--ink)}
@@ -81,45 +88,69 @@
 </div>
 
 <script>
-// 표기: {漢字|かな} = 후리가나, ＿＿ = 빈칸
-// 문제: k=종류, q=물음, show=크게 보여줄 것, sent=빈칸 문장, ko=한국어 해석, a=정답, o=오답들, why=해설
+// 일본어는 히라가나로 적고, 화면에는 로마자(크게) + 히라가나(작게)로 보여줌. ＿＿ = 빈칸
+// k=종류, q=물음, show=크게 보여줄 말, sent=빈칸 문장(히라가나), rom=빈칸 문장(로마자), ko=해석, a=정답, o=오답, why=해설
+// kana:true = 보기를 히라가나로만 (로마자를 보고 히라가나를 고르는 문제)
 const BANK = [
   // 뜻 고르기
-  {k:"뜻", q:"이 말의 뜻은?", show:"{彼女|かのじょ}", a:"그녀", o:["그","저 사람","너"], why:"彼女는 '그녀', '여자친구'라는 뜻도 있어요."},
-  {k:"뜻", q:"이 말의 뜻은?", show:"{皆|みな}さん", a:"여러분", o:["우리","그들","당신"], why:"여러 사람을 부를 때 써요."},
-  {k:"뜻", q:"이 말의 뜻은?", show:"{誰|だれ}", a:"누구", o:["어디","무엇","언제"], why:"공손하게는 どなた라고 해요."},
-  {k:"뜻", q:"이 말의 뜻은?", show:"あの{方|かた}", a:"저 분", o:["저 사람","그 사람","저것"], why:"あの人(저 사람)의 높임말이에요."},
-  {k:"뜻", q:"이 말의 뜻은?", show:"{彼|かれ}ら", a:"그들", o:["우리","그녀","여러분"], why:"ら·たち는 '~들'이에요."},
-  // 읽기 고르기
-  {k:"읽기", q:"어떻게 읽을까요?", plainShow:"君", a:"きみ", o:["くん","かれ","ぼく"], jp:true, why:"君(きみ) = 너. 이름 뒤 「~君(くん)」과는 읽기가 달라요."},
-  {k:"읽기", q:"어떻게 읽을까요?", plainShow:"僕", a:"ぼく", o:["おれ","わたし","きみ"], jp:true, why:"僕(ぼく) = 남자가 쓰는 부드러운 '나'."},
-  {k:"읽기", q:"어떻게 읽을까요?", plainShow:"俺", a:"おれ", o:["ぼく","おまえ","かれ"], jp:true, why:"俺(おれ) = 친구끼리 쓰는 거친 '나'."},
-  {k:"읽기", q:"어떻게 읽을까요?", plainShow:"彼女", a:"かのじょ", o:["かれじょ","かのおんな","かのひと"], jp:true, why:"彼女(かのじょ). 彼(かれ)와 첫 글자 읽기가 달라요."},
-  {k:"읽기", q:"어떻게 읽을까요?", plainShow:"お前", a:"おまえ", o:["おぜん","おまい","おさき"], jp:true, why:"お前(おまえ) = 거친 '너'."},
-  {k:"읽기", q:"어떻게 읽을까요?", plainShow:"誰", a:"だれ", o:["どれ","なに","どこ"], jp:true, why:"誰(だれ) = 누구."},
+  {k:"뜻", q:"이 말의 뜻은?", show:"かのじょ", a:"그녀", o:["그","저 사람","너"], why:"kanojo는 '그녀', '여자친구'라는 뜻도 있어요."},
+  {k:"뜻", q:"이 말의 뜻은?", show:"みなさん", a:"여러분", o:["우리","그들","당신"], why:"여러 사람을 부를 때 써요."},
+  {k:"뜻", q:"이 말의 뜻은?", show:"だれ", a:"누구", o:["어디","무엇","언제"], why:"공손하게는 donata라고 해요."},
+  {k:"뜻", q:"이 말의 뜻은?", show:"あのかた", a:"저 분", o:["저 사람","그 사람","저것"], why:"ano hito(저 사람)의 높임말이에요."},
+  {k:"뜻", q:"이 말의 뜻은?", show:"かれら", a:"그들", o:["우리","그녀","여러분"], why:"-ra, -tachi는 '~들'이에요."},
+  // 로마자 → 히라가나
+  {k:"읽기", q:"이 말을 히라가나로 쓰면?", show:"きみ", a:"きみ", o:["くん","かれ","ぼく"], kana:true, why:"kimi = 너."},
+  {k:"읽기", q:"이 말을 히라가나로 쓰면?", show:"ぼく", a:"ぼく", o:["おれ","ぽく","ほく"], kana:true, why:"boku = 남자가 쓰는 부드러운 '나'. ぼ(bo)·ぽ(po)·ほ(ho) 점을 잘 봐요."},
+  {k:"읽기", q:"이 말을 히라가나로 쓰면?", show:"おれ", a:"おれ", o:["おろ","あれ","おね"], kana:true, why:"ore = 친구끼리 쓰는 거친 '나'."},
+  {k:"읽기", q:"이 말을 히라가나로 쓰면?", show:"かのじょ", a:"かのじょ", o:["かのじゅ","がのじょ","かのしょ"], kana:true, why:"jo = じ + 작은 ょ."},
+  {k:"읽기", q:"이 말을 히라가나로 쓰면?", show:"おまえ", a:"おまえ", o:["おもえ","あまえ","おまい"], kana:true, why:"omae = 거친 '너'."},
+  {k:"읽기", q:"이 말을 히라가나로 쓰면?", show:"だれ", a:"だれ", o:["どれ","たれ","だね"], kana:true, why:"dare = 누구."},
   // 빈칸 채우기
-  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"＿＿は{医者|いしゃ}です。", ko:"그는 의사입니다.", a:"{彼|かれ}", o:["{彼女|かのじょ}","{私|わたし}","{君|きみ}"], jp:true, why:"彼 = 그 (남자)."},
-  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"＿＿は{日本人|にほんじん}です。", ko:"그녀는 일본 사람입니다.", a:"{彼女|かのじょ}", o:["{彼|かれ}","あなた","{僕|ぼく}"], jp:true, why:"彼女 = 그녀."},
-  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"＿＿、こんにちは。", ko:"여러분, 안녕하세요.", a:"{皆|みな}さん", o:["{彼|かれ}ら","{私|わたし}たち","あの{人|ひと}"], jp:true, why:"皆さん = 여러분."},
-  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"これは＿＿の{傘|かさ}ですか。", ko:"이건 누구의 우산이에요?", a:"{誰|だれ}", o:["{彼|かれ}","あなた","{君|きみ}"], jp:true, why:"誰の = 누구의."},
-  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"＿＿は{友達|ともだち}です。", ko:"우리는 친구입니다.", a:"{私|わたし}たち", o:["{彼|かれ}ら","{皆|みな}さん","あなた"], jp:true, why:"私たち = 우리."},
-  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"あの＿＿は{先生|せんせい}です。", ko:"저 분은 선생님입니다.", a:"{方|かた}", o:["{人|ひと}","{彼|かれ}","{君|きみ}"], jp:true, why:"あの方 = 저 분 (あの人보다 공손)."},
-  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"＿＿の{名前|なまえ}は{何|なん}ですか。", ko:"당신의 이름은 무엇입니까?", a:"あなた", o:["{誰|だれ}","{彼|かれ}ら","{俺|おれ}"], jp:true, why:"あなた = 당신. 실제로는 이름+さん으로 부르는 게 더 자연스러워요."},
+  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"＿＿は いしゃです。", rom:"＿＿ wa isha desu.", ko:"그는 의사입니다.", a:"かれ", o:["かのじょ","わたし","きみ"], why:"kare = 그 (남자)."},
+  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"＿＿は にほんじんです。", rom:"＿＿ wa nihonjin desu.", ko:"그녀는 일본 사람입니다.", a:"かのじょ", o:["かれ","あなた","ぼく"], why:"kanojo = 그녀."},
+  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"＿＿、こんにちは。", rom:"＿＿, konnichiwa.", ko:"여러분, 안녕하세요.", a:"みなさん", o:["かれら","わたしたち","あのひと"], why:"minasan = 여러분."},
+  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"これは ＿＿の かさですか。", rom:"Kore wa ＿＿ no kasa desu ka?", ko:"이건 누구의 우산이에요?", a:"だれ", o:["かれ","あなた","きみ"], why:"dare no = 누구의."},
+  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"＿＿は ともだちです。", rom:"＿＿ wa tomodachi desu.", ko:"우리는 친구입니다.", a:"わたしたち", o:["かれら","みなさん","あなた"], why:"watashitachi = 우리."},
+  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"あの ＿＿は せんせいです。", rom:"Ano ＿＿ wa sensei desu.", ko:"저 분은 선생님입니다.", a:"かた", o:["ひと","かれ","きみ"], why:"ano kata = 저 분 (ano hito보다 공손)."},
+  {k:"빈칸", q:"빈칸에 알맞은 말은?", sent:"＿＿の なまえは なんですか。", rom:"＿＿ no namae wa nan desu ka?", ko:"당신의 이름은 무엇입니까?", a:"あなた", o:["だれ","かれら","おれ"], why:"anata = 당신. 실제로는 이름+san으로 부르는 게 더 자연스러워요."},
   // 상황 고르기
-  {k:"상황", q:"친한 남자 친구에게 「내가 갈게!」라고 할 때, 가장 자연스러운 '나'는?", a:"{俺|おれ}", o:["{私|わたくし}","あなた","{彼|かれ}"], jp:true, why:"남자끼리 편하게 말할 때는 俺."},
-  {k:"상황", q:"회사 면접에서 「저는 ○○라고 합니다」라고 할 때 쓰는 '저'는?", a:"{私|わたくし}", o:["{俺|おれ}","あたし","{僕|ぼく}"], jp:true, why:"아주 정중한 자리에서는 わたくし."},
-  {k:"상황", q:"'그녀' 말고 '여자친구'라는 뜻도 있는 말은?", a:"{彼女|かのじょ}", o:["あの{人|ひと}","{皆|みな}さん","あの{方|かた}"], jp:true, why:"「彼女がいます」 = 여자친구가 있어요."},
-  {k:"상황", q:"선생님을 가리켜 「저 분」이라고 공손하게 말할 때는?", a:"あの{方|かた}", o:["あの{人|ひと}","{お前|おまえ}","{君|きみ}"], jp:true, why:"あの方 = 저 분."},
-  {k:"상황", q:"여자아이가 친구에게 편하게 「나도 가고 싶어!」라고 할 때 '나'는?", a:"あたし", o:["{俺|おれ}","{私|わたくし}","{彼女|かのじょ}"], jp:true, why:"あたし = 여자가 쓰는 친근한 '나'."},
-  {k:"상황", q:"윗사람에게 쓰면 실례가 되는 '너'는?", a:"{お前|おまえ}", o:["あなた","{田中|たなか}さん","あの{方|かた}"], jp:true, why:"お前는 아주 친한 사이나 거친 말투에서만 써요."}
+  {k:"상황", q:"친한 남자 친구에게 「내가 갈게!」라고 할 때, 가장 자연스러운 '나'는?", a:"おれ", o:["わたくし","あなた","かれ"], why:"남자끼리 편하게 말할 때는 ore."},
+  {k:"상황", q:"회사 면접에서 「저는 ○○라고 합니다」라고 할 때 쓰는 '저'는?", a:"わたくし", o:["おれ","あたし","ぼく"], why:"아주 정중한 자리에서는 watakushi."},
+  {k:"상황", q:"'그녀' 말고 '여자친구'라는 뜻도 있는 말은?", a:"かのじょ", o:["あのひと","みなさん","あのかた"], why:"Kanojo ga imasu = 여자친구가 있어요."},
+  {k:"상황", q:"선생님을 가리켜 「저 분」이라고 공손하게 말할 때는?", a:"あのかた", o:["あのひと","おまえ","きみ"], why:"ano kata = 저 분."},
+  {k:"상황", q:"여자아이가 친구에게 편하게 「나도 가고 싶어!」라고 할 때 '나'는?", a:"あたし", o:["おれ","わたくし","かのじょ"], why:"atashi = 여자가 쓰는 친근한 '나'."},
+  {k:"상황", q:"윗사람에게 쓰면 실례가 되는 '너'는?", a:"おまえ", o:["あなた","たなかさん","あのかた"], why:"omae는 아주 친한 사이나 거친 말투에서만 써요."}
 ];
-const KINDS = {뜻:"뜻 고르기", 읽기:"읽기 고르기", 빈칸:"빈칸 채우기", 상황:"상황 고르기"};
+// 띄어 쓰는 말은 직접 지정
+const ROM_FIX = {"あのかた":"ano kata","あのひと":"ano hito","たなかさん":"Tanaka-san"};
+
+const KINDS = {뜻:"뜻 고르기", 읽기:"히라가나 고르기", 빈칸:"빈칸 채우기", 상황:"상황 고르기"};
 const N = 15;
 
 const $ = s => document.querySelector(s), app = $("#app");
-const RUBY = /\{([^|{}]+)\|([^{}]*)\}/g;
-const rb = s => s.replace(RUBY,(m,k,r)=>r?`<ruby>${k}<rt>${r}</rt></ruby>`:k).replace(/＿＿/g,'<span class="blank"></span>');
-const plain = s => s.replace(RUBY,(m,k,r)=>r||k);
+// 히라가나 → 로마자 (헵번식)
+const KANA = {あ:"a",い:"i",う:"u",え:"e",お:"o",か:"ka",き:"ki",く:"ku",け:"ke",こ:"ko",さ:"sa",し:"shi",す:"su",せ:"se",そ:"so",
+  た:"ta",ち:"chi",つ:"tsu",て:"te",と:"to",な:"na",に:"ni",ぬ:"nu",ね:"ne",の:"no",は:"ha",ひ:"hi",ふ:"fu",へ:"he",ほ:"ho",
+  ま:"ma",み:"mi",む:"mu",め:"me",も:"mo",や:"ya",ゆ:"yu",よ:"yo",ら:"ra",り:"ri",る:"ru",れ:"re",ろ:"ro",わ:"wa",を:"o",ん:"n",
+  が:"ga",ぎ:"gi",ぐ:"gu",げ:"ge",ご:"go",ざ:"za",じ:"ji",ず:"zu",ぜ:"ze",ぞ:"zo",だ:"da",ぢ:"ji",づ:"zu",で:"de",ど:"do",
+  ば:"ba",び:"bi",ぶ:"bu",べ:"be",ぼ:"bo",ぱ:"pa",ぴ:"pi",ぷ:"pu",ぺ:"pe",ぽ:"po"};
+const SMALL = {ゃ:"a",ゅ:"u",ょ:"o"};
+function romaji(kana){
+  if(ROM_FIX[kana]) return ROM_FIX[kana];
+  let out="", dbl=false;
+  for(const ch of kana){
+    if(ch==="っ"){ dbl=true; continue; }
+    if(SMALL[ch] && out){ // きゃ → kya, しゃ → sha, ちゃ → cha, じゃ → ja
+      out = /(sh|ch|j)i$/.test(out) ? out.slice(0,-1)+SMALL[ch] : out.slice(0,-1)+"y"+SMALL[ch]; continue; }
+    let r = KANA[ch]; if(r==null){ out+=ch; continue; }
+    if(dbl){ r = (r.startsWith("ch") ? "t" : r[0]) + r; dbl=false; }
+    out+=r;
+  }
+  return out;
+}
+const blank = s => s.replace(/＿＿/g,'<span class="blank"></span>');
+// 화면용: 로마자 크게 + 히라가나 작게
+const jp = s => `<span class="rm">${romaji(s)}</span><small class="kn">${s}</small>`;
 const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
 function store(k,v){ try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; } }
 function speak(t){ try{ const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=.85;
@@ -138,8 +169,9 @@ function home(){
   const best=store("pq-best");
   app.innerHTML=`<div class="hello"><img src="../chiikawa/hachi.jpg" alt="하치와레"><div><h1>인칭 대명사 <b>퀴즈</b></h1>
     <p class="sub">문제집에서 배운 わたし·あなた·かれ… 얼마나 기억나는지 확인해요. 한 번에 ${N}문제, 풀 때마다 바로 정답을 알려줘요.</p></div></div>
-    <ul class="kinds"><li><b>뜻 고르기</b> — 彼女는 무슨 뜻?</li><li><b>읽기 고르기</b> — 僕는 어떻게 읽을까?</li>
-    <li><b>빈칸 채우기</b> — ＿＿は医者です (그는 의사입니다)</li><li><b>상황 고르기</b> — 면접에서 쓰는 '저'는?</li></ul>
+    <ul class="kinds"><li><b>뜻 고르기</b> — kanojo는 무슨 뜻?</li><li><b>히라가나 고르기</b> — boku를 히라가나로 쓰면?</li>
+    <li><b>빈칸 채우기</b> — ＿＿ wa isha desu (그는 의사입니다)</li><li><b>상황 고르기</b> — 면접에서 쓰는 '저'는?</li></ul>
+    <p class="sub" style="margin:0 0 12px">한자 대신 로마자로 보여주고, 아래에 작게 히라가나를 같이 써 줘요.</p>
     <div class="row"><button class="main" id="go">퀴즈 시작</button><a href="../pronouns/"><button>문제집 먼저 보기</button></a></div>
     <p class="best">${best!=null?`최고 점수 ${best} / ${N}`:"아직 기록이 없어요"}</p>`;
   $("#go").onclick=()=>start(pickSet());
@@ -148,15 +180,15 @@ function home(){
 function show(){
   const it=Q.list[Q.i], b=it.b, n=Q.list.length, done=Q.picked!=null, ok=done&&it.opts[Q.picked]===b.a;
   let body="";
-  if(b.show||b.plainShow) body=`<p class="ask">${b.q}</p><div class="big">${b.plainShow||rb(b.show)}</div>`;
-  else if(b.sent) body=`<p class="ask">${b.q}</p><div class="sent">${rb(b.sent)}</div><p class="ko">${b.ko}</p>`;
+  if(b.show) body=`<p class="ask">${b.q}</p><div class="big">${b.kana?`<span class="rm">${romaji(b.show)}</span>`:jp(b.show)}</div>`;
+  else if(b.sent) body=`<p class="ask">${b.q}</p><div class="sent"><span class="rm">${blank(b.rom)}</span><small class="kn">${blank(b.sent)}</small></div><p class="ko">${b.ko}</p>`;
   else body=`<p class="ask">${b.q}</p>`;
   app.innerHTML=`<div class="top"><span>${Q.i+1} / ${n} · 맞힘 ${Q.right}</span><button id="quit" style="font-size:12px;padding:3px 10px">그만하기</button></div>
     <div class="bar"><i style="width:${(Q.i+(done?1:0))/n*100}%"></i></div>
     <span class="tag">${KINDS[b.k]}</span>${body}
-    <div class="opts">${it.opts.map((o,k)=>{ let c=b.jp?"jp":""; if(done){ if(o===b.a) c+=" right"; else if(k===Q.picked) c+=" wrong"; }
-      return `<button class="${c}" data-k="${k}" ${done?"disabled":""}>${rb(o)}</button>`; }).join("")}</div>
-    ${done?`<div class="fb ${ok?"":"no"}" role="status"><img src="${ok?"../chiikawa/chii.jpg":"../chiikawa/hachi.jpg"}" alt=""><div><b>${ok?"⭕ 정답! えらい！":"❌ 아쉬워요 — 정답은 "+rb(b.a)}</b><span>${b.why}</span></div></div>
+    <div class="opts">${it.opts.map((o,k)=>{ const isJp=b.k!=="뜻"; let c=b.kana?"jp":""; if(done){ if(o===b.a) c+=" right"; else if(k===Q.picked) c+=" wrong"; }
+      return `<button class="${c}" data-k="${k}" ${done?"disabled":""}>${b.kana?o:isJp?jp(o):o}</button>`; }).join("")}</div>
+    ${done?`<div class="fb ${ok?"":"no"}" role="status"><img src="${ok?"../chiikawa/chii.jpg":"../chiikawa/hachi.jpg"}" alt=""><div><b>${ok?"⭕ 정답! えらい！":"❌ 아쉬워요 — 정답은 "+(b.k==="뜻"?b.a:b.kana?b.a:romaji(b.a)+" ("+b.a+")")}</b><span>${b.why}</span></div></div>
       <div class="next"><button class="main" id="next">${Q.i+1<n?"다음 문제":"결과 보기"}</button></div>`:""}`;
   $("#quit").onclick=()=>{ Q=null; home(); };
   app.querySelector(".opts").onclick=e=>{ const x=e.target.closest("button[data-k]"); if(x) answer(+x.dataset.k); };
@@ -166,11 +198,12 @@ function answer(k){
   if(Q.picked!=null) return; Q.picked=k;
   const it=Q.list[Q.i];
   if(it.opts[k]===it.b.a) Q.right++; else Q.wrong.push({b:it.b, mine:it.opts[k]});
-  if(it.b.jp) speak(plain(it.b.a));
+  speak(it.b.k==="뜻" ? it.b.show : it.b.a);
   show();
 }
 function next(){ Q.i++; Q.picked=null; if(Q.i>=Q.list.length) result(); else show(); }
 
+const show1 = (b,s) => b.k==="뜻" ? s : b.kana ? s : `${romaji(s)} (${s})`;
 function result(){
   const n=Q.list.length, r=Q.right, rate=r/n;
   if(n===N){ store("pq-best", Math.max(store("pq-best")||0, r)); }
@@ -179,8 +212,8 @@ function result(){
   app.innerHTML=`<div class="result"><img class="face" src="${face}" alt="">
     <div class="score">${r}<small> / ${n}</small></div><p><b>${msg}</b></p>
     <div class="center">${Q.wrong.length?`<button class="main" id="retry">틀린 ${Q.wrong.length}문제 다시</button>`:""}<button id="again">새 퀴즈</button><button id="home">처음으로</button></div>
-    <div class="review">${Q.wrong.length?`<h3>틀린 문제</h3>`+Q.wrong.map(w=>`<div class="rv"><div class="q">${w.b.sent?rb(w.b.sent)+" — "+w.b.ko:w.b.q+(w.b.show||w.b.plainShow?" "+(w.b.plainShow||rb(w.b.show)):"")}</div>
-      <div>정답 <span class="a">${rb(w.b.a)}</span> · 내 답 <span class="a" style="color:var(--bad)">${rb(w.mine)}</span></div><div class="q">${w.b.why}</div></div>`).join(""):`<div class="allok">전부 맞았어요! 💮</div>`}</div></div>`;
+    <div class="review">${Q.wrong.length?`<h3>틀린 문제</h3>`+Q.wrong.map(w=>`<div class="rv"><div class="q">${w.b.sent?w.b.rom+" — "+w.b.ko:w.b.q+(w.b.show?" "+romaji(w.b.show):"")}</div>
+      <div>정답 <span class="a">${show1(w.b,w.b.a)}</span> · 내 답 <span class="a" style="color:var(--bad)">${show1(w.b,w.mine)}</span></div><div class="q">${w.b.why}</div></div>`).join(""):`<div class="allok">전부 맞았어요! 💮</div>`}</div></div>`;
   if($("#retry")) $("#retry").onclick=()=>start(Q.wrong.map(w=>w.b));
   $("#again").onclick=()=>start(pickSet());
   $("#home").onclick=()=>{ Q=null; home(); };

@@ -86,7 +86,9 @@
   button.wc:hover{border-color:var(--mint)}
   button.wc.used{opacity:.35}
   div.wc{cursor:default}
-  #write .wc.p .mean{display:none}   /* 써 보기: 대명사 뜻은 가려서 직접 고르게 */
+  #write div.wc.p{cursor:pointer}   /* 써 보기: 뜻은 가려 두고 누르면 보이게 */
+  #write div.wc.p:not(.show) .mean{color:transparent;background:var(--rule);border-radius:4px;min-width:3em}
+  #write div.wc.p:not(.show):hover .mean{background:#c9ddd5}
   .line .tile.p{background:var(--hl)} .line .tile.j{background:#f3ecfb}
   /* 직접 쓰기 */
   .wq{margin-bottom:16px}
@@ -286,7 +288,7 @@ function vocab(cards, clickable){
   cards.forEach((c,i)=>{ if(!seen.has(c[0]+c[3])){ seen.add(c[0]+c[3]); list.push([c,i]); } });
   return `<div class="vocab">`+["p","w","j"].map(k=>{
     const row=shuffle(list.filter(([c])=>c[3]===k)); if(!row.length) return "";
-    return `<div class="vrow"><span class="vlab">${LABEL[k]}</span><div class="cards">${row.map(([c,i])=>card(c, clickable?"button":"div", clickable?`data-i="${i}"`:"")).join("")}</div></div>`;
+    return `<div class="vrow"><span class="vlab">${LABEL[k]}${k==="p"&&!clickable?"<br><small>눌러서 뜻 보기</small>":""}</span><div class="cards">${row.map(([c,i])=>card(c, clickable?"button":"div", clickable?`data-i="${i}"`:"")).join("")}</div></div>`;
   }).join("")+`</div>`;
 }
 
@@ -401,6 +403,7 @@ WRITE.forEach((_,i)=>{
 });
 
 $("#write").addEventListener("click",e=>{
+  const wc=e.target.closest("div.wc.p"); if(wc){ wc.classList.toggle("show"); return; }
   const m=e.target.closest(".mode [data-m]"); if(m) return setMode(m.dataset.m);
   const b=e.target.closest("[data-pad]"); if(!b) return;
   const i=+b.closest(".wq").dataset.q, a=b.dataset.pad; if(!narrow()) setActive(i);
