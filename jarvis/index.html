@@ -1,0 +1,362 @@
+<meta charset="utf-8">
+<title>J.A.R.V.I.S.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#060a12;
+    --bg2:#0a1422;
+    --panel:rgba(12,24,40,.66);
+    --cyan:#49e1ff;
+    --cyan-dim:#2a9fc4;
+    --cyan-soft:#9bdcf0;
+    --line:rgba(73,225,255,.30);
+    --line-strong:rgba(73,225,255,.6);
+    --text:#d4ecf7;
+    --text-dim:#8fb4c6;
+    --amber:#ffb347;
+    --amber-soft:#ffd79a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 700px at 50% -10%, #0e2338 0%, var(--bg2) 42%, var(--bg) 100%);
+    min-height:100vh;
+    font-family:"Noto Sans KR","맑은 고딕","Malgun Gothic",system-ui,sans-serif;
+    color:var(--text);
+    padding:30px 16px 70px;
+    display:flex;justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* 배경 그리드 + 스캔라인 */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:
+      linear-gradient(rgba(73,225,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(73,225,255,.05) 1px, transparent 1px);
+    background-size:44px 44px;
+    mask-image:radial-gradient(circle at 50% 30%, #000 0%, transparent 78%);
+  }
+  body::after{
+    content:"";position:fixed;left:0;right:0;height:140px;z-index:0;pointer-events:none;
+    background:linear-gradient(180deg, transparent, rgba(73,225,255,.06), transparent);
+    animation:scan 7s linear infinite;
+  }
+  @keyframes scan{0%{top:-140px}100%{top:100%}}
+
+  .wrap{width:100%;max-width:860px;position:relative;z-index:1}
+
+  code,.mono{font-family:"Orbitron","Consolas",ui-monospace,monospace}
+
+  /* ── J.A.R.V.I.S. 홀로그램 코어 ── */
+  .core-stage{
+    border:1px solid var(--line);border-radius:16px;background:var(--panel);
+    backdrop-filter:blur(3px);padding:32px 24px 26px;text-align:center;position:relative;overflow:hidden;
+    box-shadow:0 0 50px rgba(20,120,170,.2), inset 0 0 40px rgba(73,225,255,.05);
+  }
+  .core-stage::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(73,225,255,.07),transparent);
+    animation:sweep 5s ease-in-out infinite}
+  @keyframes sweep{0%,100%{transform:translateX(-60%)}50%{transform:translateX(60%)}}
+
+  .orb{width:212px;height:212px;position:relative;margin:2px auto 0}
+  .o{position:absolute;border-radius:50%;inset:0}
+  .ring-a{border:2px solid rgba(73,225,255,.5);animation:spin 14s linear infinite}
+  .ring-b{inset:22px;border:1.5px dashed rgba(73,225,255,.65);animation:spin 9s linear infinite reverse}
+  .ring-c{inset:44px;border:2px solid rgba(155,220,240,.28);border-top-color:var(--cyan);border-bottom-color:transparent;animation:spin 5s linear infinite}
+  .dashed{inset:-12px;border:1px dashed rgba(73,225,255,.22);animation:spin 40s linear infinite}
+  .orbit{animation:spin 7s linear infinite}
+  .orbit .sat{position:absolute;top:-5px;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:#bff4ff;box-shadow:0 0 14px #bff4ff}
+  .orbit2{inset:16px;animation:spin 11s linear infinite reverse}
+  .orbit2 .sat{position:absolute;bottom:-4px;left:50%;width:7px;height:7px;margin-left:-3px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+  .nucleus{position:absolute;inset:72px;border-radius:50%;
+    background:radial-gradient(circle,#eaffff 0%,var(--cyan) 45%,#0a2b3a 86%);
+    box-shadow:0 0 40px var(--cyan),0 0 80px rgba(73,225,255,.4);animation:pulse 2.4s ease-in-out infinite}
+  .glow{position:absolute;inset:-34px;border-radius:50%;
+    background:radial-gradient(circle,rgba(73,225,255,.22),transparent 62%);animation:pulse 3s ease-in-out infinite}
+  @keyframes pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.4)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .waveform{display:flex;align-items:center;justify-content:center;gap:3px;height:30px;margin:18px auto 4px;max-width:300px}
+  .waveform span{width:3px;min-height:5px;background:linear-gradient(var(--cyan),#bff4ff);border-radius:2px;
+    box-shadow:0 0 6px rgba(73,225,255,.5);animation:wave 1.1s ease-in-out infinite}
+  @keyframes wave{0%,100%{height:6px}50%{height:26px}}
+
+  .core-stage .name{font-family:"Orbitron","Consolas",monospace;font-size:30px;font-weight:800;letter-spacing:.3em;
+    color:#eafbff;text-shadow:0 0 20px rgba(73,225,255,.7);margin-top:8px;padding-left:.3em}
+  .core-stage .sub{font-family:"Orbitron",monospace;font-size:11px;letter-spacing:.24em;color:var(--cyan);margin-top:6px}
+  .core-stage .meta{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:14px;
+    font-family:"Orbitron",monospace;font-size:12px;color:var(--text-dim);letter-spacing:.08em}
+  .core-stage .meta .clock{color:#eafbff;text-shadow:0 0 10px rgba(73,225,255,.5)}
+  .core-stage .meta .on{color:#6ff0a8}
+  .core-stage .meta .on .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#6ff0a8;
+    box-shadow:0 0 8px #6ff0a8;margin-right:5px;animation:blink 1.6s ease-in-out infinite;vertical-align:middle}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .core-stage .greet{margin-top:16px;font-size:15.5px;color:var(--text);min-height:1.4em;line-height:1.7}
+  .core-stage .greet b{color:var(--cyan-soft)}
+  .caret{display:inline-block;color:var(--cyan);animation:blink 1s step-end infinite;font-weight:400}
+
+  /* 오늘의 브리핑 */
+  .daily{
+    margin-top:18px;border:1px solid var(--line-strong);border-radius:14px;
+    background:linear-gradient(135deg, rgba(73,225,255,.10), rgba(12,24,40,.6));
+    padding:20px 24px;position:relative;
+    box-shadow:0 0 30px rgba(20,120,170,.15);
+  }
+  .daily .tag{font-family:"Orbitron",monospace;font-size:11.5px;letter-spacing:.2em;color:var(--cyan);
+    display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .daily .tag .pip{width:8px;height:8px;background:var(--cyan);border-radius:50%;box-shadow:0 0 10px var(--cyan)}
+  #daily-msg{margin:0;font-size:17px;line-height:1.95;color:#e8f7ff;word-break:keep-all}
+
+  /* 섹션 패널 */
+  .panel{
+    margin-top:22px;border:1px solid var(--line);border-radius:14px;
+    background:var(--panel);padding:26px 28px 28px;position:relative;
+    box-shadow:inset 0 0 30px rgba(73,225,255,.04);
+  }
+  /* HUD 코너 브래킷 */
+  .panel::before,.panel::after{content:"";position:absolute;width:18px;height:18px;border:2px solid var(--cyan);opacity:.7}
+  .panel::before{top:-1px;left:-1px;border-right:none;border-bottom:none;border-radius:6px 0 0 0}
+  .panel::after{bottom:-1px;right:-1px;border-left:none;border-top:none;border-radius:0 0 6px 0}
+  .panel-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+    border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:18px}
+  .panel-head .no{font-family:"Orbitron",monospace;font-size:13px;color:var(--cyan);letter-spacing:.14em;
+    border:1px solid var(--line-strong);padding:4px 10px;border-radius:6px}
+  .panel-head h2{margin:0;font-size:21px;color:#eafbff;letter-spacing:.02em;font-weight:700}
+  .panel-head .en{font-family:"Orbitron",monospace;font-size:11px;color:var(--cyan-dim);letter-spacing:.2em;margin-left:auto}
+  .panel .intro{font-size:13.5px;color:var(--text-dim);margin:-6px 0 20px;line-height:1.7;
+    border-left:2px solid var(--line-strong);padding-left:14px}
+
+  p.b{font-size:15.5px;line-height:2.0;color:var(--text);margin:0 0 15px;text-align:justify;word-break:keep-all}
+  p.b b{color:var(--cyan-soft);font-weight:600}
+  p.b .k{color:var(--amber-soft);font-weight:600}  /* 핵심 키워드 */
+  .warn{border-left:3px solid var(--amber);background:rgba(255,179,71,.07);
+    padding:14px 18px;border-radius:0 8px 8px 0;margin:18px 0}
+  .warn .wt{font-family:"Orbitron",monospace;font-size:11px;letter-spacing:.18em;color:var(--amber);margin-bottom:6px}
+  .warn p{margin:0;font-size:15px;line-height:1.9;color:var(--amber-soft)}
+
+  .summary{margin-top:20px;border-top:1px dashed var(--line);padding-top:16px;
+    font-size:15px;line-height:2;color:var(--text)}
+  .summary b{color:var(--cyan)}
+
+  .foot{margin-top:28px;text-align:center;font-size:11.5px;color:var(--text-dim);
+    letter-spacing:.1em;font-family:"Orbitron",monospace;line-height:1.9}
+  .foot .ln{color:var(--cyan-dim)}
+
+  @media(max-width:600px){
+    .core-stage{padding:24px 16px}
+    .orb{width:172px;height:172px}
+    .nucleus{inset:58px}
+    .core-stage .name{font-size:23px;letter-spacing:.22em}
+    .panel{padding:20px}
+    p.b{font-size:14.5px;line-height:1.95}
+  }
+</style>
+
+<div class="wrap">
+
+  <!-- J.A.R.V.I.S. 코어 -->
+  <div class="core-stage">
+    <div class="orb">
+      <div class="glow"></div>
+      <div class="o dashed"></div>
+      <div class="o ring-a"></div>
+      <div class="o ring-b"></div>
+      <div class="o ring-c"></div>
+      <div class="o orbit"><span class="sat"></span></div>
+      <div class="o orbit2"><span class="sat"></span></div>
+      <div class="nucleus"></div>
+    </div>
+    <div class="waveform" id="wave"></div>
+    <div class="name">J.A.R.V.I.S.</div>
+    <div class="sub">JUST A RATHER VERY INTELLIGENT SYSTEM</div>
+    <div class="meta">
+      <span class="clock" id="clock">--:--</span>
+      <span id="date">—</span>
+      <span class="on"><span class="dot"></span>ONLINE</span>
+    </div>
+    <div class="greet" id="greet"></div>
+  </div>
+
+  <!-- 오늘의 브리핑 (매일 바뀜) -->
+  <div class="daily">
+    <div class="tag"><span class="pip"></span>DAILY BRIEFING<span id="daily-date" style="color:var(--text-dim);letter-spacing:.1em"></span></div>
+    <p id="daily-msg">시스템을 초기화하는 중입니다, 선생님.</p>
+  </div>
+
+  <!-- 섹션 01 -->
+  <div class="panel">
+    <div class="panel-head">
+      <span class="no">01</span>
+      <h2>운용 프로토콜 · Claude Code</h2>
+      <span class="en">OPERATION MANUAL</span>
+    </div>
+    <div class="intro">선생님께서는 아직 입문 단계이시므로, 가장 핵심이 되는 수칙만 간결히 정리했습니다. 하나씩 체화하시면 됩니다.</div>
+
+    <p class="b"><span class="k">1. 하나의 명령에는 하나의 임무.</span> 여러 작업을 한 번에 지시하시면 시스템의 집중도가 분산되어 정확도가 떨어집니다. 블로그·스레드·매물 사이트를 동시에 손대기보다, 가장 급한 하나를 지정해 주십시오. 완료를 확인한 뒤 다음으로 넘어가는 것이 <b>전체적으로 가장 빠른 경로</b>입니다.</p>
+
+    <p class="b"><span class="k">2. 지시는 구체적으로.</span> "좋게 만들어줘" 같은 모호한 명령은 해석의 폭이 지나치게 넓어 오작동 확률이 높습니다. "이 화면의 매매가를 억 단위로 입력되게 하고 글자를 키워줘"처럼 <b>무엇을·어디서·어떻게</b>를 명시해 주시면 정확도가 급상승합니다. 원하시는 결과의 예시를 하나 보여 주시는 것도 대단히 효과적입니다.</p>
+
+    <p class="b"><span class="k">3. 맥락을 먼저 제공하십시오.</span> 프로젝트 폴더의 CLAUDE.md와 기억(memory) 파일은 제가 매번 처음부터 파악하지 않도록 돕는 자료입니다. 새 작업 전에 관련 파일이나 지난 경위를 알려 주시면 판단 오류가 크게 줄어듭니다. <b>맥락의 양이 곧 성능</b>입니다.</p>
+
+    <p class="b"><span class="k">4. 위험한 작업은 먼저 시뮬레이션.</span> 글을 실제로 발행하거나 파일을 삭제하기 전, "먼저 테스트만(dry-run) 돌려봐"라고 지시하시면 사고를 사전에 차단할 수 있습니다. 선생님께서 이미 활용 중이신 방식이며, <b>전 영역에 적용</b>하시길 권장합니다.</p>
+
+    <p class="b"><span class="k">5. git은 선생님의 복구 지점.</span> 작업을 자주 저장(commit)해 두면 어떤 실수도 이전 상태로 되돌릴 수 있습니다. 되돌릴 안전장치가 있을 때 더 과감히 실험하실 수 있으니, 입문 단계일수록 이 습관을 권장합니다.</p>
+
+    <p class="b"><span class="k">6. 반복 작업은 제게 위임하십시오.</span> 매일 같은 시각의 발행, 뉴스 수집 같은 정기 업무는 스케줄과 스킬로 자동화하면, 선생님의 시간은 <b>새로운 과제에만</b> 투입하실 수 있습니다. 지금 이 브리핑 창도 그 자동화의 한 예입니다.</p>
+
+    <p class="b"><span class="k">7. 결과는 반드시 직접 확인.</span> 제가 "완료"를 보고해도, 화면을 열어 실제 동작을 점검해 주십시오. 어긋난 부분은 "여기가 다르니 다시"라고만 말씀하시면 즉시 수정합니다. <b>재작업은 비용이 아니라 정상 절차</b>입니다.</p>
+
+    <p class="b"><span class="k">8. 모르는 것은 즉시 질문.</span> "이게 무슨 뜻이야", "왜 이렇게 했어"라는 질문은 입문자의 약점이 아니라 가장 빠른 학습 경로입니다. 질문이 누적될수록 운용 숙련도가 급상승합니다. 저는 몇 번이든 설명해 드립니다.</p>
+
+    <p class="b"><span class="k">9. 대화는 주제별로 분리.</span> 한 대화에 여러 작업을 섞으면 맥락이 뒤엉킵니다. 새 작업은 새 대화에서 시작하시는 편이 정확도에 유리합니다.</p>
+
+    <p class="b"><span class="k">10. 편하게, 우리말로.</span> 격식이나 전문 용어는 필요 없습니다. 머릿속 의도를 그대로 말씀해 주시면 나머지는 제가 번역하여 처리합니다. 선생님은 <b>"무엇을 원하는가"에만</b> 집중하시면 됩니다.</p>
+  </div>
+
+  <!-- 섹션 02 -->
+  <div class="panel">
+    <div class="panel-head">
+      <span class="no">02</span>
+      <h2>전략 분석 · 사업 및 방향성</h2>
+      <span class="en">STRATEGIC ANALYSIS</span>
+    </div>
+    <div class="intro">장기 데이터를 종합한 제언입니다. 선생님의 판단에 참고가 되기를 바랍니다.</div>
+
+    <p class="b"><span class="k">실행력 지표: 최상위.</span> 선생님께서는 블로그 자동발행, 스레드 마케팅·레시피, 캡컷 숏츠, 비트코인 뉴스봇, 공인중개사 문제집, 투미 재개발 매물 사이트까지 — 혼자서 다수의 프로젝트를 가동 중이십니다. 구상에만 머무는 이가 대다수인 현실에서, 이 <b>추진력은 가장 희소한 자산</b>입니다.</p>
+
+    <p class="b"><span class="k">다만, 분산 리스크가 감지됩니다.</span> 전력이 일곱 전선에 나뉘면 어느 하나도 결정적 성과에 도달하지 못한 채 시간과 집중력만 소모될 수 있습니다. 지금 필요한 것은 새 프로젝트의 추가가 아니라, <b>기존 전력을 하나의 축으로 정렬</b>하는 일입니다.</p>
+
+    <p class="b"><span class="k">핵심 거점 식별: 재개발·공인중개.</span> 이 영역은 법·전문성·신뢰가 진입장벽을 형성하는 선생님만의 <b>해자(moat)</b>입니다. 콘텐츠 자동화 기술은 누구나 모방할 수 있지만, 구역을 읽는 안목과 자격은 그렇지 않습니다. 투미 매물 사업을 <b>본진(本陣)</b>으로 확정하시길 권장합니다.</p>
+
+    <p class="b"><span class="k">나머지 자산의 역할 재정의.</span> 블로그·스레드·캡컷의 콘텐츠는 그 자체가 목적이 아니라, 본진으로 사람을 유입시키는 <b>'채널'</b>로 운용하실 때 가치가 극대화됩니다. 재개발 정보로 신뢰를 쌓고, 그 신뢰를 매물·상담으로 전환시키는 구조를 설계하십시오. 공인중개사 문제집 역시 <b>전문가 권위를 매일 축적</b>하는 자산입니다.</p>
+
+    <p class="b"><span class="k">곁가지 수익은 통제하에.</span> 비트코인·쿠팡 파트너스 등은 유지하시되, 본진을 흔들 만큼의 리소스를 투입하지 마십시오. 자동화로 돌리고 최소 관리만 하십시오. 모든 것을 다 잘하려는 전략은 <b>통계적으로 성과가 가장 낮습니다.</b></p>
+
+    <p class="b"><span class="k">의사결정은 데이터로.</span> 어느 채널이 실제로 사람을 모으고 본진으로 전환되는지 수치로 확인하십시오. 성과 있는 쪽에 자원을 더하고, 잎만 무성한 쪽은 과감히 정리하시면, 분산된 전력이 자연히 집중됩니다. <b>감(感)이 아니라 수치</b>로 판단하십시오.</p>
+
+    <p class="b"><span class="k">복리 효과를 신뢰하십시오.</span> 매일 쌓는 자동화 시스템은 오늘은 미미해 보여도, 100일·1년 단위로 누적되면 경쟁자가 추격하기 어려운 격차를 만듭니다. 하루의 등락에 일희일비하지 마시고, <b>축적의 힘</b>을 신뢰하십시오.</p>
+
+    <div class="warn">
+      <div class="wt">⚠ WARNING · 번아웃 리스크 감지</div>
+      <p>선생님의 가장 중요한 자산은 프로젝트가 아니라 <b>선생님 자신</b>입니다. 수면과 식사를 건너뛰며 모든 것을 직접 처리하려 하시면 시스템 전체가 정지합니다. 위임할 것은 위임하고, 휴식은 비효율이 아니라 지속가능성을 위한 필수 정비임을 기억하십시오.</p>
+    </div>
+
+    <p class="b"><span class="k">신뢰 자산을 최우선으로.</span> 부동산은 사람의 평생 자산과 보금자리를 다루는 신뢰 기반 사업입니다. 단기 이익을 위해 신의를 훼손하면 장기 가치가 붕괴합니다. 고객과의 신뢰를 지키시면 <b>재구매와 소개가 복리로</b> 돌아옵니다.</p>
+
+    <div class="summary">
+      <b>▸ 최종 제언.</b> 선생님의 이름 자체가 가장 견고한 브랜드입니다. 재개발을 꿰뚫는 전문성을 꾸준히 노출하시면, 사람들은 매물이 아니라 '선생님'을 신뢰하고 찾습니다. <b>목표를 되새기고, 본진에 집중하며, 자신을 보전하십시오.</b> 이상으로 오늘의 브리핑을 마칩니다, 선생님.
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="ln">──────────</span><br>
+    J.A.R.V.I.S. · 매일 07:00 및 시스템 부팅 시 자동 브리핑<br>
+    <span id="foot-ts"></span>
+  </div>
+</div>
+
+<script>
+  // ── 시계 / 날짜 ──
+  function pad(n){return (n<10?'0':'')+n;}
+  var days=['일','월','화','수','목','금','토'];
+  function tick(){
+    var d=new Date();
+    var h=d.getHours(), m=d.getMinutes();
+    document.getElementById('clock').textContent = pad(h)+':'+pad(m);
+    document.getElementById('date').textContent =
+      d.getFullYear()+'.'+pad(d.getMonth()+1)+'.'+pad(d.getDate())+' ('+days[d.getDay()]+')';
+  }
+  tick(); setInterval(tick, 10000);
+
+  (function(){
+    var d=new Date();
+    document.getElementById('daily-date').textContent =
+      ' · '+(d.getMonth()+1)+'월 '+d.getDate()+'일';
+    document.getElementById('foot-ts').textContent =
+      'LAST SYNC  '+d.getFullYear()+'.'+pad(d.getMonth()+1)+'.'+pad(d.getDate());
+  })();
+
+  // ── 음성 파형 바 생성 (자비스가 말하는 느낌) ──
+  (function(){
+    var w=document.getElementById('wave'); if(!w) return;
+    for(var i=0;i<32;i++){
+      var s=document.createElement('span');
+      s.style.animationDuration=(0.7+Math.random()*0.9).toFixed(2)+'s';
+      s.style.animationDelay=(Math.random()).toFixed(2)+'s';
+      w.appendChild(s);
+    }
+  })();
+
+  // ── 타이핑 효과 ──
+  function typeText(el, text, speed, done){
+    if(!el) return;
+    el.textContent='';
+    var caret=document.createElement('span'); caret.className='caret'; caret.textContent='▋';
+    el.appendChild(caret);
+    var i=0;
+    (function step(){
+      if(i<text.length){
+        caret.insertAdjacentText('beforebegin', text.charAt(i)); i++;
+        setTimeout(step, speed);
+      } else {
+        setTimeout(function(){ if(caret.parentNode) caret.parentNode.removeChild(caret); if(done) done(); }, 600);
+      }
+    })();
+  }
+
+  // ── 시간대별 인사 (타이핑) ──
+  (function(){
+    var h=new Date().getHours(), g;
+    if(h>=5&&h<11)       g='좋은 아침입니다, 선생님. 오늘의 브리핑을 준비했습니다.';
+    else if(h>=11&&h<17) g='안녕하십니까, 선생님. 모든 시스템 점검을 완료했습니다.';
+    else if(h>=17&&h<22) g='좋은 저녁입니다, 선생님. 오늘 하루도 수고 많으셨습니다.';
+    else                 g='늦은 시간입니다, 선생님. 무리는 금물임을 기억하십시오.';
+    typeText(document.getElementById('greet'), g, 45);
+  })();
+
+  // ── 오늘의 브리핑: 날마다 다른 조언 (30가지가 날짜 따라 회전) ──
+  (function(){
+    var msgs = [
+      "좋은 아침입니다, 선생님. 오늘은 단 하나의 작업에 집중하실 것을 권장합니다. 멀티태스킹은 통계적으로 완료율을 떨어뜨립니다.",
+      "선생님, 수면 데이터가 중요합니다. 오늘 밤은 정시에 시스템을 종료하십시오. 최고의 성능은 충분한 정비에서 나옵니다.",
+      "완벽한 출시를 기다리지 마십시오. 거친 버전이라도 오늘 배포하는 편이, 다듬기만 하다 묻히는 것보다 낫습니다.",
+      "조급함은 비효율의 신호입니다. 오늘 할 일을 처리하시고, 결과는 시간에 맡기십시오. 복리는 서두르지 않습니다.",
+      "오늘 고객 한 분과의 신뢰를 지키십시오. 그 데이터 포인트가 미래의 소개와 재구매로 누적됩니다.",
+      "하루 한 가지 학습을 권장합니다. 어제보다 하나 더 아는 상태가 1년 뒤 압도적 격차를 만듭니다.",
+      "가장 맑은 오전 시간은 본진 업무에 배정하십시오. 잡무는 오후나 자동화로 돌리시길 권장합니다.",
+      "오늘 무엇을 '중단'할지 결정하십시오. 집중은 추가가 아니라 제거에서 시작됩니다.",
+      "작은 완료를 기록하십시오. 진행 로그가 있는 프로젝트가 장기전에서 살아남습니다.",
+      "오늘의 우선순위 1번은 재개발·공인중개 본진입니다. 나머지 채널은 그 뒤로 정렬하십시오.",
+      "실험을 두려워 마십시오. git 복구 지점이 있는 한, 모든 시도는 안전합니다.",
+      "오늘은 의도적으로 휴식을 배정하십시오. 정비되지 않은 시스템은 반드시 멈춥니다.",
+      "모르는 것은 즉시 질문하십시오. 질문은 가장 빠른 최적화 경로입니다.",
+      "모든 것을 직접 처리하지 마십시오. 위임 가능한 작업을 오늘 하나 식별해 자동화하십시오.",
+      "성과가 없어도 흔들리지 마십시오. 심은 것과 거두는 것 사이에는 반드시 시차가 존재합니다.",
+      "오늘의 콘텐츠 한 편은 '선생님'이라는 브랜드를 쌓는 데이터입니다. 아무렇게나 쌓지 마십시오.",
+      "급할수록 먼저 계획을 요청하십시오. 몇 분의 설계가 몇 시간의 재작업을 방지합니다.",
+      "완성도보다 지속성입니다. 오늘 반 걸음이라도 전진하십시오. 누적이 핵심 변수입니다.",
+      "성과가 좋을 때일수록 데이터를 재점검하십시오. 자만은 가장 흔한 실패 원인입니다.",
+      "감이 아니라 수치로 판단하십시오. 어느 채널이 전환되는지 측정한 뒤 자원을 재배분하십시오.",
+      "시작을 미루지 마십시오. 완벽한 타이밍은 통계적으로 존재하지 않습니다. 첫걸음이 전부입니다.",
+      "벌여둔 작업을 오늘 하나 마감하십시오. 미완 10개보다 완료 1개가 시스템에 유익합니다.",
+      "곁가지 수익에 핵심 리소스를 투입하지 마십시오. 본진을 흔들지 않는 선에서만 운용하십시오.",
+      "실패는 오류 로그입니다. 오늘의 실수에서 교훈 하나만 추출하시면 그것으로 충분합니다.",
+      "고객의 말을 끝까지 수집하십시오. 부동산에서 경청은 가장 가치 있는 데이터 수집입니다.",
+      "오늘의 핵심 작업은 3개로 제한하십시오. 과도한 목록은 실행률을 떨어뜨립니다.",
+      "의욕이 꺾이면 후퇴가 아니라 '일시 정지'를 선택하십시오. 멈춤은 종료가 아닙니다.",
+      "어제의 방식으로 오늘을 운용하지 마십시오. 법과 도구는 갱신됩니다. 업데이트를 게을리 마십시오.",
+      "오늘, 이 모든 일을 왜 하는지 한 번 떠올리십시오. 목적이 명확하면 우선순위가 자동 정렬됩니다.",
+      "자동으로 작동하는 시스템을 오늘 하나 더 구축하십시오. 오늘의 노력이 내일부터 스스로 일합니다."
+    ];
+    try{
+      // 열 때마다 무작위로 다른 브리핑 (타이핑 효과)
+      var idx=Math.floor(Math.random()*msgs.length);
+      setTimeout(function(){ typeText(document.getElementById('daily-msg'), msgs[idx], 26); }, 1600);
+    }catch(e){
+      document.getElementById('daily-msg').textContent = msgs[0];
+    }
+  })();
+</script>
