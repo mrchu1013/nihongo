@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>일본어 조사 공부</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Zen+Maru+Gothic:wght@500;700&display=swap">
+<style>
+  /* 다른 문제집과 같은 공책, 조사는 보라색 */
+  :root{
+    --desk:#f1eef8; --paper:#fffef9; --ink:#36324a; --soft:#7d7891; --rule:#e3ddf1;
+    --main:#7a5cc7; --main-soft:#ece5fb; --hl:#fff1a8; --ok:#2c8a5a; --ok-soft:#e1f4e8; --bad:#d4553f; --bad-soft:#fbe7e2;
+    --kr:"Gowun Dodum","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+    --jp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--desk);color:var(--ink);font-family:var(--kr);line-height:1.7;font-size:15.5px}
+  .wrap{max-width:760px;margin:0 auto;padding:22px 16px 60px}
+  .book{background:var(--paper);border-radius:6px 18px 18px 6px;box-shadow:0 10px 30px rgba(70,50,120,.12);border-left:10px solid var(--main);padding:22px 24px 26px;margin-bottom:18px}
+  .jp{font-family:var(--jp)}
+  .hello{display:flex;gap:16px;align-items:center;margin-bottom:10px}
+  .hello img{width:84px;height:84px;border-radius:50%;object-fit:cover;flex:none;border:3px solid #fff;box-shadow:0 2px 10px rgba(70,50,120,.18)}
+  h1{margin:0;font-size:24px;font-weight:400}
+  h1 b{font-family:var(--jp);color:var(--main)}
+  h2{font-size:19px;font-weight:400;margin:0 0 4px}
+  h2 .n{display:inline-block;width:26px;height:26px;border-radius:50%;background:var(--main);color:#fff;text-align:center;line-height:26px;font-size:14px;margin-right:6px}
+  .sub{margin:2px 0 0;color:var(--soft);font-size:14px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .tabs a{text-decoration:none}
+  button{font:inherit;border:1px solid var(--rule);background:#fff;border-radius:999px;padding:7px 16px;cursor:pointer;color:var(--ink)}
+  button:hover{border-color:var(--main)}
+  button:focus-visible{outline:2px solid var(--main);outline-offset:2px}
+  button.main{background:var(--main);color:#fff;border-color:var(--main);font-weight:bold}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  /* 일본어 문장: 히라가나 + 작은 로마자, 조사는 형광펜 */
+  .s{display:inline-block;cursor:pointer}
+  .s .h{font-family:var(--jp);font-size:19px}
+  .s .r{display:block;font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;font-size:12.5px;color:var(--soft);letter-spacing:.02em;line-height:1.3}
+  .p{background:linear-gradient(transparent 55%,var(--hl) 55%);color:var(--main);font-weight:700}
+  .s:hover .h{text-decoration:underline dotted var(--main)}
+  /* 조사 카드 */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .card{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:10px 14px}
+  .card .head{display:flex;align-items:baseline;gap:8px}
+  .card .big{font-family:var(--jp);font-weight:700;font-size:30px;color:var(--main);line-height:1.3}
+  .card .rd{font-size:13px;color:var(--soft)}
+  .card .m{font-weight:bold}
+  .card .d{font-size:13.5px;color:var(--soft);margin:2px 0 6px}
+  .ex{display:flex;flex-direction:column;gap:6px}
+  .ex .ko{font-size:13.5px}
+  /* 헷갈리는 짝 */
+  .pair{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:12px 14px;margin-top:12px}
+  .pair h3{margin:0 0 8px;font-size:17px;font-weight:400}
+  .pair h3 b{font-family:var(--jp);color:var(--main);font-size:20px}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .vs > div{background:var(--main-soft);border-radius:10px;padding:8px 10px}
+  .vs .ko{font-size:13.5px}
+  .vs .x{opacity:.75}
+  .vs .x .h{text-decoration:line-through;text-decoration-color:var(--bad)}
+  .tip{font-size:14px;margin-top:8px;background:var(--hl);border-radius:10px;padding:6px 10px}
+  /* 퀴즈 */
+  .top{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums}
+  .bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin:8px 0 16px}
+  .bar i{display:block;height:100%;background:var(--main);transition:width .3s}
+  .tag{display:inline-block;font-size:12px;background:var(--hl);border-radius:999px;padding:1px 10px;margin-bottom:6px}
+  .ask{font-size:17px;margin:0 0 6px}
+  .sent{text-align:center;margin:6px 0 2px}
+  .sent .h{font-size:26px;line-height:2}
+  .sent .r{font-size:14px}
+  .blank{display:inline-block;min-width:2.4em;border-bottom:3px solid var(--main);margin:0 3px}
+  .ko-q{text-align:center;color:var(--soft);font-size:14.5px;margin:0 0 4px}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .opts button{border-radius:14px;padding:10px 8px;line-height:1.5}
+  .opts .pt{display:block;font-family:var(--jp);font-weight:700;font-size:26px}
+  .opts .pr{display:block;font-size:12.5px;color:var(--soft)}
+  .opts.sents{grid-template-columns:1fr}
+  .opts.sents button{text-align:left;padding:8px 14px}
+  .opts button.right{border-color:var(--ok);background:var(--ok-soft)}
+  .opts button.wrong{border-color:var(--bad);background:var(--bad-soft)}
+  .opts button:disabled{cursor:default;color:var(--ink)}
+  .fb{display:flex;gap:12px;align-items:center;margin-top:14px;padding:10px 12px;border-radius:12px;background:var(--ok-soft)}
+  .fb.no{background:var(--bad-soft)}
+  .fb img{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:none}
+  .fb b{display:block}
+  .fb .why{font-size:14px}
+  .fb .s .h{font-size:17px}
+  .next{display:flex;justify-content:flex-end;margin-top:12px}
+  .result{text-align:center}
+  .face{width:110px;height:110px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:0 4px 14px rgba(70,50,120,.15)}
+  .score{font-size:52px;font-weight:bold;line-height:1.1;font-variant-numeric:tabular-nums;margin-top:8px}
+  .score small{font-size:20px;color:var(--soft)}
+  .review{text-align:left;margin-top:16px}
+  .review h3{font-size:16px;margin:0 0 8px;font-weight:400}
+  .rv{background:var(--bad-soft);border-radius:12px;padding:8px 12px;margin-bottom:6px;font-size:14px}
+  .rv .q{color:var(--soft)}
+  .rv .s .h{font-size:17px}
+  .allok{background:var(--ok-soft);border-radius:12px;padding:10px;color:var(--ok)}
+  .center{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+  .kinds{background:#fff;border:1px dashed #cfc3ea;border-radius:12px;padding:10px 16px;font-size:14.5px;margin:10px 0 14px}
+  .kinds li{margin:2px 0}
+  .best{font-size:13px;color:var(--soft);margin:10px 0 0}
+  .foot{text-align:center;color:var(--soft);font-size:12px;margin-top:6px}
+  .foot a{color:var(--main)}
+  @media (max-width:560px){
+    .book{padding:18px 14px 22px}
+    .cards,.vs{grid-template-columns:1fr}
+    .sent .h{font-size:21px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="book">
+    <div class="hello"><img src="../chiikawa/usagi.jpg" alt="우사기"><div>
+      <h1>일본어 <b>조사</b> 공부</h1>
+      <p class="sub">は・が・を・に・で… 한국어 '은/는·이/가·을/를'이랑 비슷하지만 다른 곳이 있어요. 형광펜 친 부분이 조사예요. 문장을 누르면 일본어 소리가 나와요.</p>
+    </div></div>
+    <div class="tabs">
+      <a href="#learn"><button>① 조사 익히기</button></a>
+      <a href="#pairs"><button>② 헷갈리는 짝</button></a>
+      <a href="#quiz"><button class="main">③ 헷갈리는 문제 풀기</button></a>
+    </div>
+  </div>
+
+  <div class="book" id="learn">
+    <h2><span class="n">1</span>조사 익히기</h2>
+    <p class="sub">자주 쓰는 조사 16개. 읽는 법이 글자와 다른 조사(は=wa, へ=e, を=o)를 꼭 기억해요.</p>
+    <div class="cards" id="cards"></div>
+  </div>
+
+  <div class="book" id="pairs">
+    <h2><span class="n">2</span>헷갈리는 짝</h2>
+    <p class="sub">한국 사람이 제일 많이 틀리는 것만 모았어요. 줄 그은 문장은 틀린 문장이에요.</p>
+    <div id="pairList"></div>
+  </div>
+
+  <div class="book" id="quiz"></div>
+
+  <div class="foot"><a href="../">처음으로</a><br>캐릭터 그림 © nagano · 개인 학습용 팬 페이지 · 기록은 이 기기 브라우저에만 저장돼요</div>
+</div>
+
+<script>
+// 문장 표기: 조사는 [ ]로 감싸고, 빈칸은 ＿＿. 화면에는 히라가나 + 작은 로마자로 보여줌
+const PARTS = [
+  {p:"は", r:"wa", m:"~은/는 (주제)", d:"이야기의 주제를 꺼내요. 조사일 땐 ha가 아니라 wa로 읽어요.",
+   ex:[["わたし[は] がくせいです。","저는 학생입니다."],["きょう[は] あついです。","오늘은 더워요."]]},
+  {p:"が", r:"ga", m:"~이/가 (주어)", d:"새로운 정보, '누가?'에 대한 답, だれ·なに 같은 의문사 바로 뒤에 써요.",
+   ex:[["だれ[が] きました{か}。","누가 왔어요?"],["ねこ[が] います。","고양이가 있어요."]]},
+  {p:"を", r:"o", m:"~을/를 (목적)", d:"동작의 대상. wo가 아니라 o로 읽어요.",
+   ex:[["みず[を] のみます。","물을 마셔요."],["これ[を] ください。","이것을 주세요."]]},
+  {p:"に", r:"ni", m:"~에 / ~에게", d:"정해진 시간, 도착하는 곳, 있는 곳(いる·ある), 받는 사람.",
+   ex:[["しちじ[に] おきます。","7시에 일어나요."],["へや[に] ねこ{が} います。","방에 고양이가 있어요."],["ともだち[に] あげます。","친구에게 줘요."]]},
+  {p:"へ", r:"e", m:"~로 / ~에 (방향)", d:"가는 방향. he가 아니라 e로 읽어요. に로 바꿔도 대부분 괜찮아요.",
+   ex:[["おおさか[へ] いきます。","오사카로 가요."]]},
+  {p:"で", r:"de", m:"~에서 / ~로 (수단)", d:"동작이 일어나는 장소, 그리고 교통수단·도구.",
+   ex:[["こうえん[で] あそびます。","공원에서 놀아요."],["でんしゃ[で] いきます。","전철로 가요."]]},
+  {p:"と", r:"to", m:"~와/과, ~랑 (함께)", d:"같이 하는 사람, 또는 빠짐없이 전부 나열할 때.",
+   ex:[["ともだち[と] いきます。","친구랑 가요."],["すし[と] てんぷら[を] たべました。","초밥과 튀김을 먹었어요."]]},
+  {p:"や", r:"ya", m:"~랑 ~등 (일부만 나열)", d:"몇 개만 예로 들 때. 뒤에 など(등)가 자주 붙어요.",
+   ex:[["すし[や] てんぷら[など][を] たべました。","초밥이랑 튀김 같은 걸 먹었어요."]]},
+  {p:"も", r:"mo", m:"~도", d:"は·が·を 자리에 '대신' 들어가요. わたしはも ✗",
+   ex:[["わたし[も] いきます。","저도 갈게요."]]},
+  {p:"の", r:"no", m:"~의", d:"명사와 명사를 이어요. 한국어에서 '의'를 빼는 곳에도 꼭 넣어요.",
+   ex:[["わたし[の] かさです。","제 우산이에요."],["にほんご[の] ほん","일본어 책"]]},
+  {p:"から", r:"kara", m:"~부터 / ~에서 (출발)", d:"시작하는 시간·장소. 문장 끝에 붙으면 '~니까(이유)'.",
+   ex:[["くじ[から] はたらきます。","9시부터 일해요."],["かんこく[から] きました。","한국에서 왔어요."]]},
+  {p:"まで", r:"made", m:"~까지", d:"끝나는 시간·장소. から와 짝꿍이에요.",
+   ex:[["えき[まで] あるきます。","역까지 걸어요."]]},
+  {p:"より", r:"yori", m:"~보다", d:"비교할 때 써요.",
+   ex:[["きょう[は] きのう[より] さむいです。","오늘은 어제보다 추워요."]]},
+  {p:"か", r:"ka", m:"~까? (질문)", d:"문장 끝에 붙이면 질문이 돼요.",
+   ex:[["これ[は] いくらです[か]。","이거 얼마예요?"]]},
+  {p:"ね", r:"ne", m:"~네요, ~죠? (공감)", d:"상대도 아는 걸 같이 느낄 때.",
+   ex:[["おいしいです[ね]。","맛있네요."]]},
+  {p:"よ", r:"yo", m:"~요! (알려 주기)", d:"상대가 모르는 걸 알려 줄 때.",
+   ex:[["ここ[は] おいしいです[よ]。","여기 맛있어요!"]]},
+];
+
+// 헷갈리는 짝: a·b = [문장, 해석, 틀린 문장이면 true]
+const PAIRS = [
+  {t:["は","が"], a:["わたし[は] たなかです。","(자기소개) 저는 다나카예요."], b:["わたし[が] たなかです。","(누가 다나카 씨예요? → ) 제가 다나카예요."],
+   tip:"평소 '~은/는' 하고 말을 꺼낼 땐 は. 질문에 대한 '답'이거나, だれ·なに·どこ가 주어일 땐 が (だれは ✗ → だれが)."},
+  {t:["に","で"], a:["へや[に] います。","방에 있어요. (있는 곳)"], b:["へや[で] べんきょうします。","방에서 공부해요. (무언가 하는 곳)"],
+   tip:"いる·ある·すむ(살다) 앞의 장소는 に, 무언가를 '하는' 장소는 で. とうきょうに すんでいます / とうきょうで はたらいています."},
+  {t:["を","が"], a:["すし[を] たべます。","초밥을 먹어요."], b:["すし[が] すきです。","초밥을 좋아해요."],
+   tip:"すき(좋아함)·きらい(싫어함)·じょうず(잘함)·わかる(알다)·ほしい(갖고 싶다) 앞은 '을/를'이어도 が!"},
+  {t:["に","を"], a:["ともだち[に] あいます。","친구를 만나요."], b:["でんしゃ[に] のります。","전철을 타요."],
+   tip:"あう(만나다)·のる(타다)는 한국어로 '을/를'인데 일본어는 に. ともだちを あいます ✗"},
+  {t:["と","や"], a:["すし[と] てんぷら","초밥과 튀김 (딱 이 두 개)"], b:["すし[や] てんぷら","초밥이랑 튀김 등 (그 밖에도 더)"],
+   tip:"전부 말하면 と, 몇 개만 예로 들면 や. や 뒤에는 など(등)가 자주 붙어요."},
+  {t:["に","×"], a:["しちじ[に] おきます。","7시에 일어나요."], b:["あした[に] いきます。","내일 가요. → あした いきます。", true],
+   tip:"7시·3월·일요일처럼 정해진 때엔 に. きょう·あした·まいにち·いま처럼 '지금 기준' 말엔 に를 안 붙여요."},
+  {t:["に","へ"], a:["おおさか[に] いきます。","오사카에 가요. (도착하는 곳)"], b:["おおさか[へ] いきます。","오사카로 가요. (가는 방향)"],
+   tip:"둘 다 맞아요! 여행 회화에서는 아무거나 써도 통해요. 대신 읽을 땐 へ = e."},
+];
+
+// 문제: k=종류, sent=빈칸 문장, ko=해석, a=정답, o=오답 3개, why=해설 (×=조사 안 넣음)
+// k:"문장" 은 보기가 문장, k:"읽기" 는 show를 보고 읽는 법 고르기
+const BANK = [
+  {k:"빈칸", sent:"わたし＿＿ がくせいです。", ko:"저는 학생입니다.", a:"は", o:["が","を","に"], why:"자기소개처럼 '~은/는' 하고 주제를 말할 땐 は."},
+  {k:"빈칸", sent:"だれ＿＿ きました{か}。", ko:"누가 왔어요?", a:"が", o:["は","を","で"], why:"だれ·なに 같은 의문사가 주어면 꼭 が. だれは ✗"},
+  {k:"빈칸", sent:"わたし＿＿ たなかです。", ko:"('누가 다나카 씨예요?'라는 질문에) 제가 다나카예요.", a:"が", o:["は","も","の"], why:"질문의 답이 되는 '누가'는 が. わたしは라고 하면 그냥 자기소개처럼 들려요."},
+  {k:"빈칸", sent:"みず＿＿ のみます。", ko:"물을 마셔요.", a:"を", o:["が","に","で"], why:"동작(마시다)의 대상 → を."},
+  {k:"빈칸", sent:"としょかん＿＿ べんきょうします。", ko:"도서관에서 공부해요.", a:"で", o:["に","を","へ"], why:"공부하는 '동작'이 일어나는 곳 → で."},
+  {k:"빈칸", sent:"へや＿＿ ねこ{が} います。", ko:"방에 고양이가 있어요.", a:"に", o:["で","を","へ"], why:"있는 곳(いる·ある) → に. へやで ✗"},
+  {k:"빈칸", sent:"でんしゃ＿＿ いきます。", ko:"전철로 가요.", a:"で", o:["に","を","と"], why:"교통수단·도구 → で."},
+  {k:"빈칸", sent:"しちじ＿＿ おきます。", ko:"7시에 일어나요.", a:"に", o:["で","を","が"], why:"숫자로 정해진 시간 → に."},
+  {k:"빈칸", sent:"ともだち＿＿ おおさか{へ} いきます。", ko:"친구랑 오사카에 가요.", a:"と", o:["に","や","を"], why:"같이 하는 사람 → と. ともだちに는 '친구에게'라는 뜻이 돼요."},
+  {k:"빈칸", sent:"わたし＿＿ いきます。", ko:"저도 갈게요.", a:"も", o:["は","が","の"], why:"'~도' → も."},
+  {k:"빈칸", sent:"これ{は} わたし＿＿ かさです。", ko:"이건 제 우산이에요.", a:"の", o:["は","が","に"], why:"명사+명사를 잇는 '~의' → の."},
+  {k:"빈칸", sent:"くじ＿＿ ごじ{まで} はたらきます。", ko:"9시부터 5시까지 일해요.", a:"から", o:["まで","に","で"], why:"시작 → から, 끝 → まで."},
+  {k:"빈칸", sent:"えき＿＿ あるきます。", ko:"역까지 걸어요.", a:"まで", o:["から","に","で"], why:"도착하는 끝 지점 '~까지' → まで."},
+  {k:"빈칸", sent:"ねこ＿＿ いぬ{の} ほう{が} すきです。", ko:"고양이보다 개를 더 좋아해요.", a:"より", o:["から","まで","と"], why:"비교 '~보다' → より."},
+  {k:"빈칸", sent:"これ{は} いくらです＿＿。", ko:"이거 얼마예요?", a:"か", o:["ね","よ","を"], why:"질문 → 문장 끝에 か."},
+  {k:"빈칸", sent:"きょう{は} さむいです＿＿。", ko:"오늘 춥네요~ (그렇죠?)", a:"ね", o:["よ","か","を"], why:"서로 같이 느끼는 공감 → ね. よ는 상대가 모르는 걸 알려 줄 때."},
+  {k:"빈칸", sent:"この みせ、おいしいです＿＿！", ko:"이 가게 맛있어요! (모르는 친구에게 알려 줄 때)", a:"よ", o:["ね","か","を"], why:"상대가 모르는 정보를 알려 줄 땐 よ."},
+  {k:"빈칸", sent:"すし＿＿ てんぷら{など}{を} たべました。", ko:"초밥이랑 튀김 같은 걸 먹었어요.", a:"や", o:["と","も","の"], why:"뒤에 など(등)가 있으면 '몇 개만 예로 든 것' → や."},
+  {k:"빈칸", sent:"とうきょう＿＿ すんでいます。", ko:"도쿄에 살아요.", a:"に", o:["で","を","へ"], why:"すむ(살다)는 '있는 곳'이라서 に."},
+  {k:"빈칸", sent:"とうきょう＿＿ はたらいています。", ko:"도쿄에서 일해요.", a:"で", o:["に","を","へ"], why:"일하는 '동작'의 장소 → で."},
+  {k:"빈칸", sent:"ここ＿＿ しゃしん{を} とっても いいです{か}。", ko:"여기서 사진 찍어도 돼요?", a:"で", o:["に","を","へ"], why:"여행 필수 문장! 찍는 동작의 장소 → で."},
+  {k:"빈칸", sent:"なんば＿＿ あいましょう。", ko:"난바에서 만나요.", a:"で", o:["に","を","へ"], why:"만나는 '장소'는 で, 만나는 '사람'은 に (ともだちに あいます)."},
+  {k:"빈칸", sent:"ひとり＿＿ いきます。", ko:"혼자서 가요.", a:"で", o:["に","と","を"], why:"사람 수 + で = '~이서' (ふたりで = 둘이서)."},
+  {k:"빈칸", sent:"すみません、えき＿＿ どこです{か}。", ko:"실례합니다, 역은 어디예요?", a:"は", o:["が","を","に"], why:"모르는 걸 물을 때, 물어보는 대상(주제) → は."},
+  {k:"빈칸", sent:"かんこく＿＿ きました。", ko:"한국에서 왔어요.", a:"から", o:["で","に","を"], why:"출발한 곳 '~에서(부터)' → から. で는 동작하는 장소라서 ✗"},
+
+  {k:"함정", sent:"ともだち＿＿ あいます。", ko:"친구를 만나요.", a:"に", o:["を","で","が"], why:"한국어는 '을/를'이지만 あう(만나다)는 に! ともだちを あいます ✗"},
+  {k:"함정", sent:"でんしゃ＿＿ のります。", ko:"전철을 타요.", a:"に", o:["を","で","が"], why:"のる(타다)도 に. 한국어 '을/를'에 속지 않기."},
+  {k:"함정", sent:"すし＿＿ すきです。", ko:"초밥을 좋아해요.", a:"が", o:["を","に","で"], why:"すき(좋아함)·きらい(싫어함)는 が. すしを すきです ✗"},
+  {k:"함정", sent:"にほんご＿＿ わかります。", ko:"일본어를 알아요(이해해요).", a:"が", o:["を","に","で"], why:"わかる(알다)도 が."},
+  {k:"함정", sent:"みず＿＿ ほしいです。", ko:"물을 원해요(갖고 싶어요).", a:"が", o:["を","に","で"], why:"ほしい(갖고 싶다)도 が."},
+  {k:"함정", sent:"かれ{は} にほんご＿＿ じょうずです。", ko:"그는 일본어를 잘해요.", a:"が", o:["を","に","で"], why:"じょうず(잘함)·へた(못함)도 が."},
+  {k:"함정", sent:"あした＿＿ おおさか{へ} いきます。", ko:"내일 오사카에 가요.", a:"×", o:["に","で","を"], why:"あした·きょう·まいにち에는 に를 안 붙여요. あしたに ✗"},
+  {k:"함정", sent:"まいにち＿＿ べんきょうします。", ko:"매일 공부해요.", a:"×", o:["に","で","を"], why:"まいにち(매일)에도 조사 없이 바로 써요."},
+  {k:"함정", sent:"せんせい＿＿ ききます。", ko:"선생님께 물어봐요.", a:"に", o:["を","が","で"], why:"물어보는 상대 → に. せんせいを ききます는 ✗"},
+  {k:"함정", sent:"でんしゃ＿＿ おります。", ko:"전철에서 내려요.", a:"を", o:["で","に","が"], why:"おりる(내리다)는 を (から도 OK). '~에서'라고 で를 쓰면 ✗"},
+
+  {k:"문장", ko:"방에 고양이가 있어요.", a:"へや[に] ねこ[が] います。", o:["へや[で] ねこ[が] います。","へや[に] ねこ[を] います。","へや[を] ねこ[が] います。"], why:"있는 곳은 に, 있는 것은 が."},
+  {k:"문장", ko:"초밥을 좋아해요.", a:"すし[が] すきです。", o:["すし[を] すきです。","すし[に] すきです。","すし[で] すきです。"], why:"すき 앞은 が."},
+  {k:"문장", ko:"내일 가요.", a:"あした いきます。", o:["あした[に] いきます。","あした[で] いきます。","あした[を] いきます。"], why:"あした에는 조사를 안 붙여요."},
+  {k:"문장", ko:"차로 가요.", a:"くるま[で] いきます。", o:["くるま[に] いきます。","くるま[を] いきます。","くるま[と] いきます。"], why:"교통수단은 で. くるまに는 '차에(로 들어가다)'처럼 이상해져요."},
+  {k:"문장", ko:"친구를 만났어요.", a:"ともだち[に] あいました。", o:["ともだち[を] あいました。","ともだち[で] あいました。","ともだち[から] あいました。"], why:"あう(만나다)는 사람에 に."},
+  {k:"문장", ko:"저도 학생이에요.", a:"わたし[も] がくせいです。", o:["わたし[は][も] がくせいです。","わたし[も][は] がくせいです。","わたし[が][も] がくせいです。"], why:"も는 は·が 자리에 '대신' 들어가요. 둘을 같이 쓰지 않아요."},
+
+  {k:"읽기", show:"わたし[は]", q:"여기서 は는 어떻게 읽을까요?", a:"wa", o:["ha","ga","ba"], why:"조사 は는 wa로 읽어요."},
+  {k:"읽기", show:"おおさか[へ] いきます", q:"여기서 へ는 어떻게 읽을까요?", a:"e", o:["he","fe","ni"], why:"조사 へ는 e로 읽어요."},
+  {k:"읽기", show:"みず[を] のみます", q:"여기서 を는 어떻게 읽을까요?", a:"o", o:["wo","wa","ho"], why:"を는 お와 같은 o 소리예요."},
+  {k:"읽기", show:"こんにち[は]", q:"인사말 끝의 は는 어떻게 읽을까요?", a:"wa", o:["ha","ga","na"], why:"원래 '오늘은'이라는 뜻의 조사라서 wa예요."},
+];
+const KINDS = {빈칸:"빈칸 채우기", 함정:"한국어 함정", 문장:"맞는 문장 고르기", 읽기:"조사 읽기"};
+const N = 15;
+
+// ───────── 표기 도우미 ─────────
+const KANA = {あ:"a",い:"i",う:"u",え:"e",お:"o",か:"ka",き:"ki",く:"ku",け:"ke",こ:"ko",さ:"sa",し:"shi",す:"su",せ:"se",そ:"so",
+  た:"ta",ち:"chi",つ:"tsu",て:"te",と:"to",な:"na",に:"ni",ぬ:"nu",ね:"ne",の:"no",は:"ha",ひ:"hi",ふ:"fu",へ:"he",ほ:"ho",
+  ま:"ma",み:"mi",む:"mu",め:"me",も:"mo",や:"ya",ゆ:"yu",よ:"yo",ら:"ra",り:"ri",る:"ru",れ:"re",ろ:"ro",わ:"wa",を:"o",ん:"n",
+  が:"ga",ぎ:"gi",ぐ:"gu",げ:"ge",ご:"go",ざ:"za",じ:"ji",ず:"zu",ぜ:"ze",ぞ:"zo",だ:"da",ぢ:"ji",づ:"zu",で:"de",ど:"do",
+  ば:"ba",び:"bi",ぶ:"bu",べ:"be",ぼ:"bo",ぱ:"pa",ぴ:"pi",ぷ:"pu",ぺ:"pe",ぽ:"po"};
+const SMALL = {ゃ:"a",ゅ:"u",ょ:"o"};
+const PUNCT = {"。":".","、":",","？":"?","！":"!"};
+const PART_READ = {は:"wa",へ:"e",を:"o"};
+function romaji(kana){
+  let out="", dbl=false;
+  for(const ch of kana){
+    if(ch==="っ"){ dbl=true; continue; }
+    if(SMALL[ch] && out){ out = /(sh|ch|j)i$/.test(out) ? out.slice(0,-1)+SMALL[ch] : out.slice(0,-1)+"y"+SMALL[ch]; continue; }
+    let r = KANA[ch] ?? PUNCT[ch]; if(r==null){ out+=ch; continue; }
+    if(dbl){ r = (r.startsWith("ch") ? "t" : r[0]) + r; dbl=false; }
+    out+=r;
+  }
+  return out;
+}
+// "わたし[は] がくせいです。" → "Watashi wa gakusei desu."
+function rom(s){
+  const t = s.split(/(\[[^\]]+\]|\{[^}]+\}|＿＿|\s+)/).filter(Boolean).map(x=>{
+    if(x[0]==="["||x[0]==="{") { const p=x.slice(1,-1); return " "+(PART_READ[p]||romaji(p))+" "; }
+    if(x==="＿＿") return " ___ ";
+    if(/^\s+$/.test(x)) return " ";
+    return romaji(x).replace(/desu/g," desu").replace(/^ desu/,"desu");
+  }).join("");
+  const r = t.replace(/\s+/g," ").replace(/\s+([.,?!])/g,"$1").replace(/,(\S)/g,", $1").trim();
+  return r.charAt(0).toUpperCase()+r.slice(1);
+}
+const plain = s => s.replace(/[\[\]{}]/g,"").replace(/＿＿/g,"");
+// [조사] = 형광펜(이번에 배우는 조사), {조사} = 형광펜 없이 로마자만 띄어 쓰기
+const hira = s => s.replace(/\[([^\]]+)\]/g,'<span class="p">$1</span>').replace(/\{([^}]+)\}/g,"$1").replace(/＿＿/g,'<span class="blank"></span>');
+const sent = s => `<span class="s" data-say="${plain(s)}"><span class="h">${hira(s)}</span><span class="r">${rom(s)}</span></span>`;
+const fill = (s,a) => s.replace("＿＿", a==="×" ? "" : `[${a}]`).replace(/\s{2,}/g," ");
+
+const $ = s => document.querySelector(s);
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+function store(k,v){ try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; } }
+function speak(t){ try{ const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=.85;
+  const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("ja")); if(v) u.voice=v; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){} }
+document.addEventListener("click",e=>{ const s=e.target.closest(".s[data-say]"); if(s && !s.closest("button")) speak(s.dataset.say); });
+
+// ───────── ① 익히기 / ② 헷갈리는 짝 ─────────
+$("#cards").innerHTML = PARTS.map(c=>`<div class="card">
+  <div class="head"><span class="big">${c.p}</span><span class="rd">${c.r}</span><span class="m">${c.m}</span></div>
+  <div class="d">${c.d}</div>
+  <div class="ex">${c.ex.map(([j,k])=>`<div>${sent(j)}<div class="ko">${k}</div></div>`).join("")}</div></div>`).join("");
+
+const side = ([j,k,x]) => `<div class="${x?"x":""}">${sent(j)}<div class="ko">${x?"❌ ":""}${k}</div></div>`;
+$("#pairList").innerHTML = PAIRS.map(p=>`<div class="pair">
+  <h3><b>${p.t[0]}</b> vs <b>${p.t[1]==="×"?"안 붙임":p.t[1]}</b></h3>
+  <div class="vs">${side(p.a)}${side(p.b)}</div><div class="tip">💡 ${p.tip}</div></div>`).join("");
+
+// ───────── ③ 퀴즈 ─────────
+const app = $("#quiz");
+let Q=null;
+function pickSet(){ // 종류가 고루 섞이게 (빈칸·함정 위주)
+  const by={}; shuffle(BANK).forEach(b=>(by[b.k]=by[b.k]||[]).push(b));
+  const want={빈칸:6,함정:5,문장:3,읽기:1}, out=[];
+  for(const k in want) out.push(...(by[k]||[]).slice(0,want[k]));
+  return shuffle(out).slice(0,N);
+}
+function start(list){ Q={list:list.map(b=>({b, opts:shuffle([b.a,...b.o])})), i:0, picked:null, right:0, wrong:[]}; show(); app.scrollIntoView({behavior:"smooth"}); }
+
+function home(){
+  const best=store("pt-best");
+  app.innerHTML=`<h2><span class="n">3</span>헷갈리는 문제 풀기</h2>
+    <p class="sub">한 번에 ${N}문제. 풀 때마다 바로 정답과 이유를 알려줘요. 숫자키 1~4로도 고를 수 있어요.</p>
+    <ul class="kinds"><li><b>빈칸 채우기</b> — としょかん＿＿ べんきょうします (に? で?)</li>
+    <li><b>한국어 함정</b> — 친구'를' 만나요 → ともだち＿＿ あいます</li>
+    <li><b>맞는 문장 고르기</b> — 4개 중 진짜 맞는 문장은?</li><li><b>조사 읽기</b> — は·へ·を는 어떻게 읽을까?</li></ul>
+    <div class="row"><button class="main" id="go">문제 풀기 시작</button><a href="#pairs"><button>헷갈리는 짝 먼저 보기</button></a></div>
+    <p class="best">${best!=null?`최고 점수 ${best} / ${N}`:"아직 기록이 없어요"}</p>`;
+  $("#go").onclick=()=>start(pickSet());
+}
+const optHtml = (b,o) => {
+  if(b.k==="문장") return sent(o);
+  if(b.k==="읽기") return `<span class="pt" style="font-family:inherit">${o}</span>`;
+  if(o==="×") return `<span class="pt">×</span><span class="pr">아무것도 안 넣음</span>`;
+  return `<span class="pt">${o}</span><span class="pr">${PART_READ[o]||romaji(o)}</span>`;
+};
+const answerLine = b => b.k==="문장"||b.k==="읽기" ? null : fill(b.sent,b.a);
+function show(){
+  const it=Q.list[Q.i], b=it.b, n=Q.list.length, done=Q.picked!=null, ok=done&&it.opts[Q.picked]===b.a;
+  let body="";
+  if(b.k==="문장") body=`<p class="ask">「${b.ko}」를 일본어로 바르게 쓴 문장은?</p>`;
+  else if(b.k==="읽기") body=`<p class="ask">${b.q}</p><div class="sent">${sent(b.show)}</div>`;
+  else body=`<p class="ask">빈칸에 알맞은 조사는?</p><div class="sent">${sent(b.sent)}</div><p class="ko-q">${b.ko}</p>`;
+  const ansTxt = b.k==="문장" ? sent(b.a) : b.k==="읽기" ? b.a : (b.a==="×" ? "× (조사 없음)" : `${b.a} (${PART_READ[b.a]||romaji(b.a)})`);
+  app.innerHTML=`<div class="top"><span>${Q.i+1} / ${n} · 맞힘 ${Q.right}</span><button id="quit" style="font-size:12px;padding:3px 10px">그만하기</button></div>
+    <div class="bar"><i style="width:${(Q.i+(done?1:0))/n*100}%"></i></div>
+    <span class="tag">${KINDS[b.k]}</span>${body}
+    <div class="opts ${b.k==="문장"?"sents":""}">${it.opts.map((o,k)=>{ let c=""; if(done){ if(o===b.a) c="right"; else if(k===Q.picked) c="wrong"; }
+      return `<button class="${c}" data-k="${k}" ${done?"disabled":""}>${optHtml(b,o)}</button>`; }).join("")}</div>
+    ${done?`<div class="fb ${ok?"":"no"}" role="status"><img src="${ok?"../chiikawa/chii.jpg":"../chiikawa/hachi.jpg"}" alt="">
+      <div><b>${ok?"⭕ 정답! えらい！":"❌ 아쉬워요 — 정답은 "+(b.k==="문장"?"아래 문장":ansTxt)}</b>
+      ${answerLine(b)?`<div>${sent(answerLine(b))}</div>`:b.k==="문장"&&!ok?`<div>${sent(b.a)}</div>`:""}
+      <div class="why">${b.why}</div></div></div>
+      <div class="next"><button class="main" id="next">${Q.i+1<n?"다음 문제":"결과 보기"}</button></div>`:""}`;
+  $("#quit").onclick=()=>{ Q=null; home(); };
+  app.querySelector(".opts").onclick=e=>{ const x=e.target.closest("button[data-k]"); if(x) answer(+x.dataset.k); };
+  if(done){ $("#next").onclick=next; $("#next").focus({preventScroll:true}); }
+}
+function answer(k){
+  if(Q.picked!=null) return; Q.picked=k;
+  const it=Q.list[Q.i];
+  if(it.opts[k]===it.b.a) Q.right++; else Q.wrong.push({b:it.b, mine:it.opts[k]});
+  speak(plain(it.b.k==="문장" ? it.b.a : it.b.k==="읽기" ? it.b.show : fill(it.b.sent,it.b.a)));
+  show();
+}
+function next(){ Q.i++; Q.picked=null; if(Q.i>=Q.list.length) result(); else show(); }
+
+function result(){
+  const n=Q.list.length, r=Q.right, rate=r/n;
+  if(n===N) store("pt-best", Math.max(store("pt-best")||0, r));
+  const face = rate>=.9?"../chiikawa/chii.jpg":rate>=.7?"../chiikawa/usagi.jpg":"../chiikawa/hachi.jpg";
+  const msg = rate>=.9?"완벽해요! 조사 마스터 すごい！":rate>=.7?"잘했어요! 틀린 것만 다시 보면 완벽해요.":"괜찮아요, 헷갈리는 짝을 한 번 더 보고 다시 도전!";
+  const mineTxt = (b,m) => b.k==="문장" ? sent(m) : b.k==="읽기" ? m : sent(fill(b.sent,m));
+  app.innerHTML=`<div class="result"><img class="face" src="${face}" alt="">
+    <div class="score">${r}<small> / ${n}</small></div><p><b>${msg}</b></p>
+    <div class="center">${Q.wrong.length?`<button class="main" id="retry">틀린 ${Q.wrong.length}문제 다시</button>`:""}<button id="again">새 문제</button><button id="home">처음으로</button></div>
+    <div class="review">${Q.wrong.length?`<h3>틀린 문제</h3>`+Q.wrong.map(w=>`<div class="rv"><div class="q">${w.b.ko||w.b.q}</div>
+      <div>정답 ${w.b.k==="읽기"?w.b.a:sent(w.b.k==="문장"?w.b.a:fill(w.b.sent,w.b.a))}</div>
+      <div>내 답 <span style="color:var(--bad)">${mineTxt(w.b,w.mine)}</span></div><div class="q">${w.b.why}</div></div>`).join(""):`<div class="allok">전부 맞았어요! 💮</div>`}</div></div>`;
+  if($("#retry")) $("#retry").onclick=()=>start(Q.wrong.map(w=>w.b));
+  $("#again").onclick=()=>start(pickSet());
+  $("#home").onclick=()=>{ Q=null; home(); };
+  app.scrollIntoView({behavior:"smooth"});
+}
+document.addEventListener("keydown",e=>{
+  if(!Q||e.ctrlKey||e.metaKey||e.altKey||Q.i>=Q.list.length) return;
+  if(Q.picked==null && /^[1-4]$/.test(e.key)){ e.preventDefault(); answer(+e.key-1); }
+});
+home();
+</script>
+</body>
+</html>
