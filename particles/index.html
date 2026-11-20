@@ -40,6 +40,9 @@
   .s .r{display:block;font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;font-size:12.5px;color:var(--soft);letter-spacing:.02em;line-height:1.3}
   .p{background:linear-gradient(transparent 55%,var(--hl) 55%);color:var(--main);font-weight:700}
   .s:hover .h{text-decoration:underline dotted var(--main)}
+  /* 로마자는 가려 두고, 누르면 보이기 (정답을 고른 뒤 보기 안의 로마자는 자동으로 보임) */
+  .s .r{filter:blur(4px);user-select:none;transition:filter .15s}
+  .s .r.on, body.rom-all .s .r, .opts button:disabled .s .r{filter:none;user-select:auto}
   /* 조사 카드 */
   .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
   .card{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:10px 14px}
@@ -117,12 +120,13 @@
   <div class="book">
     <div class="hello"><img src="../chiikawa/usagi.jpg" alt="우사기"><div>
       <h1>일본어 <b>조사</b> 공부</h1>
-      <p class="sub">は・が・を・に・で… 한국어 '은/는·이/가·을/를'이랑 비슷하지만 다른 곳이 있어요. 형광펜 친 부분이 조사예요. 문장을 누르면 일본어 소리가 나와요.</p>
+      <p class="sub">は・が・を・に・で… 한국어 '은/는·이/가·을/를'이랑 비슷하지만 다른 곳이 있어요. 형광펜 친 부분이 조사예요. 문장을 누르면 일본어 소리가 나오고, 흐린 영어(로마자)를 누르면 읽는 법이 보여요.</p>
     </div></div>
     <div class="tabs">
       <a href="#learn"><button>① 조사 익히기</button></a>
       <a href="#pairs"><button>② 헷갈리는 짝</button></a>
       <a href="#quiz"><button class="main">③ 헷갈리는 문제 풀기</button></a>
+      <button id="romAll">로마자 모두 보기</button>
     </div>
   </div>
 
@@ -295,7 +299,13 @@ const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.f
 function store(k,v){ try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; } }
 function speak(t){ try{ const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=.85;
   const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("ja")); if(v) u.voice=v; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){} }
-document.addEventListener("click",e=>{ const s=e.target.closest(".s[data-say]"); if(s && !s.closest("button")) speak(s.dataset.say); });
+document.addEventListener("click",e=>{
+  const s=e.target.closest(".s[data-say]"); if(!s || s.closest("button")) return;
+  const r=e.target.closest(".r"); if(r){ r.classList.toggle("on"); return; }  // 로마자 줄: 보이기/가리기
+  speak(s.dataset.say);                                                      // 히라가나: 소리
+});
+$("#romAll").onclick=()=>{ const on=document.body.classList.toggle("rom-all");
+  $("#romAll").textContent = on ? "로마자 모두 가리기" : "로마자 모두 보기"; };
 
 // ───────── ① 익히기 / ② 헷갈리는 짝 ─────────
 $("#cards").innerHTML = PARTS.map(c=>`<div class="card">
